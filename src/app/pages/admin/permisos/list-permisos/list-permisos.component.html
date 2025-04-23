@@ -1,0 +1,38 @@
+<div class="container">
+  <app-header></app-header>
+  <div class="contenido">
+    <mat-card class="mb-4">
+      <mat-card-content>
+        <div class="info-trabajadores">
+          <div>
+            <mat-card-title>
+              <p class="mat-subheading-2">
+                {{ permisos.length }} Permisos registrados
+              </p>
+            </mat-card-title>
+          </div>
+          <button mat-raised-button color="primary">
+            <a routerLink="/admin/add-permiso">Agregar permiso</a>
+          </button>
+        </div>
+
+        <table class="mat-elevation-z8" style="width: 100%">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trabajador of permisos">
+              <td>{{ trabajador.idPermisos }}</td>
+              <td>{{ trabajador.nombrePermiso }}</td>
+              <td>{{ trabajador.estado }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

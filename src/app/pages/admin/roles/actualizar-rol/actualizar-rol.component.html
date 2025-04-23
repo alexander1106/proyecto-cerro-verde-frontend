@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="header">
+    <app-header></app-header>
+  </div>
+  <div class="contenido">
+    <h2>Agregar nuevo rol</h2>
+
+    <div class="contenido">
+      <form (ngSubmit)="actualizarDatos()">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Nombre del rol</mat-label>
+          <input
+            matInput
+            placeholder="Ej. Administrador"
+            name="nombre"
+            [(ngModel)]="rol.nombreRol"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Descripción</mat-label>
+          <textarea
+            matInput
+            name="descripcion"
+            [(ngModel)]="rol.descripcion"
+          ></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Estado</mat-label>
+          <mat-select name="estado" [(ngModel)]="rol.estado" required>
+            <mat-option [value]="true">Activo</mat-option>
+            <mat-option [value]="false">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div align="end">
+          <button mat-button (click)="cancelar()">Cancelar</button>
+          <button mat-button color="primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+.custom-toolbar {
+  background-color: #fff;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Título */
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Buscador más grande y fluido */
+.search-field {
+  border-radius: 12px;
+  background-color: #f0f0f0;
+  overflow: hidden;
+  height: 52px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.search-field .input-group-text {
+  background-color: transparent;
+  border: none;
+  padding-left: 14px;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.search-field .form-control {
+  background-color: transparent;
+  border: none;
+  height: 100%;
+  font-size: 1rem;
+  color: #555;
+}
+
+.search-field .form-control:focus {
+  box-shadow: none;
+}
+
+/* Notificaciones */
+.notification-icon {
+  font-size: 1.6rem;
+  color: #555;
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-icon:hover {
+  color: #007bff;
+}
+
+.notification-badge {
+  font-size: 0.7rem;
+  padding: 3px 6px;
+}
+
+/* Usuario */
+.user-box {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #888;
+}

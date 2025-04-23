@@ -1,0 +1,65 @@
+<div class="main-container">
+  <!-- Formulario -->
+  <div class="login-container mat-elevation-z4">
+    <mat-card>
+      <mat-card-header>
+        <img src="assets/logo.png" alt="Logo" />
+        <p>Hotel cerro verde</p>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="logo-container text-center">
+          <h2>Dashboard administrativo</h2>
+          <div *ngIf="mensajeError" class="error-message">
+            {{ mensajeError }}
+          </div>
+          <form (ngSubmit)="formSubmit()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Usuario</mat-label>
+              <input
+                matInput
+                [(ngModel)]="loginData.username"
+                required
+                name="username"
+                placeholder="Digite su nombre de usuario"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                [(ngModel)]="loginData.password"
+                required
+                name="password"
+                [type]="hide ? 'password' : 'text'"
+                placeholder="Digite su contraseña"
+              />
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+              >
+                <mat-icon>{{
+                  hide ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              <mat-hint><a routerLink="/enviar-correo">¿Olvidaste tu contraseña?</a></mat-hint>
+            </mat-form-field>
+
+            <div class="container">
+              <button mat-raised-button color="primary" type="submit">
+                Iniciar sesión
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Imagen -->
+  <div class="cont-img">
+    <img src="assets/habitaciones.jpg" alt="Habitación" />
+  </div>
+</div>

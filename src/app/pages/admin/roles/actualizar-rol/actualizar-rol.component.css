@@ -1,0 +1,35 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap; /* Para que se acomoden en pantallas pequeñas */
+}
+app-header{
+  margin-top: 20px !important;
+}
+.header{
+  margin-top: 10px !important;
+}
+.form-item {
+  flex: 1;
+  min-width: 200px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+.contenido{
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: white;
+}
+h2{
+  margin-left: 20px !important;
+}

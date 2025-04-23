@@ -1,0 +1,29 @@
+<!-- container.component.html -->
+<div class="container">
+  <app-header></app-header>
+  <div class="contenido">
+    <h1>Registrar permisos</h1>
+    <form class="formulario">
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nombre del permiso</mat-label>
+          <input
+            matInput
+            formControlName="nombre"
+            placeholder="Ingresa tu nombre"
+            required
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado" required>
+            <mat-option value="">Selecciona un estado</mat-option>
+            <mat-option value="activo">Activo</mat-option>
+            <mat-option value="inactivo">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" type="submit">Enviar</button>
+    </form>
+  </div>
+</div>

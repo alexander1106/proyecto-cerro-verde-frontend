@@ -1,0 +1,160 @@
+.sidebar-card {
+  background: transparent ;
+  border-radius: 20px;
+  color: rgb(208, 208, 208) !important;
+  border: 0px;
+  box-shadow: 0px 0px 0px 0px;
+
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0 16px;
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.logo-container img {
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+h5 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sidebar-content {
+  padding: 0 8px;
+}
+
+mat-expansion-panel {
+  background-color: transparent;
+  padding-bottom: -10px !important;
+  box-shadow: 0px 0px 0px 0px !important;
+  border: 0px !important;
+  color: white;
+  box-shadow: none;
+}
+
+mat-expansion-panel-header {
+  background-color: rgb(255, 255, 255) !important;
+  border-radius: 10px;
+  margin: 6px 0;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.submodulo-buttons {
+  margin-top: 4px;
+  color: gray;
+  width: 240px!important;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 6px 0;
+  background-color: #ffffff !important;
+  color: #ffffff;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #373759;
+    transform: translateX(4px);
+  }
+
+}
+
+.sub-button {
+  font-size: 14px;
+  background-color: #2f2f45;
+  color: #e0e0e0;
+  padding-left: 20px;
+
+  &:hover {
+    background-color: #3f3f60;
+    transform: translateX(6px);
+  }
+
+
+}
+
+.logout {
+  background-color: #3c1c1c;
+  color: #f44336;
+
+  &:hover {
+    background-color: #5c2b2b;
+  }
+}
+.submodulo-nav-button {
+  font-size: 14px;
+  width: 100%;
+  margin-left: -20px !important;
+  padding-left: 0px; /* más indentado */
+  background-color: #ffffff;
+  color: #e0e0e0;
+
+  &:hover {
+    background-color: #3f3f60;
+    transform: translateX(6px);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    color: gray !important;
+  }
+}
+mat-icon{
+  color: gray !important;
+}
+
+.nav-button, .submodulo-nav-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.modulo-header span{
+  color: gray;
+  margin-left: 5px;
+  margin-top: -2vh !important;
+
+}
+
+.submodulo-nav-button {
+  padding-left: 12px;
+  background-color: #2f2f45;
+  color: #e0e0e0;
+
+  &:hover {
+    background-color: #3f3f60;
+    transform: translateX(6px);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    color: rgb(183, 183, 183) !important;
+  }
+
+  span {
+    text-align: left;
+    color: rgb(159, 159, 159);
+  }
+}

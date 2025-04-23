@@ -1,0 +1,11 @@
+.menu{
+  width: 19% !important;
+  background-color: rgb(11, 133, 133);
+  height: 100vh;
+}
+.contenido{
+  width: 81% !important;
+  background-color: ghostwhite;
+  padding: 0px !important;
+}
+

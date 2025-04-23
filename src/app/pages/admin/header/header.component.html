@@ -1,0 +1,33 @@
+<div class="custom-toolbar container-fluid d-flex justify-content-between align-items-center px-4 py-3 shadow-sm">
+  <!-- Título y Buscador + Notificaciones -->
+  <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4 w-100">
+    <h1 class="dashboard-title mb-0">Dashboard</h1>
+
+    <div class="d-flex align-items-center gap-4 w-100">
+      <!-- Buscador -->
+      <div class="input-group search-field flex-grow-1">
+        <span class="input-group-text">
+          <i class="fas fa-search"></i>
+        </span>
+        <input type="text" class="form-control" placeholder="Buscar..." />
+      </div>
+
+      <!-- Campana de notificaciones -->
+      <div class="notification-icon position-relative">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          3
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usuario -->
+  <div class="user-box d-flex align-items-center gap-2 px-3 py-2 ms-3">
+    <img src="{{ user?.perfil }}" alt="{{ user?.username }}" class="user-image" />
+    <div class="user-info">
+      <div class="user-name">{{ user?.username }}</div>
+      <div class="user-role">Administrador</div>
+    </div>
+  </div>
+</div>
