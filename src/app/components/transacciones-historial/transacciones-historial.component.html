@@ -1,0 +1,48 @@
+<div class="container py-4 historial-container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="historial-card">
+          <div class="historial-header">
+            <h2 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-clock-history me-2"></i>
+              Historial de Transacciones
+            </h2>
+          </div>
+          
+          <div class="historial-body">
+            <div class="transaction-list">
+              <div *ngIf="historial.length > 0; else sinHistorial">
+                <div class="transaction-item" 
+                     *ngFor="let trans of historial"
+                     [ngClass]="trans.tipo.id === 1 ? 'ingreso' : 'egreso'">
+                  <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>{{ trans.fechaHoraTransaccion | date:'short' }}</span>
+                      <span class="money-amount" [ngClass]="trans.tipo.id === 1 ? 'ingreso' : 'egreso'">
+                        {{ trans.tipo.id === 1 ? '+' : '-' }} S/{{ trans.montoTransaccion.toFixed(2) }}
+                      </span>
+                    </div>
+                    <small class="text-muted">{{ trans.tipo.nombre }}</small>
+                  </div>
+                </div>
+              </div>
+  
+              <ng-template #sinHistorial>
+                <div class="empty-state">
+                  <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                  <p class="mb-0">No hay transacciones registradas</p>
+                </div>
+              </ng-template>
+            </div>
+  
+            <div class="navigation-buttons">
+              <a class="btn btn-outline-secondary" [routerLink]="['/transacciones']">
+                <i class="bi bi-arrow-left me-2"></i>
+                Volver a Transacciones
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
