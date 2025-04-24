@@ -10,9 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ListUserComponent implements OnInit{
 
-  usuarios:any[]=[
-  ]
-    trabajadoresFiltrados: any[] = [];
+  usuarios:any[]=[]
+  trabajadoresFiltrados: any[] = [];
   filtroBusqueda: string = '';
 
   constructor( private usuariosService:UserService){}
