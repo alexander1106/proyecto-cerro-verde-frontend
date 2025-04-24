@@ -1,0 +1,51 @@
+<div class="container">
+    <app-header></app-header>
+  
+    <div class="card">
+      <div class="info-productos-linea">
+        <h5>Productos registrados</h5>
+        <!-- Buscador personalizado sin Angular Material -->
+        <div class="mover">
+          <div class="buscador">
+            <div class="input-wrapper">
+              <input type="text" id="searchInput" placeholder="Buscador producto" [(ngModel)]="filtroBusqueda"
+                (ngModelChange)="buscarProductos()" />
+              <button type="button" class="btn-icono">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+  
+          <button class="btn-agregar">
+            <a routerLink="/admin/add-producto">+ Producto</a>
+          </button>
+        </div>
+      </div>
+  
+      <table class="tabla-productos">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Categoria</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let producto of (filtroBusqueda ? productosFiltrados : productos)">
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>{{ producto.categoriaproducto?.nombre }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar" (click)="editarProducto(producto.id_producto)">
+                <mat-icon class="edit" color="primary">edit</mat-icon>
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminarProducto(producto.id_producto)">
+                <mat-icon class="delete" color="warn">delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

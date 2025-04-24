@@ -44,6 +44,8 @@ import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/a
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
+import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
+import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,6 +68,8 @@ import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/
     ListProveedorComponent,
     ListCategoriasComponent,
     AddCategoriasComponent,
+    ListProductoComponent,
+    AddProductoComponent,
   ],
   imports: [
     BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,

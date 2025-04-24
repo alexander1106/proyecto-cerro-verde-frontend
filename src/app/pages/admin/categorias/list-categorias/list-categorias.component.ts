@@ -27,7 +27,7 @@ export class ListCategoriasComponent {
         console.log("Proveedores:" + this.categorias);
       }, (error) => {
         console.log(error);
-        Swal.fire("error !!", "Al cargar el listado de los Proveedores", 'error')
+        Swal.fire("error !!", "Al cargar el listado de las categorias", 'error')
       }
     )
   }

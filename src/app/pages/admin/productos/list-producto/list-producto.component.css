@@ -13,7 +13,7 @@
     padding: 20px 30px;
 }
   
-.info-categorias-linea {
+.info-productos-linea {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,7 +30,7 @@
     display: flex;
 }
   
-.info-categorias-linea p {
+.info-productos-linea p {
     font-size: 18px;
     font-weight: 600;
     margin: 0;
@@ -118,7 +118,7 @@
     transform: scale(1.05);
 }
 
-.tabla-categorias {
+.tabla-productos {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
@@ -126,8 +126,8 @@
     overflow: hidden;
 }
   
-.tabla-categorias th,
-.tabla-categorias td {
+.tabla-productos th,
+.tabla-productos td {
     padding: 14px;
     text-align: left;
     border-bottom: 1px solid #eee;
@@ -135,7 +135,7 @@
     color: #444;
 }
   
-.tabla-categorias th {
+.tabla-productos th {
     background-color: #3f51b5;
     color: white;
     font-weight: 600;
@@ -143,7 +143,7 @@
     letter-spacing: 0.5px;
 }
   
-.tabla-categorias tbody tr:hover {
+.tabla-productos tbody tr:hover {
     background-color: #f1f1f1;
     cursor: pointer;
 }
@@ -155,8 +155,8 @@
       width: 100%;
     }
   
-    .tabla-categorias th,
-    .tabla-categorias td {
+    .tabla-productos th,
+    .tabla-productos td {
       font-size: 14px;
       padding: 10px;
     }

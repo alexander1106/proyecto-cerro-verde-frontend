@@ -19,6 +19,8 @@ import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor
 import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
+import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
+import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 
 
 const routes: Routes = [{
@@ -88,6 +90,15 @@ const routes: Routes = [{
     },{
       path: 'edit-categoria/:id',
       component:AddCategoriasComponent
+    },{
+      path: 'productos',
+      component:ListProductoComponent
+    },{
+      path: 'add-producto',
+      component:AddProductoComponent
+    },{
+      path: 'edit-producto/:id',
+      component:AddProductoComponent
     }
   ]
 },
