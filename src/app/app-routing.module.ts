@@ -17,6 +17,8 @@ import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.compo
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
+import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
+import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 
 
 const routes: Routes = [{
@@ -77,6 +79,15 @@ const routes: Routes = [{
     },{
       path: 'edit-proveedor/:ruc',
       component:AddProveedorComponent
+    },{
+      path: 'categorias',
+      component:ListCategoriasComponent
+    },{
+      path: 'add-categoria',
+      component:AddCategoriasComponent
+    },{
+      path: 'edit-categoria/:id',
+      component:AddCategoriasComponent
     }
   ]
 },

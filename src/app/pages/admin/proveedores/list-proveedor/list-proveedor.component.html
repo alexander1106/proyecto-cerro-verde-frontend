@@ -1,56 +1,51 @@
 <div class="container">
-    <app-header></app-header>
-  
-    <div class="card">
-      <div class="info-proveedores-linea">
-        <h5>Proveedores registrados</h5>
-        <!-- Buscador personalizado sin Angular Material -->
-        <div class="mover">
-          <div class="buscador">
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Buscador proveedor"
-                [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarProveedores()"
-              />
-              <button type="button" class="btn-icono">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
+  <app-header></app-header>
+
+  <div class="card">
+    <div class="info-proveedores-linea">
+      <h5>Proveedores registrados</h5>
+      <!-- Buscador personalizado sin Angular Material -->
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" id="searchInput" placeholder="Buscador proveedor" [(ngModel)]="filtroBusqueda"
+              (ngModelChange)="buscarProveedores()" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
           </div>
-  
-          <button class="btn-agregar">
-            <a routerLink="/admin/add-proveedor">+ Proveedor</a>
-          </button>
         </div>
+
+        <button class="btn-agregar">
+          <a routerLink="/admin/add-proveedor">+ Proveedor</a>
+        </button>
       </div>
-  
-      <table class="tabla-proveedores">
-        <thead>
-          <tr>
-            <th>RUC</th>
-            <th>Razón Social</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let proveedor of (filtroBusqueda ? proveedoresFiltrados : proveedores)">
-            <td>{{ proveedor.ruc_proveedor }}</td>
-            <td>{{ proveedor.razon_social }}</td>
-            <td>{{ proveedor.direccion }}</td>
-            <td class="acciones">
-              <button class="btn-accion editar" (click)="editarProveedor(proveedor.ruc_proveedor)">
-                <mat-icon class="edit" color="primary">edit</mat-icon>
-              </button>
-              <button class="btn-accion eliminar" (click)="eliminarProveedor(proveedor.ruc_proveedor)">
-                <mat-icon class="delete" color="warn" >delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
+
+    <table class="tabla-proveedores">
+      <thead>
+        <tr>
+          <th>RUC</th>
+          <th>Razón Social</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let proveedor of (filtroBusqueda ? proveedoresFiltrados : proveedores)">
+          <td>{{ proveedor.ruc_proveedor }}</td>
+          <td>{{ proveedor.razon_social }}</td>
+          <td>{{ proveedor.direccion }}</td>
+          <td class="acciones">
+            <button class="btn-accion editar" (click)="editarProveedor(proveedor.ruc_proveedor)">
+              <mat-icon class="edit" color="primary">edit</mat-icon>
+            </button>
+            <button class="btn-accion eliminar" (click)="eliminarProveedor(proveedor.ruc_proveedor)">
+              <mat-icon class="delete" color="warn">delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  
+</div>

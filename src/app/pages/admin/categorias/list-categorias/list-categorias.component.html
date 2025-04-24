@@ -1,0 +1,47 @@
+<div class="container">
+    <app-header></app-header>
+  
+    <div class="card">
+      <div class="info-categorias-linea">
+        <h5>Categorias de Productos registrados</h5>
+        <!-- Buscador personalizado sin Angular Material -->
+        <div class="mover">
+          <div class="buscador">
+            <div class="input-wrapper">
+              <input type="text" id="searchInput" placeholder="Buscador categoria" [(ngModel)]="filtroBusqueda"
+                (ngModelChange)="buscarCategorias()" />
+              <button type="button" class="btn-icono">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+  
+          <button class="btn-agregar">
+            <a routerLink="/admin/add-categoria">+ Categoria</a>
+          </button>
+        </div>
+      </div>
+  
+      <table class="tabla-categorias">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let categoria of (filtroBusqueda ? categoriasFiltrados : categorias)">
+            <td>{{ categoria.nombre }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar" (click)="editarCategoria(categoria.id_categoria)">
+                <mat-icon class="edit" color="primary">edit</mat-icon>
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminarCategoria(categoria.id_categoria)">
+                <mat-icon class="delete" color="warn">delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
