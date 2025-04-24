@@ -29,6 +29,7 @@ export class MenuComponent implements OnInit {
         const modulosConSubmodulos = modulos.map((modulo: any) => {
           return this.moduloService.obtenerSubmodulosPorModulo(modulo.idModulo).toPromise()
             .then((submodulos) => {
+              console.log(`Submódulos del módulo ${modulo.idModulo}:`, submodulos);
               modulo.submodulos = submodulos;
               return modulo;
             });
