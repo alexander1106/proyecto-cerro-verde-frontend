@@ -15,6 +15,8 @@ import { AddRolComponent } from './pages/admin/roles/add-rol/add-rol.component';
 import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
 import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.component';
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
+import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
+import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 
 
 const routes: Routes = [{
@@ -66,7 +68,13 @@ const routes: Routes = [{
     },{
       path:'rol/:rolId',
       component:ActualizarRolComponent
-    },
+    },{
+      path: 'proveedores',
+      component:ListProveedorComponent
+    },{
+      path: 'add-proveedor',
+      component:AddProveedorComponent
+    }
   ]
 },
 ];

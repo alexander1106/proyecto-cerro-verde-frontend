@@ -40,6 +40,8 @@ import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actua
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
 import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.component';
 import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
+import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
+import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,6 +60,8 @@ import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
     ActualizarRolComponent,
     ConfirmarPasswordComponent,
     EnviarCorreoComponent,
+    AddProveedorComponent,
+    ListProveedorComponent,
   ],
   imports: [
     BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,
