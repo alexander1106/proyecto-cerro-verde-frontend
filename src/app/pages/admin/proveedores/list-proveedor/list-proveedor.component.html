@@ -12,7 +12,7 @@
                 type="text"
                 id="searchInput"
                 placeholder="Buscador proveedor"
-                [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarTrabajadores()"
+                [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarProveedores()"
               />
               <button type="button" class="btn-icono">
                 <i class="fas fa-search"></i>
@@ -21,15 +21,9 @@
           </div>
   
           <button class="btn-agregar">
-            <a routerLink="/admin/add-usuario">+ Proveedor</a>
+            <a routerLink="/admin/add-proveedor">+ Proveedor</a>
           </button>
         </div>
-      </div>
-  
-      <div class="div-filtros">
-        <p class="filtro activo">Todos los proveedores</p>
-        <p class="filtro">Proveedores activos</p>
-        <p class="filtro">Proveedores inactivos</p>
       </div>
   
       <table class="tabla-proveedores">
@@ -38,25 +32,20 @@
             <th>RUC</th>
             <th>Razón Social</th>
             <th>Dirección</th>
-            <th>Estado</th>
-            <th>Acciones</th>w
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let trabajador of (filtroBusqueda ? proveedoresFiltrados : proveedores)">
-            <td>{{ trabajador.ruc_proveedor }}</td>
-            <td>{{ trabajador.razon_social }}</td>
-            <td>{{ trabajador.direccion }}</td>
-            <td>{{ trabajador.estado === 1 ? 'Activo' : 'Inactivo' }}</td>
+          <tr *ngFor="let proveedor of (filtroBusqueda ? proveedoresFiltrados : proveedores)">
+            <td>{{ proveedor.ruc_proveedor }}</td>
+            <td>{{ proveedor.razon_social }}</td>
+            <td>{{ proveedor.direccion }}</td>
             <td class="acciones">
-              <button class="btn-accion ver">
-                <mat-icon color="accent">visibility</mat-icon>
-              </button>
-              <button class="btn-accion editar">
+              <button class="btn-accion editar" (click)="editarProveedor(proveedor.ruc_proveedor)">
                 <mat-icon class="edit" color="primary">edit</mat-icon>
               </button>
-              <button class="btn-accion eliminar">
-                <mat-icon class="delete" color="warn">delete</mat-icon>
+              <button class="btn-accion eliminar" (click)="eliminarProveedor(proveedor.ruc_proveedor)">
+                <mat-icon class="delete" color="warn" >delete</mat-icon>
               </button>
             </td>
           </tr>

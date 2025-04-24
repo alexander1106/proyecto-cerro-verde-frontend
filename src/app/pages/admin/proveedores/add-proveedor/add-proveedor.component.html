@@ -1,1 +1,35 @@
-<p>add-proveedor works!</p>
+<div class="container">
+    <app-header></app-header>
+    <div class="contenido">
+        <h2>{{editar ? 'Editar Proveedor' : 'Registrar nuevo proveedor'}}</h2>
+        <form (ngSubmit)="formSubmit()">
+            <div class="form">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>RUC</mat-label>
+                    <input [(ngModel)]="proveedor.ruc_proveedor" name="RUC" required matInput
+                        placeholder="Digite el RUC del Proveedor" />
+                </mat-form-field>
+
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Razón Social</mat-label>
+                    <input [(ngModel)]="proveedor.razon_social" name="razon_social" required matInput
+                        placeholder="Digite la Razón Social del Proveedor" />
+                </mat-form-field>
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Dirección</mat-label>
+                    <input required matInput [(ngModel)]="proveedor.direccion" name="direccion"
+                        placeholder="Digite la Dirección del Proveedor" />
+                </mat-form-field>
+
+                <div class="form-actions">
+                    <button mat-raised-button color="primary" class="btn-primary">
+                        {{editar ? 'Editar' : 'Registrar'}}
+                    </button>
+                    <button mat-raised-button color="accent" type="reset" style="margin-left: 20px">
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

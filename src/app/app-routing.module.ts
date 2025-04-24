@@ -74,6 +74,9 @@ const routes: Routes = [{
     },{
       path: 'add-proveedor',
       component:AddProveedorComponent
+    },{
+      path: 'edit-proveedor/:ruc',
+      component:AddProveedorComponent
     }
   ]
 },
