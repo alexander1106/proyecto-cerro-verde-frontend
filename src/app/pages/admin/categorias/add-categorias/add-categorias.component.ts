@@ -1,44 +1,43 @@
 import { Component } from '@angular/core';
-import { ProveedoresService } from '../../../../service/proveedores.service';
+import { CategoriasService } from '../../../../service/categorias.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-add-proveedor',
+  selector: 'app-add-categorias',
   standalone: false,
-  templateUrl: './add-proveedor.component.html',
-  styleUrl: './add-proveedor.component.css'
+  templateUrl: './add-categorias.component.html',
+  styleUrl: './add-categorias.component.css'
 })
-export class AddProveedorComponent {
-  public proveedor = {
-    ruc_proveedor: '',
-    razon_social: '',
-    direccion: '',
+export class AddCategoriasComponent {
+  public categoria = {
+    id_categoria: '',
+    nombre: '',
     estado: '1'
   }
 
   editar: boolean = false;
 
-  constructor(private proveedoresService: ProveedoresService, private snack: MatSnackBar, private router: Router, private route: ActivatedRoute) { }
+  constructor(private categoriasService: CategoriasService, private snack: MatSnackBar, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    const ruc = this.route.snapshot.paramMap.get('ruc')
-    if (ruc) {
+    const id = Number(this.route.snapshot.paramMap.get('id'))
+    if (id) {
       this.editar = true;
-      this.proveedoresService.buscarProveedorId(ruc).subscribe((data: any) => {
-        this.proveedor = data;
+      this.categoriasService.buscarCategoriaId(id).subscribe((data: any) => {
+        this.categoria = data;
       })
     }
     console.log(this.editar)
   }
 
   formSubmit() {
-    console.log(this.proveedor);
+    console.log(this.categoria);
     if (this.editar) {
       Swal.fire({
         title: "¿Estás seguro?",
-        text: "Se editará el proveedor",
+        text: "Se editará la categoria",
         icon: "info",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -46,10 +45,10 @@ export class AddProveedorComponent {
         confirmButtonText: "Si, editar"
       }).then((result) => {
         if (result.isConfirmed) {
-          this.proveedoresService.modificarProveedor(this.proveedor).subscribe(
+          this.categoriasService.modificarCategoria(this.categoria).subscribe(
             (data) => {
-              Swal.fire("Excelente", "El proveedor fue editado con éxito", "success");
-              this.router.navigate(["/admin/proveedores"])
+              Swal.fire("Excelente", "La categoria fue editado con éxito", "success");
+              this.router.navigate(["/admin/categorias"])
               console.log(data);
             }, (error) => {
               console.log(error);
@@ -61,10 +60,10 @@ export class AddProveedorComponent {
         }
       });
     } else {
-      this.proveedoresService.registrarProveedor(this.proveedor).subscribe(
+      this.categoriasService.registrarCategoria(this.categoria).subscribe(
         (data) => {
-          Swal.fire("Excelente", "El proveedor fue registrado con éxito", "success");
-          this.router.navigate(["/admin/proveedores"])
+          Swal.fire("Excelente", "La categoria fue registrado con éxito", "success");
+          this.router.navigate(["/admin/categorias"])
           console.log(data);
         }, (error) => {
           console.log(error);

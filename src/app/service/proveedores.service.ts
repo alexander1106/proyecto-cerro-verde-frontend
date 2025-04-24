@@ -24,7 +24,7 @@ export class ProveedoresService {
     return this.http.put("http://localhost:8080/api/proveedores", proveedor)
   }
 
-  eliminarProveedor(id: String) {
+  eliminarProveedor(id: string) {
     return this.http.delete(`http://localhost:8080/api/proveedores/${id}`)
   }
 }

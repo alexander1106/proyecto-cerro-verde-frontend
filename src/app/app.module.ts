@@ -42,6 +42,8 @@ import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.compo
 import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
 import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
+import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
+import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,6 +64,8 @@ import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor
     EnviarCorreoComponent,
     AddProveedorComponent,
     ListProveedorComponent,
+    ListCategoriasComponent,
+    AddCategoriasComponent,
   ],
   imports: [
     BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,
