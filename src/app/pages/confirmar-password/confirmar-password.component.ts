@@ -14,7 +14,7 @@ export class ConfirmarPasswordComponent implements  OnInit {
   nuevaClave: string = '';
   confirmarClave: string = '';
   token: string = '';
-  hide:any;
+  hide:any=true;
 
   constructor(private route: ActivatedRoute, private resetPasswordService: LoginService, private router:Router) {}
 

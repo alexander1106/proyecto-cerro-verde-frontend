@@ -9,20 +9,20 @@
               Apertura de Caja
             </h2>
           </div>
-          
+
           <div class="apertura-body">
             <form (ngSubmit)="aperturar()" class="fade-in">
               <div class="mb-4">
                 <label for="monto" class="form-label">Monto de apertura</label>
                 <div class="input-group">
                   <span class="input-group-text">S/</span>
-                  <input 
-                    type="number" 
-                    id="monto" 
-                    [(ngModel)]="monto" 
+                  <input
+                    type="number"
+                    id="monto"
+                    [(ngModel)]="monto"
                     name="monto"
-                    class="form-control" 
-                    required 
+                    class="form-control"
+                    required
                     min="1"
                     step="0.01"
                     placeholder="Ingrese el monto inicial"
@@ -33,7 +33,7 @@
                   Ingrese el monto con el que iniciará operaciones
                 </small>
               </div>
-              
+
               <button type="submit" class="btn btn-aperturar w-100">
                 <i class="bi bi-unlock me-2"></i>
                 Aperturar Caja
@@ -41,7 +41,7 @@
             </form>
           </div>
         </div>
-  
+
         <!-- Historial Card -->
         <div class="historial-card shadow-sm">
           <div class="card-body">
@@ -49,7 +49,7 @@
               <i class="bi bi-clock-history me-2"></i>
               Historial de Cajas
             </h4>
-  
+
             <div *ngIf="historial.length > 0; else sinHistorial">
               <div class="table-responsive">
                 <table class="table table-hover">
@@ -74,7 +74,7 @@
                 </table>
               </div>
             </div>
-  
+
             <ng-template #sinHistorial>
               <div class="empty-state">
                 <i class="bi bi-inbox fs-1 d-block mb-2"></i>

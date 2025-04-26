@@ -7,6 +7,11 @@ import baseUrl from '../components/helper';
   providedIn: 'root'
 })
 export class RolesService {
+  actualizarEstado(idRol: number, nuevoEstado: boolean) {
+    return this.http.put(`${baseUrl}/roles/${idRol}/estado`, {
+      estado: nuevoEstado
+    });
+  }
 
   constructor(private http: HttpClient) { }
 
@@ -24,13 +29,20 @@ export class RolesService {
   public agregarRol(rol: any) {
     return this.http.post(`${baseUrl}/roles/`, rol );
   }
- 
+
+   // Crear un nuevo permiso
+   public agregarRolSinPermisos(rol: any) {
+    return this.http.post(`${baseUrl}/roles-sp/`, rol );
+  }
+
+
   public obtenerRol(rolId:any){
     return this.http.get(`${baseUrl}/roles/${rolId}`);
   }
 
+
   // Editar un permiso existente
-  public actualizarRol(rol:any){
+  public actualizarRol(rol: any){
     return this.http.put(`${baseUrl}/roles/`, rol);
   }
 

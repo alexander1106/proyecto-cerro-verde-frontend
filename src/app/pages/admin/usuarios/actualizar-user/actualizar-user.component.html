@@ -2,9 +2,9 @@
         <app-header></app-header>
 
         <div class="contenido">
-          <h2>Registrar nuevo trabajador</h2>
+          <h2>Actualizar datos del trabajador</h2>
 
-          <form #form="ngForm" (ngSubmit)="formSubmit()" novalidate>
+          <form (ngSubmit)="formSubmit()">
             <div class="form">
               <mat-form-field class="full-width" appearance="outline">
                 <mat-label>Nombre</mat-label>
@@ -95,7 +95,8 @@
 
             <div class="form-image-upload">
               <img
-                [src]="imagenPrevia || 'assets/subir.jpg'"
+
+                [src]="user.perfil || 'assets/subir.jpg'"
                 alt="Foto del trabajador"
               />
               <input type="file" (change)="onFileSelected($event)" />
@@ -107,29 +108,21 @@
               <div class="modulo-card" *ngFor="let modulo of modulos">
                 <div class="modulo-header">
                   <mat-checkbox [(ngModel)]="modulo.seleccionado" name="modulo_{{modulo.nombre}}" (change)="onModuloChange(modulo)" class="title-mod">
-                   <p>
-                    {{ modulo.nombre }}
-
-                   </p>
+                    <p>{{ modulo.nombre }}</p>
                   </mat-checkbox>
                 </div>
-                <div class="submodulo-lista" >
-                  <mat-checkbox *ngFor="let sub of modulo.submodulos" (change)="onSubmoduloChange(modulo)" [(ngModel)]="sub.seleccionado" name="sub_{{modulo.nombre}}_{{sub.nombre}}" >
-                    <p>                    {{ sub.nombre }}
-                    </p>
+                <div class="submodulo-lista">
+                  <mat-checkbox *ngFor="let sub of modulo.submodulos" [(ngModel)]="sub.seleccionado" name="sub_{{modulo.nombre}}_{{sub.nombre}}">
+                    <p>{{ sub.nombre }}</p>
                   </mat-checkbox>
                 </div>
               </div>
             </div>
 
             <div class="form-actions">
-              <button
-              mat-raised-button
-              color="primary"
-              class="btn-primary"
-              [disabled]="!form.valid">
-              Registrar
-            </button>
+              <button mat-raised-button color="primary" class="btn-primary">
+                Registrar
+              </button>
               <button
                 mat-raised-button
                 color="accent"

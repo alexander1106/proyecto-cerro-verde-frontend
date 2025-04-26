@@ -54,12 +54,20 @@ export class LoginService {
       return null;
     }
   }
+  public getUserRole(): string | null {
+    const user = this.getUser();
+    console.log("Usuario cargado:", user);
 
-  public getUserRole(){
-    let user = this.getUser();
-    return user.authorities[0].authority;
+    if (user && user.rol && user.rol.nombreRol) {
+      console.log("Rol detectado:", user.rol.nombreRol);
+      return user.rol.nombreRol;
+    }
 
+    console.warn("No se encontró un rol válido");
+    return null;
   }
+
+
 
   public getCurrentUser(){
     return this.httpClient.get(`${baseUrl}/usuario-actual`);

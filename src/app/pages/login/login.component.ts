@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit{
     "username":"",
     "password":""
   }
-hide: any;
+hide: any= true;
 mensajeError: string = '';
 
   constructor(private snack:MatSnackBar, private loginService:LoginService, private router:Router ){}

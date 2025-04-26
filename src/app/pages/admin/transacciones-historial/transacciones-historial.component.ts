@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CajaService } from '../../services/caja.service';
+import { CajaService } from '../../../service/caja.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-transacciones-historial',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
+  standalone: false,
   templateUrl: './transacciones-historial.component.html',
   styleUrls: ['./transacciones-historial.component.css']
 })

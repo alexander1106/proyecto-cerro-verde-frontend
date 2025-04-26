@@ -12,7 +12,7 @@
         <!-- Inicio -->
         <button mat-list-item routerLink="/admin" class="nav-button">
           <mat-icon mat-list-icon>dashboard</mat-icon>
-          <span>Inicio</span>
+          <span class="capitalize-first inicio">Inicio</span>
         </button>
 
         <!-- Módulos -->
@@ -21,7 +21,7 @@
             <mat-expansion-panel-header>
               <div class="modulo-header">
                 <mat-icon mat-list-icon>{{ modulo.icon }}</mat-icon>
-                <span>{{ modulo.nombre }}</span>
+                <span class="nombre_modulo">{{ modulo.nombre }}</span>
               </div>
             </mat-expansion-panel-header>
 
@@ -33,7 +33,7 @@
               class="nav-button submodulo-nav-button"
             >
               <mat-icon mat-list-icon>{{ submodulo.icon }}</mat-icon>
-              <span>{{ submodulo.nombre }}</span>
+              <span class="capitalize-first">> {{ submodulo.nombre }}</span>
             </button>
             </div>
           </mat-expansion-panel>

@@ -12,15 +12,14 @@ import Swal from 'sweetalert2';
 })
 export class ActualizarRolComponent implements OnInit {
 
-  rolId=0
+  id_rol=0
   rol:any
   constructor(private router:ActivatedRoute, private rolesService:RolesService,
     private routerEnlace:Router, private snack:MatSnackBar
   ){}
-
   ngOnInit(): void {
-    this.rolId = this.router.snapshot.params['rolId'];
-    this.rolesService.obtenerRol(this.rolId).subscribe(
+    this.id_rol = this.router.snapshot.params['id'];  // Matching the 'id' parameter
+    this.rolesService.obtenerRol(this.id_rol).subscribe(
       (data: any) => {
         this.rol = data;
       },
@@ -29,6 +28,7 @@ export class ActualizarRolComponent implements OnInit {
         this.snack.open('Error al cargar los datos del rol', 'Cerrar', { duration: 3000 });
       }
     );
+
   }
   public cancelar() {
     this.routerEnlace.navigate(['/admin/roles']);
@@ -47,4 +47,5 @@ export class ActualizarRolComponent implements OnInit {
       }
     )
   }
+
 }

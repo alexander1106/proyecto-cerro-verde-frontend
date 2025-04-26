@@ -1,11 +1,16 @@
-.menu{
-  width: 19% !important;
-  background-color: rgb(11, 133, 133);
-  height: 100vh;
-}
-.contenido{
-  width: 81% !important;
-  background-color: ghostwhite;
-  padding: 0px !important;
+.boostrap-wrapper {
+  display: flex;
+  padding-bottom: 1px;
 }
 
+.menu {
+  width: 19%;
+  background-color: rgb(38, 78, 98);
+  min-height: 100vh; /* Esto garantiza que como mínimo tenga la altura de la ventana */
+}
+
+.contenido {
+  width: 81%;
+  background-color: ghostwhite;
+  padding: 0;
+}

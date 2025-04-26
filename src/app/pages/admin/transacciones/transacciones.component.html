@@ -8,7 +8,7 @@
               Transacciones de Caja
             </h2>
           </div>
-          
+
           <div class="transaction-body">
             <div class="form-container">
               <form (ngSubmit)="guardarTransaccion()" class="fade-in">
@@ -17,31 +17,45 @@
                     <label class="form-label">Monto</label>
                     <div class="input-group">
                       <span class="input-group-text">S/</span>
-                      <input 
-                        type="number" 
-                        [(ngModel)]="nuevaTransaccion.montoTransaccion" 
-                        name="montoTransaccion" 
+                      <input
+                        type="number"
+                        [(ngModel)]="nuevaTransaccion.montoTransaccion"
+                        name="montoTransaccion"
                         class="form-control"
                         step="0.01"
-                        required 
+                        required
                         placeholder="Ingrese el monto"
                       />
                     </div>
                   </div>
-  
+
                   <div class="col-12 col-md-4">
                     <label class="form-label">Tipo</label>
-                    <select 
-                      [(ngModel)]="nuevaTransaccion.tipo" 
-                      name="tipo" 
-                      class="form-select" 
+                    <select
+                      [(ngModel)]="nuevaTransaccion.tipo"
+                      name="tipo"
+                      class="form-select"
                       required
                     >
                       <option [ngValue]="{ id: 1 }">Ingreso</option>
                       <option [ngValue]="{ id: 2 }">Egreso</option>
                     </select>
                   </div>
-  
+
+                  <div class="col-12 col-md-4">
+                    <label class="form-label">Método de pago</label>
+                    <select
+                      [(ngModel)]="nuevaTransaccion.metodo"
+                      name="metodo"
+                      class="form-select"
+                      required
+                    >
+                      <option value="" disabled>Seleccione método</option>
+                      <option value="Yape/tarjeta">Yape/tarjeta</option>
+                      <option value="Efectivo">Efectivo</option>
+                    </select>
+                  </div>
+
                   <div class="col-12 col-md-3">
                     <button type="submit" class="btn btn-guardar w-100">
                       <i class="bi bi-plus-circle me-2"></i>
@@ -51,10 +65,10 @@
                 </div>
               </form>
             </div>
-  
+
             <div class="transaction-list">
               <div *ngIf="transacciones.length > 0; else sinTransacciones">
-                <div class="transaction-item" 
+                <div class="transaction-item"
                      *ngFor="let trans of transacciones"
                      [ngClass]="trans.tipo.id === 1 ? 'ingreso' : 'egreso'">
                   <div class="flex-grow-1">
@@ -65,10 +79,11 @@
                       </span>
                     </div>
                     <small class="text-muted">{{ trans.tipo.nombre }}</small>
+                    <small class="text-muted"> Método: {{ trans.metodo }}</small>
                   </div>
                 </div>
               </div>
-  
+
               <ng-template #sinTransacciones>
                 <div class="empty-state">
                   <i class="bi bi-inbox fs-1 d-block mb-2"></i>
@@ -76,13 +91,13 @@
                 </div>
               </ng-template>
             </div>
-  
+
             <div class="navigation-buttons">
-              <a class="btn btn-outline-secondary" [routerLink]="['/detalle']">
+              <a class="btn btn-outline-secondary" [routerLink]="['/admin/detalle-caja']">
                 <i class="bi bi-arrow-left me-2"></i>
                 Volver a Caja
               </a>
-              <a class="btn btn-outline-primary" [routerLink]="['/transacciones/historial']">
+              <a class="btn btn-outline-primary" [routerLink]="['/admin/transacciones/historial']">
                 <i class="bi bi-clock-history me-2"></i>
                 Ver Historial
               </a>

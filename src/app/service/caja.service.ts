@@ -5,7 +5,8 @@ import { tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CajaService {
-  private baseUrl = '/cerro-verde/caja';
+
+  private baseUrl = 'http://localhost:8080/cerro-verde/caja';
   cajaActual = signal<any | null>(null);
 
   constructor(private http: HttpClient) {}
@@ -53,5 +54,5 @@ export class CajaService {
   obtenerTodasLasTransacciones() {
     return this.http.get<any[]>(`${this.baseUrl}/transacciones/all`);
   }
-  
+
 }

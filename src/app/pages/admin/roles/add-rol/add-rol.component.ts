@@ -24,7 +24,7 @@ public rol={
 
   formSubmit(){
     console.log(this.rol);
-    this.rolesService.agregarRol(this.rol).subscribe(
+    this.rolesService.agregarRolSinPermisos(this.rol).subscribe(
       (data)=>{
         Swal.fire("Excelente","El rol fue registrado con exito en el sistema", "success");
         this.router.navigate(["/admin/roles" ])

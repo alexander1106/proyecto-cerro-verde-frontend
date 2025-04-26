@@ -13,15 +13,21 @@
 
           <form (ngSubmit)="formSubmit()">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Cooreo</mat-label>
+              <mat-label>Correo</mat-label>
               <input
                 matInput
                 [(ngModel)]="email"
                 required
                 name="email"
-                placeholder="Digite su correo electronico"
+                placeholder="Digite su correo electrónico"
+                [pattern]="'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'"
+                #emailInput="ngModel"
               />
+              <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+                Por favor ingrese un correo electrónico válido.
+              </mat-error>
             </mat-form-field>
+
 
             <div class="container">
               <button mat-raised-button color="primary" type="submit">

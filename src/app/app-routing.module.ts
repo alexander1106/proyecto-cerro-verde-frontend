@@ -12,13 +12,20 @@ import { ListPermisosComponent } from './pages/admin/permisos/list-permisos/list
 import { AddPermisosComponent } from './pages/admin/permisos/add-permisos/add-permisos.component';
 import { ListRolesComponent } from './pages/admin/roles/list-roles/list-roles.component';
 import { AddRolComponent } from './pages/admin/roles/add-rol/add-rol.component';
-import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
 import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.component';
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
+import { CajaAperturaComponent } from './pages/admin/caja-apertura/caja-apertura.component';
+import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
+import { CajaDetalleComponent } from './pages/admin/caja-detalle/caja-detalle.component';
+import { TransaccionesComponent } from './pages/admin/transacciones/transacciones.component';
+import { TransaccionesHistorialComponent } from './pages/admin/transacciones-historial/transacciones-historial.component';
+import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/actualizar-user.component';
+import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
+import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 
 
 const routes: Routes = [{
@@ -68,12 +75,20 @@ const routes: Routes = [{
       path:'add-rol',
       component:AddRolComponent
     },{
-      path:'rol/:rolId',
-      component:ActualizarRolComponent
+      path: 'edit-rol/:id',
+      component: ActualizarRolComponent
+    },{
+      path: 'edit-user/:id',
+      component: ActualizarUserComponent,
     },{
       path: 'proveedores',
       component:ListProveedorComponent
-    },{
+    },
+    {
+      path: 'productos',
+      component:ListProductoComponent,
+    }
+    ,{
       path: 'add-proveedor',
       component:AddProveedorComponent
     },{
@@ -88,6 +103,26 @@ const routes: Routes = [{
     },{
       path: 'edit-categoria/:id',
       component:AddCategoriasComponent
+    },{
+      path: 'edit-producto/:id',
+      component:AddProductoComponent
+    },{
+      path: 'caja',
+      component:CajaAperturaComponent
+    },{
+      path: 'detalle-caja',
+      component:CajaDetalleComponent
+    },
+    {
+      path: 'transacciones',
+      component:TransaccionesComponent
+    },
+    {
+      path: 'transacciones/historial',
+      component: TransaccionesHistorialComponent
+    }, {
+      path: 'add-producto',
+      component: AddProductoComponent
     }
   ]
 },

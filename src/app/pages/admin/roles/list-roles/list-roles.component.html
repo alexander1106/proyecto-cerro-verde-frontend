@@ -1,71 +1,57 @@
 <div class="container">
   <app-header></app-header>
 
-  <div class="contenido">
-    <mat-card class="custom-card">
-      <mat-card-content>
-        <!-- Encabezado -->
-        <div class="header-row">
-          <h5 class="mat-subheading-2">
-            <b>{{ roles.length }}</b> Roles registrados
-          </h5>
-          <button mat-raised-button color="primary" routerLink="/admin/add-rol">
-            Agregar rol
-          </button>
+  <div class="card">
+    <div class="info-categorias-linea">
+      <h5>Roles registrados</h5>
+      <!-- Buscador personalizado sin Angular Material -->
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" id="searchInput" placeholder="Buscador rol" [(ngModel)]="filtroBusqueda"
+              (ngModelChange)="buscarRoles()" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
         </div>
 
-        <!-- Tabla de roles -->
-        <div class="table-container mat-elevation-z4">
-          <table class="styled-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Estado</th>
-                <th>Editar</th>
-                <th>Permisos</th>
-                <th>Eliminar</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let trabajador of roles">
-                <td>{{ trabajador.idRol }}</td>
-                <td>{{ trabajador.nombreRol }}</td>
-                <td>{{ trabajador.descripcion }}</td>
+        <button class="btn-agregar">
+          <a routerLink="/admin/add-rol">+ Rol</a>
+        </button>
+      </div>
+    </div>
 
-                <td>
-                  <mat-slide-toggle [checked]="trabajador.estado">
-                  </mat-slide-toggle>
-                </td>
-                <td>
-                  <button
-                    mat-icon-button
-                    color="accent"
-                    [routerLink]="'/admin/rol/' + trabajador.idRol"
-                  >
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                </td>
-                <td>
-                  <button mat-icon-button color="primary">
-                    <mat-icon>lock</mat-icon>
-                  </button>
-                </td>
-                <td>
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="eliminarRol(trabajador)"
-                  >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <table class="tabla-categorias">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rol of rolesFiltrados">
+          <td>{{ rol.nombreRol }}</td>
+          <td>{{ rol.descripcion }}</td>
+          <td>
+            {{ rol.estado ? 'Activo' : 'Desactivo' }}
+          </td>
+          <td class="acciones">
+            <button class="btn-accion editar">
+              <a [routerLink]="['/admin/edit-rol', rol.id]">
+                <mat-icon class="edit" color="primary">edit</mat-icon>
+              </a>
+            </button>
+            <!-- Nuevo botón para asignar servicios -->
+            <button class="btn-accion asignar-servicios" (click)="asignarServicios(rol)">
+              <mat-icon class="assign" color="accent">assignment</mat-icon>
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

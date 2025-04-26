@@ -1,7 +1,8 @@
 .historial-container {
     animation: fadeIn 0.4s ease-out;
+    color: gray;
   }
-  
+
   .historial-card {
     border-radius: 12px;
     overflow: hidden;
@@ -9,22 +10,22 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-  
+
   .historial-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     padding: var(--spacing-lg);
     border-radius: 12px 12px 0 0;
   }
-  
+
   .historial-body {
     padding: var(--spacing-lg);
   }
-  
+
   .transaction-list {
     margin-bottom: var(--spacing-lg);
   }
-  
+
   .transaction-item {
     display: flex;
     align-items: center;
@@ -35,49 +36,49 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
   }
-  
+
   .transaction-item:hover {
     transform: translateX(5px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   .ingreso {
     border-left: 4px solid var(--success);
   }
-  
+
   .egreso {
     border-left: 4px solid var(--danger);
   }
-  
+
   .money-amount {
     font-family: var(--font-family);
     font-weight: 700;
   }
-  
+
   .money-amount.ingreso {
     color: var(--success);
   }
-  
+
   .money-amount.egreso {
     color: var(--danger);
   }
-  
+
   .empty-state {
     text-align: center;
     padding: var(--spacing-xl);
     color: var(--secondary);
   }
-  
+
   .navigation-buttons {
     margin-top: var(--spacing-lg);
   }
-  
+
   @media (max-width: 768px) {
     .historial-header,
     .historial-body {
       padding: var(--spacing-md);
     }
-    
+
     .transaction-item {
       padding: var(--spacing-sm);
     }

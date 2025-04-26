@@ -42,8 +42,15 @@ import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.compo
 import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
 import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
+
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
+import { CajaAperturaComponent } from './pages/admin/caja-apertura/caja-apertura.component';
+import { CajaDetalleComponent } from './pages/admin/caja-detalle/caja-detalle.component';
+import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/actualizar-user.component';
+import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
+import { TransaccionesHistorialComponent } from './pages/admin/transacciones-historial/transacciones-historial.component';
+import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,6 +73,13 @@ import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/
     ListProveedorComponent,
     ListCategoriasComponent,
     AddCategoriasComponent,
+    CajaAperturaComponent,
+    CajaDetalleComponent,
+    ListProductoComponent,
+    ActualizarUserComponent,
+    AddProductoComponent,
+    TransaccionesHistorialComponent,
+
   ],
   imports: [
     BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,

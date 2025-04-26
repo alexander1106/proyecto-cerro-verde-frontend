@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CajaService } from '../../services/caja.service';
+import { CajaService } from '../../../service/caja.service';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 
@@ -18,8 +18,10 @@ export class TransaccionesComponent implements OnInit {
     montoTransaccion: null,
     tipo: {
       id: 1
-    }
+    },
+    metodo: '' // ahora es un string vacío
   };
+
 
   constructor(private cajaService: CajaService, private router: Router) {}
 
@@ -40,7 +42,8 @@ export class TransaccionesComponent implements OnInit {
       next: () => {
         this.nuevaTransaccion = {
           montoTransaccion: null,
-          tipo: { id: 1 }
+          tipo: { id: 1 },
+          metodo: ''
         };
         this.cargarTransacciones();
       },

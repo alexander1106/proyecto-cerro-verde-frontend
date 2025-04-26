@@ -1,21 +1,24 @@
-        import { Component, OnInit } from '@angular/core';
-        import { UserService } from '../../../../service/user.service';
-        import Swal from 'sweetalert2';
-        import { MatSnackBar } from '@angular/material/snack-bar';
-        import { Router } from '@angular/router';
-        import { RolesService } from '../../../../service/roles.service';
-        import { ModulosService } from '../../../../service/modulos.service';
-import { NgForm } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { UserService } from '../../../../service/user.service';
+import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RolesService } from '../../../../service/roles.service';
+import { ModulosService } from '../../../../service/modulos.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
-        @Component({
-          selector: 'app-add-user',
-          standalone: false,
-          templateUrl: './add-user.component.html',
-          styleUrl: './add-user.component.css'
-        })
-        export class AddUserComponent implements OnInit {
+@Component({
+  selector: 'app-actualizar-user',
+  standalone: false,
+  templateUrl: './actualizar-user.component.html',
+  styleUrl: './actualizar-user.component.css'
+})
+export class ActualizarUserComponent implements OnInit {
+  idUser=0;
+  usuario:any;
+
   rolSeleccionado: number | null = null;
           roles: any;
+          permisos:any[]=[];
           modulos: any[] = [];
           imagenPrevia: string | ArrayBuffer | null = null;
 
@@ -51,17 +54,20 @@ import { NgForm } from '@angular/forms';
           constructor(
             private userService: UserService,
             private snack: MatSnackBar,
+            private route:ActivatedRoute,
             private router: Router,
             private rolesService: RolesService,
             private modulosService: ModulosService
           ) {}
           ngOnInit(): void {
+            this.idUser = this.route.snapshot.params['id'];
+
+            // Cargar los roles
             this.rolesService.listarRoles().subscribe(
               (data: any) => {
                 this.roles = data;
-                console.log('Roles recibidos:', this.roles); // Agrega esta línea para depuración
                 if (this.roles.length > 0) {
-                  this.rolSeleccionado = this.roles[0].id; // Selecciona el primer rol si no hay valor previo
+                  this.rolSeleccionado = this.roles[0].id;
                 }
               },
               (error) => {
@@ -69,9 +75,50 @@ import { NgForm } from '@angular/forms';
                 Swal.fire('Error !!', 'Al cargar el listado de los roles', 'error');
               }
             );
-            this.cargarModulos();
-          }
 
+            // Cargar módulos y submódulos
+            this.modulosService.listarModulos().subscribe(
+              (modulos) => {
+                const modulosConSubmodulos = modulos.map((modulo: any) => {
+                  return this.modulosService.obtenerSubmodulosPorModulo(modulo.idModulo).toPromise()
+                    .then((submodulos) => {
+                      modulo.submodulos = submodulos;
+                      return modulo;
+                    });
+                });
+
+                Promise.all(modulosConSubmodulos).then((result) => {
+                  this.modulos = result;
+
+                  // Luego de tener módulos cargados, obtenemos al usuario
+                  this.userService.obtenerUsuario(this.idUser).subscribe(
+                    (data: any) => {
+                      this.user = data;
+                      this.rolSeleccionado = this.user.rol?.id ?? null;
+
+                      // Marcar los permisos seleccionados
+                      this.modulos.forEach(modulo => {
+                        modulo.submodulos.forEach((sub: any) => {
+                          sub.seleccionado = this.user.usuariosPermisos.some((permiso: any) => {
+                            return permiso.permisos.id === sub.idSubModulo;
+                          });
+                        });
+                      });
+
+                    },
+                    (error) => {
+                      console.log(error);
+                      this.snack.open('Error al cargar los datos del usuario', 'Cerrar', { duration: 3000 });
+                    }
+                  );
+
+                });
+              },
+              (error) => {
+                console.error('Error al cargar los módulos:', error);
+              }
+            );
+          }
 
           onFileSelected(event: any): void {
             const file = event.target.files[0];
@@ -90,14 +137,16 @@ import { NgForm } from '@angular/forms';
             modulo.seleccionado = todosSeleccionados;
           }
 
+
           onModuloChange(modulo: any): void {
             modulo.submodulos.forEach((sub: any) => {
               sub.seleccionado = modulo.seleccionado;
-            });
-          }
-          formSubmit(form: NgForm) {
-            if (!form.valid) {
-              this.snack.open('Por favor complete todos los campos obligatorios', 'Aceptar', {
+            });}
+
+          formSubmit() {
+            // Verifica si el rol seleccionado no es válido
+            if (!this.rolSeleccionado) {
+              this.snack.open('Debe seleccionar un rol', 'Aceptar', {
                 duration: 3000,
               });
               return;
@@ -124,17 +173,17 @@ import { NgForm } from '@angular/forms';
                       }
                     });
                     this.user.usuariosPermisos.push({
-                      permisos: {
+                      permisos:{
                         id: sub.idSubModulo
                       }
-                    });
+                    })
                   }
                 });
               });
             }
 
             console.log('Usuario con permisos:', this.user); // Verifica el objeto `user` con los permisos agregados
-            this.userService.añadirUsuario(this.user).subscribe(
+            this.userService.editarUsuario(this.user).subscribe(
               (data) => {
                 Swal.fire('Usuario guardado', 'Usuario registrado con éxito', 'success');
                 this.router.navigate(['/admin/usuarios']);

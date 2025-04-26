@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { CategoriasService } from '../../../../service/categorias.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { CategoriasService } from '../../../../service/categorias.service';
 
 @Component({
   selector: 'app-add-categorias',
@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
   templateUrl: './add-categorias.component.html',
   styleUrl: './add-categorias.component.css'
 })
+
 export class AddCategoriasComponent {
   public categoria = {
     id_categoria: '',
@@ -19,13 +20,13 @@ export class AddCategoriasComponent {
 
   editar: boolean = false;
 
-  constructor(private categoriasService: CategoriasService, private snack: MatSnackBar, private router: Router, private route: ActivatedRoute) { }
+  constructor(private categoriService:CategoriasService, private snack: MatSnackBar, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'))
     if (id) {
       this.editar = true;
-      this.categoriasService.buscarCategoriaId(id).subscribe((data: any) => {
+      this.categoriService.buscarCategoriaId(id).subscribe((data: any) => {
         this.categoria = data;
       })
     }
@@ -45,12 +46,12 @@ export class AddCategoriasComponent {
         confirmButtonText: "Si, editar"
       }).then((result) => {
         if (result.isConfirmed) {
-          this.categoriasService.modificarCategoria(this.categoria).subscribe(
-            (data) => {
+          this.categoriService.modificarCategoria(this.categoria).subscribe(
+            (data:any) => {
               Swal.fire("Excelente", "La categoria fue editado con éxito", "success");
               this.router.navigate(["/admin/categorias"])
               console.log(data);
-            }, (error) => {
+            }, (error:any) => {
               console.log(error);
               this.snack.open('Ha ocurrido un error en el sistema !!', 'Aceptar', {
                 duration: 3000,
@@ -60,12 +61,12 @@ export class AddCategoriasComponent {
         }
       });
     } else {
-      this.categoriasService.registrarCategoria(this.categoria).subscribe(
-        (data) => {
+      this.categoriService.registrarCategoria(this.categoria).subscribe(
+        (data:any) => {
           Swal.fire("Excelente", "La categoria fue registrado con éxito", "success");
           this.router.navigate(["/admin/categorias"])
           console.log(data);
-        }, (error) => {
+        }, (error:any) => {
           console.log(error);
           this.snack.open('Ha ocurrido un error en el sistema !!', 'Aceptar', {
             duration: 3000,

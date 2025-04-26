@@ -7,6 +7,7 @@
 
 }
 
+
 .sidebar-header {
   display: flex;
   justify-content: center;
@@ -55,12 +56,28 @@ mat-expansion-panel-header {
     background-color: rgba(255, 255, 255, 0.1);
   }
 }
-
+.inicio{
+  margin-left: 8px;
+  margin-top: -3px !important;
+}
+.nombre_modulo{
+  margin-top: -10px !important;
+}
+.modulo-header mat-icon{
+  padding-top: 4px;
+  margin-top: 10px !important;
+}
+.modulo-header  {
+  margin-top: -10px !important;
+}
 .submodulo-buttons {
-  margin-top: 4px;
-  color: gray;
+  margin-top: 0px;
   width: 240px!important;
+  text-transform: uppercase !important;
   border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+.capitalize-first {
+  text-transform: capitalize;
 }
 
 .nav-button {
@@ -111,6 +128,7 @@ mat-expansion-panel-header {
   padding-left: 0px; /* más indentado */
   background-color: #ffffff;
   color: #e0e0e0;
+  text-transform: capitalize;
 
   &:hover {
     background-color: #3f3f60;
