@@ -16,11 +16,12 @@ import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actua
 import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.component';
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
-import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
+import { ListCompraComponent } from './pages/admin/compras/list-compra/list-compra.component';
+import { AddCompraComponent } from './pages/admin/compras/add-compra/add-compra.component';
 
 
 const routes: Routes = [{
@@ -76,12 +77,6 @@ const routes: Routes = [{
       path: 'proveedores',
       component:ListProveedorComponent
     },{
-      path: 'add-proveedor',
-      component:AddProveedorComponent
-    },{
-      path: 'edit-proveedor/:ruc',
-      component:AddProveedorComponent
-    },{
       path: 'categorias',
       component:ListCategoriasComponent
     },{
@@ -99,6 +94,15 @@ const routes: Routes = [{
     },{
       path: 'edit-producto/:id',
       component:AddProductoComponent
+    },{
+      path: 'compras',
+      component:ListCompraComponent
+    },{
+      path: 'add-compra',
+      component:AddCompraComponent
+    },{
+      path: 'edit-compra',
+      component:AddCompraComponent
     }
   ]
 },

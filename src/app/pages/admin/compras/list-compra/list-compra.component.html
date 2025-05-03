@@ -1,0 +1,95 @@
+<div class="container">
+    <app-header></app-header>
+
+    <div class="card">
+        <div class="info-compras-linea">
+            <h5>Compras registrados</h5>
+            <!-- Buscador personalizado sin Angular Material -->
+            <div class="mover">
+                <div class="buscador">
+                    <div class="input-wrapper">
+                        <input type="text" id="searchInput" placeholder="Buscador compra" [(ngModel)]="filtroBusqueda"
+                            (ngModelChange)="buscarCompras()" />
+                        <button type="button" class="btn-icono">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-agregar">
+                    <a routerLink="/admin/add-compra">+ Compra</a>
+                </button>
+            </div>
+        </div>
+
+        <table class="tabla-compras">
+            <thead>
+                <tr>
+                    <th>Correlativo</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let compra of (filtroBusqueda ? comprasFiltrados : compras)">
+                    <td>{{ compra.correlativo }}</td>
+                    <td>{{ compra.fecha_compra }}</td>
+                    <td>{{ compra.proveedor.razon_social }}</td>
+                    <td>Total de compra</td>
+                    <td class="acciones">
+                        <button class="btn-accion ver" (click)="verModal(compra.id_compra)">
+                            <mat-icon color="accent">visibility</mat-icon>
+                        </button>
+                        <button class="btn-accion editar" (click)="editarCompra(compra.id_compra)">
+                            <mat-icon class="edit" color="primary">edit</mat-icon>
+                        </button>
+                        <button class="btn-accion eliminar" (click)="eliminarCompra(compra.id_compra)">
+                            <mat-icon class="delete" color="warn">delete</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="mostrarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" (click)="cerrarModal()">&times;</span>
+            <h2>Detalle de la compra</h2>
+            <span class="auxiliar">
+                <p><strong>Correlativo:</strong> {{ compraSeleccionada?.correlativo }}</p>
+                <p><strong>Fecha:</strong> {{ compraSeleccionada?.fecha_compra }}</p>
+                <p><strong>Proveedor:</strong> {{ compraSeleccionada?.proveedor?.razon_social }}</p>
+            </span>
+            <p><strong>Lista de productos:</strong></p>
+            <section>
+                <table class="tabla-compras">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Sub Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let producto of productosPaginados()">
+                            <td>{{ producto.producto.categoriaproducto.nombre }}</td>
+                            <td>{{ producto.producto.nombre }}</td>
+                            <td>{{ producto.cantidad }}</td>
+                            <td>{{ producto.precio }}</td>
+                            <td>{{ producto.precio * producto.cantidad }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div *ngIf="totalPaginas > 1" class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+                    <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+                    <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+                    <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

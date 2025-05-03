@@ -1,0 +1,11 @@
+{
+  "/ruc": {
+    "target": "https://api.apis.net.pe",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ruc": "/v2/sunat/ruc"
+    },
+    "logLevel": "debug"
+  }
+}

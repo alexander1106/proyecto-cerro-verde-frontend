@@ -40,12 +40,13 @@ import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actua
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
 import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.component';
 import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
-import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/add-proveedor.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
+import { ListCompraComponent } from './pages/admin/compras/list-compra/list-compra.component';
+import { AddCompraComponent } from './pages/admin/compras/add-compra/add-compra.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,12 +65,13 @@ import { AddProductoComponent } from './pages/admin/productos/add-producto/add-p
     ActualizarRolComponent,
     ConfirmarPasswordComponent,
     EnviarCorreoComponent,
-    AddProveedorComponent,
     ListProveedorComponent,
     ListCategoriasComponent,
     AddCategoriasComponent,
     ListProductoComponent,
     AddProductoComponent,
+    ListCompraComponent,
+    AddCompraComponent,
   ],
   imports: [
     BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,
