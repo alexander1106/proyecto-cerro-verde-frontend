@@ -34,7 +34,6 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card'; // ✅ Importar MatCardModule
 import { MatCheckboxModule } from '@angular/material/checkbox';
-
 import { AddRolComponent } from './pages/admin/roles/add-rol/add-rol.component';
 import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
@@ -42,11 +41,11 @@ import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.compo
 import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
-import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
-import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 import { ListCompraComponent } from './pages/admin/compras/list-compra/list-compra.component';
-import { AddCompraComponent } from './pages/admin/compras/add-compra/add-compra.component';
+import { FilterPipe } from './pipes/filter.pipe';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { ListUnidadComponent } from './pages/admin/unidad/list-unidad/list-unidad.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -67,18 +66,16 @@ import { AddCompraComponent } from './pages/admin/compras/add-compra/add-compra.
     EnviarCorreoComponent,
     ListProveedorComponent,
     ListCategoriasComponent,
-    AddCategoriasComponent,
     ListProductoComponent,
-    AddProductoComponent,
     ListCompraComponent,
-    AddCompraComponent,
+    ListUnidadComponent,
   ],
   imports: [
     BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,
     MatToolbarModule,MatDatepickerModule,MatSelectModule,MatSlideToggleModule,
     AppRoutingModule,HttpClientModule,MatDialogModule,
     MatListModule,MatExpansionModule,MatNativeDateModule,FormsModule,MatInputModule,MatButtonModule,MatCardModule,
-    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe
+    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe, FilterPipe, MatAutocompleteModule
   ],
   providers: [
     authInterceptorProviders,

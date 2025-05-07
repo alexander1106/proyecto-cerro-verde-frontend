@@ -17,11 +17,9 @@ import { EnviarCorreoComponent } from './pages/enviar-correo/enviar-correo.compo
 import { ConfirmarPasswordComponent } from './pages/confirmar-password/confirmar-password.component';
 import { ListProveedorComponent } from './pages/admin/proveedores/list-proveedor/list-proveedor.component';
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
-import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
-import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 import { ListCompraComponent } from './pages/admin/compras/list-compra/list-compra.component';
-import { AddCompraComponent } from './pages/admin/compras/add-compra/add-compra.component';
+import { ListUnidadComponent } from './pages/admin/unidad/list-unidad/list-unidad.component';
 
 
 const routes: Routes = [{
@@ -80,29 +78,14 @@ const routes: Routes = [{
       path: 'categorias',
       component:ListCategoriasComponent
     },{
-      path: 'add-categoria',
-      component:AddCategoriasComponent
-    },{
-      path: 'edit-categoria/:id',
-      component:AddCategoriasComponent
-    },{
       path: 'productos',
       component:ListProductoComponent
-    },{
-      path: 'add-producto',
-      component:AddProductoComponent
-    },{
-      path: 'edit-producto/:id',
-      component:AddProductoComponent
     },{
       path: 'compras',
       component:ListCompraComponent
     },{
-      path: 'add-compra',
-      component:AddCompraComponent
-    },{
-      path: 'edit-compra',
-      component:AddCompraComponent
+      path: 'medida',
+      component:ListUnidadComponent
     }
   ]
 },

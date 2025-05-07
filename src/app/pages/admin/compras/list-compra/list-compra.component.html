@@ -16,8 +16,8 @@
                     </div>
                 </div>
 
-                <button class="btn-agregar">
-                    <a routerLink="/admin/add-compra">+ Compra</a>
+                <button (click)="abrirModalRegistro()" class="btn-agregar">
+                    + Compra
                 </button>
             </div>
         </div>
@@ -34,15 +34,15 @@
             </thead>
             <tbody>
                 <tr *ngFor="let compra of (filtroBusqueda ? comprasFiltrados : compras)">
-                    <td>{{ compra.correlativo }}</td>
+                    <td>{{ compra.numeroDoc }}</td>
                     <td>{{ compra.fecha_compra }}</td>
                     <td>{{ compra.proveedor.razon_social }}</td>
-                    <td>Total de compra</td>
+                    <td>S/. {{ compra.total }}</td>
                     <td class="acciones">
                         <button class="btn-accion ver" (click)="verModal(compra.id_compra)">
                             <mat-icon color="accent">visibility</mat-icon>
                         </button>
-                        <button class="btn-accion editar" (click)="editarCompra(compra.id_compra)">
+                        <button class="btn-accion editar">
                             <mat-icon class="edit" color="primary">edit</mat-icon>
                         </button>
                         <button class="btn-accion eliminar" (click)="eliminarCompra(compra.id_compra)">
@@ -58,9 +58,17 @@
             <span class="close" (click)="cerrarModal()">&times;</span>
             <h2>Detalle de la compra</h2>
             <span class="auxiliar">
-                <p><strong>Correlativo:</strong> {{ compraSeleccionada?.correlativo }}</p>
-                <p><strong>Fecha:</strong> {{ compraSeleccionada?.fecha_compra }}</p>
-                <p><strong>Proveedor:</strong> {{ compraSeleccionada?.proveedor?.razon_social }}</p>
+                <span>
+                    <p><strong>Correlativo:</strong> {{ compraSeleccionada?.numeroDoc }}</p>
+                    <p><strong>Fecha:</strong> {{ compraSeleccionada?.fecha_compra }}</p>
+                    <p><strong>Proveedor:</strong> {{ compraSeleccionada?.proveedor?.razon_social }}</p>
+                </span>
+                <span>
+                    <p><strong>Flete:</strong> S/. {{ compraSeleccionada?.flete }}</p>
+                    <p><strong>Descuento:</strong> S/. {{ compraSeleccionada?.descuento }}</p>
+                    <p><strong>IGV:</strong> {{ compraSeleccionada?.igv }}%</p>
+                    <p><strong>Total:</strong> S/. {{ compraSeleccionada?.total }}</p>
+                </span>
             </span>
             <p><strong>Lista de productos:</strong></p>
             <section>
@@ -69,6 +77,7 @@
                         <tr>
                             <th>Categoria</th>
                             <th>Producto</th>
+                            <th>U.M</th>
                             <th>Cantidad</th>
                             <th>Precio Unitario</th>
                             <th>Sub Total</th>
@@ -78,18 +87,61 @@
                         <tr *ngFor="let producto of productosPaginados()">
                             <td>{{ producto.producto.categoriaproducto.nombre }}</td>
                             <td>{{ producto.producto.nombre }}</td>
+                            <td>{{ producto.producto.unidad.abreviatura }}</td>
                             <td>{{ producto.cantidad }}</td>
-                            <td>{{ producto.precio }}</td>
-                            <td>{{ producto.precio * producto.cantidad }}</td>
+                            <td>S/. {{ producto.precio }}</td>
+                            <td>S/. {{ producto.precio * producto.cantidad }}</td>
                         </tr>
                     </tbody>
                 </table>
-                <div *ngIf="totalPaginas > 1" class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
-                    <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+                <div *ngIf="totalPaginas > 1"
+                    class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+                    <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+                        [disabled]="paginaActual === 1">Anterior</button>
                     <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
-                    <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+                    <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+                        [disabled]="paginaActual === totalPaginas">Siguiente</button>
                 </div>
             </section>
+        </div>
+    </div>
+
+    <div *ngIf="modalRegistro" class="modalRegistro">
+        <div class="modal-content-registro">
+            <span class="close" (click)="cerrarMordalRegistro()">&times;</span>
+            <h2 class="mb-3">Compra</h2>
+
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+                <mat-form-field class="w-50" appearance="outline">
+                    <mat-label>Número de Documento</mat-label>
+                    <input type="text" name="numeroDoc" id="numeroDoc" [(ngModel)]="compra.numeroDoc"
+                        #numedoDoc="ngModel" required matInput placeholder="Numero de Documento" minlength="1">
+                </mat-form-field>
+
+                <mat-form-field class="ms-5 w-25" appearance="outline">
+                    <mat-label>Fecha</mat-label>
+                    <input name="fecha_compra" id="fecha_compra" [(ngModel)]="compra.fecha_compra"
+                        #fecha_compra="ngModel" required matInput [matDatepicker]="picker">
+                    <mat-hint>DD/MM/AAAA</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Selecciona Proveedor</mat-label>
+                    <input type="text" id="searchInput" [name]="compra.proveedor.razon_social"
+                        placeholder="Seleccione proveedor" matInput (input)="filtrarProveedores()"
+                        [(ngModel)]="proveedorBusqueda" [matAutocomplete]="auto"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #auto="matAutocomplete"
+                        (optionSelected)="seleccionarProveedor($event.option.value)">
+                        <mat-option *ngFor=" let proveedor of proveedorFiltrado" [value]="proveedor.ruc_proveedor || proveedor.razon_social ">
+                            {{proveedor.ruc_proveedor}} | {{proveedor.razon_social}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </form>
+
         </div>
     </div>
 </div>

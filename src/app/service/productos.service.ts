@@ -12,6 +12,10 @@ export class ProductosService {
     return this.http.get<any[]>("http://localhost:8080/api/productos")
   }
 
+  listarProductosActivos(){
+    return this.http.get<any[]>("http://localhost:8080/api/productosactivos")
+  }
+
   buscarProductoId(id: number){
     return this.http.get(`http://localhost:8080/api/productos/${id}`)
   }

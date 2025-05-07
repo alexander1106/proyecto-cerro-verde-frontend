@@ -14,7 +14,6 @@ import { HttpHeaders } from '@angular/common/http';
 export class ListProveedorComponent {
   proveedores: any[] = []
   proveedoresFiltrados: any[] = [];
-  proveedoresFiltros: any[] = [];
   filtroBusqueda: string = '';
   mostrarModal: boolean = false;
   public proveedor = {
@@ -128,7 +127,6 @@ export class ListProveedorComponent {
   //BUSCADOR
   buscarProveedores() {
     const filtro = this.filtroBusqueda.trim().toLowerCase();
-
     if (filtro === '') {
       this.proveedores;
       this.paginaActual = 1; // Volver a la primera página

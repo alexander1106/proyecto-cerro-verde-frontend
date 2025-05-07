@@ -1,35 +1,36 @@
 import { Component } from '@angular/core';
-import { CategoriasService } from '../../../../service/categorias.service';
-import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
+import { UnidadService } from '../../../../service/unidad.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-list-categorias',
+  selector: 'app-list-unidad',
   standalone: false,
-  templateUrl: './list-categorias.component.html',
-  styleUrl: './list-categorias.component.css'
+  templateUrl: './list-unidad.component.html',
+  styleUrl: './list-unidad.component.css'
 })
-export class ListCategoriasComponent {
-  categorias: any[] = []
-  categoriasFiltrados: any[] = [];
+export class ListUnidadComponent {
+  unidades: any[] = []
+  unidadesFiltrados: any[] = [];
   filtroBusqueda: string = '';
   mostrarModal: boolean = false;
-  public categoria = {
-    id_categoria: '',
+  public unidad = {
+    idUnidad: '',
     nombre: '',
+    abreviatura: '',
+    equivalencia:'',
     estado: '1'
   };
   paginaActual = 1;
   elementosPorPagina = 5;
 
   constructor(
-    private categoriasService: CategoriasService,
+    private unidadesService: UnidadService,
     private snack: MatSnackBar
   ) { }
 
   ngOnInit(): void {
-    this.listarCategorias();
+    this.listarUnidades();
   }
 
   //ACCIONES DEL MODAL
@@ -37,16 +38,18 @@ export class ListCategoriasComponent {
     this.mostrarModal = true;
   }
   cerrarModal() {
-    this.categoria.nombre = '';
+    this.unidad.nombre = '';
+    this.unidad.abreviatura = '';
+    this.unidad.equivalencia = '';
     this.mostrarModal = false;
   }
 
-  //MOSTRAR LAS CATEGORIAS
-  listarCategorias() {
-    this.categoriasService.listarCategoriasActivos().subscribe(
+  //MOSTRAR LAS UNIDADES
+  listarUnidades() {
+    this.unidadesService.listarUnidadActivos().subscribe(
       (data: any) => {
-        this.categorias = data;
-        this.categoriasFiltrados = [...this.categorias];
+        this.unidades = data;
+        this.unidadesFiltrados = [...this.unidades];
         this.actualizarPaginacion();
       }, (error) => {
         console.log(error);
@@ -55,12 +58,12 @@ export class ListCategoriasComponent {
     )
   }
 
-  //REGISTRAR CATEGORIA
+  //REGISTRAR UNIDAD
   formSubmit() {
-    this.categoriasService.registrarCategoria(this.categoria).subscribe(
+    this.unidadesService.registrarUnidad(this.unidad).subscribe(
       (data) => {
-        Swal.fire("Excelente", "La Categoria fue registrado con éxito", "success");
-        this.listarCategorias();
+        Swal.fire("Excelente", "La Unidad de Medida fue registrado con éxito", "success");
+        this.listarUnidades();
         this.cerrarModal();
       }, (error) => {
         console.log(error);
@@ -71,22 +74,22 @@ export class ListCategoriasComponent {
     )
   }
 
-  //EDITAR CATEGORIA
-  editarCategoria(id: number) {
-    this.categoriasService.buscarCategoriaId(id).subscribe({
+  //EDITAR UNIDAD
+  editarUnidad(id: number) {
+    this.unidadesService.buscarUnidadId(id).subscribe({
       next: (data: any) => {
-        this.categoria = data;
+        this.unidad = data;
         this.verModal();
       },
       error: (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo obtener los datos de la categoria", "error");
+        Swal.fire("Error", "No se pudo obtener los datos de la Unidad de Medida", "error");
       }
     });
   }
 
-  //ELIMINAR CATEGORIAS
-  eliminarCategoria(id: number) {
+  //ELIMINAR UNIDADES
+  eliminarUnidad(id: number) {
     Swal.fire({
       title: "¿Estás seguro?",
       text: "No podrás recuperar el registro",
@@ -97,19 +100,19 @@ export class ListCategoriasComponent {
       confirmButtonText: "Si, eliminar"
     }).then((result) => {
       if (result.isConfirmed) {
-        this.categoriasService.eliminarCategoria(id).subscribe({
+        this.unidadesService.eliminarUnidad(id).subscribe({
           next: (response: any) => {
             Swal.fire({
               title: "Eliminado",
               text: response.mensaje,
               icon: "success"
             });
-            this.listarCategorias();
+            this.listarUnidades();
           },
           error: (error) => {
             Swal.fire({
               title: "Error",
-              text: "No se pudo eliminar la categoria",
+              text: "No se pudo eliminar la Unidad de Medida",
               icon: "error"
             });
             console.log(error);
@@ -120,15 +123,16 @@ export class ListCategoriasComponent {
   }
 
   //BUSCADOR
-  buscarCategorias() {
+  buscarUnidad() {
     const filtro = this.filtroBusqueda.trim().toLowerCase();
     if (filtro === '') {
-      this.categorias;
+      this.unidades;
       this.paginaActual = 1; // Volver a la primera página
       this.actualizarPaginacion(); // Volver a paginar normal
     } else {
-      this.categoriasFiltrados = this.categorias.filter(categoria =>
-        categoria.nombre.toLowerCase().includes(filtro)
+      this.unidadesFiltrados = this.unidades.filter(unidad =>
+        unidad.nombre.toLowerCase().includes(filtro) || 
+        unidad.equivalencia.toLowerCase().includes(filtro)
       );
     }
   }
@@ -137,16 +141,16 @@ export class ListCategoriasComponent {
   actualizarPaginacion() {
     const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
     const fin = inicio + this.elementosPorPagina;
-    this.categoriasFiltrados = this.categorias.slice(inicio, fin);
+    this.unidadesFiltrados = this.unidades.slice(inicio, fin);
   }
 
   // Obtener categorias de la página actual
-  get categoriasPaginados() {
-    return this.categoriasFiltrados;
+  get unidadesPaginados() {
+    return this.unidadesFiltrados;
   }
 
   get totalPaginas(): number {
-    return Math.ceil(this.categorias.length / this.elementosPorPagina);
+    return Math.ceil(this.unidades.length / this.elementosPorPagina);
   }
 
   // Cambiar de página

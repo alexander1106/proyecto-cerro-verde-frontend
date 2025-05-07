@@ -1,51 +1,126 @@
 <div class="container">
-    <app-header></app-header>
-  
-    <div class="card">
-      <div class="info-productos-linea">
-        <h5>Productos registrados</h5>
-        <!-- Buscador personalizado sin Angular Material -->
-        <div class="mover">
-          <div class="buscador">
-            <div class="input-wrapper">
-              <input type="text" id="searchInput" placeholder="Buscador producto" [(ngModel)]="filtroBusqueda"
-                (ngModelChange)="buscarProductos()" />
-              <button type="button" class="btn-icono">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
+  <app-header></app-header>
+
+  <div class="card">
+    <div class="info-productos-linea">
+      <h5>Productos registrados</h5>
+      <!-- Buscador personalizado sin Angular Material -->
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" id="searchInput" placeholder="Buscador producto" [(ngModel)]="filtroBusqueda"
+              (ngModelChange)="buscarProductos()" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
           </div>
-  
-          <button class="btn-agregar">
-            <a routerLink="/admin/add-producto">+ Producto</a>
-          </button>
         </div>
+
+        <button (click)="verModal()" class="btn-agregar">
+          + Producto
+        </button>
       </div>
-  
-      <table class="tabla-productos">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Categoria</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let producto of (filtroBusqueda ? productosFiltrados : productos)">
-            <td>{{ producto.nombre }}</td>
-            <td>{{ producto.descripcion }}</td>
-            <td>{{ producto.categoriaproducto?.nombre }}</td>
-            <td class="acciones">
-              <button class="btn-accion editar" (click)="editarProducto(producto.id_producto)">
-                <mat-icon class="edit" color="primary">edit</mat-icon>
-              </button>
-              <button class="btn-accion eliminar" (click)="eliminarProducto(producto.id_producto)">
-                <mat-icon class="delete" color="warn">delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    </div>
+
+    <table class="tabla-productos mb-5">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Categoria</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of (productosFiltrados.length ? productosFiltrados : productos)">
+          <td>{{ producto.nombre }}</td>
+          <td>{{ producto.descripcion }}</td>
+          <td>{{ producto.categoriaproducto?.nombre }}</td>
+          <td class="acciones">
+            <button class="btn-accion editar" (click)="editarProducto(producto.id_producto)">
+              <mat-icon class="edit" color="primary">edit</mat-icon>
+            </button>
+            <button class="btn-accion eliminar" (click)="eliminarProducto(producto.id_producto)">
+              <mat-icon class="delete" color="warn">delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="totalPaginas > 1"
+      class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+      <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual === totalPaginas">Siguiente</button>
     </div>
   </div>
+
+  <!-- MODAL -->
+  <div *ngIf="mostrarModal" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal()">&times;</span>
+      <h2>Categoria</h2>
+      <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input id="nombre" [(ngModel)]="producto.nombre" name="nombre" #nombre="ngModel" required matInput
+            placeholder="Digite Nombre" type="text" minlength="1" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Descripcion</mat-label>
+          <input id="descripcion" [(ngModel)]="producto.descripcion" name="descripcion" #descripcion="ngModel" required
+            matInput placeholder="Digite Descripcion" type="text" minlength="1" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Selecciona Categoria</mat-label>
+          <input type="text" id="searchInput" [name]="producto.categoriaproducto.nombre"
+            placeholder="Seleccione categoria" matInput (input)="filtrarCategorias()"
+            [(ngModel)]="producto.categoriaproducto.nombre" [matAutocomplete]="auto"
+            [ngModelOptions]="{standalone: true}">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarCategoria($event.option.value)">
+            <mat-option *ngFor=" let categoria of categoriaFiltrado" [value]="categoria.nombre">
+              {{categoria.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Selecciona Unidad de Medida</mat-label>
+          <input type="text" id="searchInput" [name]="producto.unidad.nombre" placeholder="Seleccione unidad de medida"
+            matInput (input)="filtrarUnidades()" [(ngModel)]="producto.unidad.nombre" [matAutocomplete]="autoUnidad"
+            [ngModelOptions]="{standalone: true}">
+          <mat-autocomplete #autoUnidad="matAutocomplete" (optionSelected)="seleccionarUnidad($event.option.value)">
+            <mat-option *ngFor=" let unidad of unidadFiltrado" [value]="unidad.nombre">
+              {{unidad.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <p>
+          <mat-slide-toggle type="button" [(ngModel)]="mostarInput" [ngModelOptions]="{standalone: true}"
+            (change)="accionInput($event)">Producto para venta</mat-slide-toggle>
+        </p>
+
+        <mat-form-field *ngIf=" mostarInput" class="w-50" floatLabel="always" appearance="outline">
+            <mat-label>Precio Venta</mat-label>
+            <input id="precioVenta" [(ngModel)]="aux" name="precioVenta" #precioVenta="ngModel"
+              required matInput placeholder="0" type="number" />
+            <span matTextPrefix>S/.&nbsp;</span>
+            </mat-form-field>
+
+            <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
+              <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
+                class="btn-primary">
+                Guardar
+              </button>
+            </div>
+      </form>
+    </div>
+  </div>
+
+</div>

@@ -5,4 +5,5 @@ export class ReplaceSpacesPipe implements PipeTransform {
   transform(value: string): string {
     return value.toLowerCase().replace(/\s+/g, '-');
   }
+  
 }

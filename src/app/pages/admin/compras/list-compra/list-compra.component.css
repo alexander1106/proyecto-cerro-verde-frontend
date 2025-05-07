@@ -3,7 +3,7 @@
     max-width: 1200px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-  
+
 .card {
     margin-top: 20px;
     border-radius: 12px;
@@ -12,7 +12,7 @@
     background-color: white;
     padding: 20px 30px;
 }
-  
+
 .info-compras-linea {
     display: flex;
     justify-content: space-between;
@@ -23,19 +23,19 @@
     border-radius: 8px;
     color: rgb(0, 0, 0);
 }
-  
-.mover{
+
+.mover {
     width: 35vw !important;
     float: right;
     display: flex;
 }
-  
+
 .info-compras-linea p {
     font-size: 18px;
     font-weight: 600;
     margin: 0;
 }
-  
+
 .div-filtros {
     display: flex;
     gap: 20px;
@@ -44,7 +44,7 @@
     align-items: center;
     padding-left: 8px;
 }
-  
+
 .filtro {
     padding: 8px 16px;
     background-color: #eee;
@@ -53,21 +53,21 @@
     transition: background-color 0.2s ease;
     font-weight: 500;
 }
-  
+
 .filtro:hover {
     background-color: #d5d5d5;
 }
-  
+
 .buscador {
     max-width: 300px;
     width: 100%;
 }
-  
+
 .input-wrapper {
     position: relative;
     display: flex;
 }
-  
+
 .input-wrapper input {
     flex: 1;
     padding: 10px 36px 10px 10px;
@@ -76,12 +76,12 @@
     font-size: 14px;
     transition: box-shadow 0.3s ease;
 }
-  
+
 .input-wrapper input:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(63, 81, 181, 0.6);
 }
-  
+
 .input-wrapper button {
     position: absolute;
     right: 8px;
@@ -93,7 +93,7 @@
     cursor: pointer;
     color: #999;
 }
-  
+
 .btn-agregar {
     padding: 10px 24px;
     background-color: #4caf50;
@@ -106,13 +106,13 @@
     border: none;
     cursor: pointer;
 }
-  
+
 .btn-agregar a {
     text-decoration: none;
     color: inherit;
     display: block;
 }
-  
+
 .btn-agregar:hover {
     background-color: #45a049;
     transform: scale(1.05);
@@ -125,7 +125,7 @@
     border-radius: 8px;
     overflow: hidden;
 }
-  
+
 .tabla-compras th,
 .tabla-compras td {
     padding: 14px;
@@ -134,7 +134,7 @@
     font-size: 15px;
     color: #444;
 }
-  
+
 .tabla-compras th {
     background-color: #3f51b5;
     color: white;
@@ -142,44 +142,47 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-  
+
 .tabla-compras tbody tr:hover {
     background-color: #f1f1f1;
     cursor: pointer;
 }
-  
+
 @media (max-width: 768px) {
+
     .buscador,
     .btn-agregar {
-      max-width: 100%;
-      width: 100%;
+        max-width: 100%;
+        width: 100%;
     }
-  
+
     .tabla-compras th,
     .tabla-compras td {
-      font-size: 14px;
-      padding: 10px;
+        font-size: 14px;
+        padding: 10px;
     }
 }
-  
-  
-  /* Botón de búsqueda (ícono de lupa) */
+
+
+/* Botón de búsqueda (ícono de lupa) */
 .btn-icono {
-    background-color: #4caf50; /* verde */
+    background-color: #4caf50;
+    /* verde */
     border: none;
     color: white;
     padding: 8px;
     border-radius: 5px;
     cursor: pointer;
 }
-  
+
 .btn-icono:hover {
     background-color: #45a049;
 }
-  
-  /* Botón de agregar trabajador */
+
+/* Botón de agregar trabajador */
 .btn-agregar {
-    background-color: #2196f3; /* azul */
+    background-color: #2196f3;
+    /* azul */
     border: none;
     color: white;
     padding: 10px 20px;
@@ -188,17 +191,17 @@
     font-weight: bold;
     text-decoration: none;
 }
-  
+
 .btn-agregar a {
     color: white;
     text-decoration: none;
 }
-  
+
 .btn-agregar:hover {
     background-color: #1976d2;
 }
-  
-  /* Botones de acción */
+
+/* Botones de acción */
 .btn-accion {
     background-color: transparent;
     border: none;
@@ -207,16 +210,18 @@
     border-radius: 50%;
     transition: background-color 0.3s ease;
 }
-  
+
 .btn-accion.editar:hover {
-    background-color: #e3f2fd; /* azul claro */
+    background-color: #e3f2fd;
+    /* azul claro */
 }
-  
+
 .btn-accion.eliminar:hover {
-    background-color: #ffebee; /* rojo claro */
+    background-color: #ffebee;
+    /* rojo claro */
 }
-  
-  /* Filtros */
+
+/* Filtros */
 .filtro {
     display: inline-block;
     padding: 6px 12px;
@@ -226,22 +231,25 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-  
+
 .filtro:hover {
     background-color: #bdbdbd;
 }
-  
+
 .filtro.activo {
-    background-color: #4caf50; /* verde */
+    background-color: #4caf50;
+    /* verde */
     color: white;
 }
-.delete{
+
+.delete {
     color: rgb(197, 8, 8);
 }
-.edit{
+
+.edit {
     color: #1976d2;
 }
-  
+
 /*Estilos del modal*/
 .modal {
     position: fixed;
@@ -250,50 +258,52 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro translúcido */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro translúcido */
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     background-color: #ffffff;
     padding: 30px 25px;
     border-radius: 12px;
     width: 90%;
     max-width: 50rem;
-    min-height: 575px;
+    min-height: 85%;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     animation: modalFadeIn 0.3s ease-out;
     position: relative;
-  }
-  
-  @keyframes modalFadeIn {
+}
+
+@keyframes modalFadeIn {
     from {
-      opacity: 0;
-      transform: translateY(-40px);
+        opacity: 0;
+        transform: translateY(-40px);
     }
+
     to {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
-  
-  .modal-content h2 {
+}
+
+.modal-content h2 {
     margin-top: 0;
     font-size: 22px;
     color: #333;
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
-  }
-  
-  .modal-content p {
+}
+
+.modal-content p {
     margin: 12px 0;
     font-size: 16px;
     color: #444;
-  }
-  
-  .modal .close {
+}
+
+.modal .close {
     position: absolute;
     right: 16px;
     top: 14px;
@@ -302,14 +312,63 @@
     color: #aaa;
     cursor: pointer;
     transition: color 0.2s;
-  }
-  
-  .modal .close:hover {
-    color: #f44336;
-  }
+}
 
-  .auxiliar {
+.modal .close:hover {
+    color: #f44336;
+}
+
+.auxiliar {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    & p{
+        margin: 0;
+    }
+
+    & span {
+        display: flex;
+        gap: 2rem;
+    }
+}
+
+
+
+
+.modalRegistro {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro translúcido */
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
-  }
+}
+
+.modal-content-registro {
+    background-color: #ffffff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 50rem;
+    min-height: 85%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease-out;
+    position: relative;
+}
+
+.modalRegistro .close {
+    position: absolute;
+    right: 16px;
+    top: 14px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}

@@ -6,6 +6,7 @@
       <h5>Proveedores registrados</h5>
       <!-- Buscador personalizado sin Angular Material -->
       <div class="mover">
+
         <div class="buscador">
           <div class="input-wrapper">
             <input type="text" id="searchInput" placeholder="Buscador proveedor" [(ngModel)]="filtroBusqueda"
@@ -19,7 +20,9 @@
         <button (click)="verModal()" class="btn-agregar">
           + Proveedor
         </button>
+
       </div>
+      
     </div>
 
     <table class="tabla-proveedores mb-5">
@@ -47,6 +50,7 @@
         </tr>
       </tbody>
     </table>
+
     <div *ngIf="totalPaginas > 1"
       class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
       <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
@@ -55,6 +59,7 @@
       <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
         [disabled]="paginaActual === totalPaginas">Siguiente</button>
     </div>
+
   </div>
 
   <!-- MODAL -->
