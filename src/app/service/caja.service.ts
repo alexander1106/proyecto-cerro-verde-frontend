@@ -55,4 +55,20 @@ export class CajaService {
     return this.http.get<any[]>(`${this.baseUrl}/transacciones/all`);
   }
 
+  obtenerDenominaciones() {
+    return this.http.get<any[]>(`${this.baseUrl}/arqueo/denominaciones`);
+  }  
+
+  crearArqueo(detalles: any[]) {
+    return this.http.post(`${this.baseUrl}/arqueo/crear`, detalles);
+  }
+
+  obtenerArqueoPorId(id: number) {
+    return this.http.get(`${this.baseUrl}/arqueo/${id}`);
+  }
+
+  actualizarArqueo(id: number, arqueo: any) {
+    return this.http.put(`${this.baseUrl}/arqueo/${id}`, arqueo);
+  }
+
 }

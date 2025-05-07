@@ -1,0 +1,31 @@
+<div class="arqueo">
+    <h2>Arqueo de Caja</h2>
+  
+    <table>
+      <thead>
+        <tr>
+          <th>Denominación</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of denominaciones">
+          <td>{{ d.valor }}</td>
+          <td>
+            <input type="number" [(ngModel)]="d.cantidad" min="0" />
+          </td>
+          <td>{{ d.valor * d.cantidad }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <h3>Total: {{ calcularTotal() }}</h3>
+  
+    <button (click)="guardarArqueo()">Guardar Arqueo</button>
+  
+    <div *ngIf="arqueoGuardado">
+      <p><strong>ID Arqueo:</strong> {{ arqueoGuardado.id }}</p>
+    </div>
+  </div>
+  

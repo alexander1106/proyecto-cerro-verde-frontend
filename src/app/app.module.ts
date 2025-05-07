@@ -11,6 +11,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http'; // <- IMPORTA ESTO
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MenuComponent } from './pages/admin/menu/menu.component';
 import {MatListModule} from '@angular/material/list';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
@@ -51,6 +52,7 @@ import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { TransaccionesHistorialComponent } from './pages/admin/transacciones-historial/transacciones-historial.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
+import { ArqueoCajaComponent } from './pages/admin/arqueo-caja/arqueo-caja.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,6 +81,8 @@ import { AddProductoComponent } from './pages/admin/productos/add-producto/add-p
     ActualizarUserComponent,
     AddProductoComponent,
     TransaccionesHistorialComponent,
+    ArqueoCajaComponent,
+
 
   ],
   imports: [
@@ -86,7 +90,7 @@ import { AddProductoComponent } from './pages/admin/productos/add-producto/add-p
     MatToolbarModule,MatDatepickerModule,MatSelectModule,MatSlideToggleModule,
     AppRoutingModule,HttpClientModule,MatDialogModule,
     MatListModule,MatExpansionModule,MatNativeDateModule,FormsModule,MatInputModule,MatButtonModule,MatCardModule,
-    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe
+    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe, CommonModule, FormsModule
   ],
   providers: [
     authInterceptorProviders,

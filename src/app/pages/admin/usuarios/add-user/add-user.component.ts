@@ -107,7 +107,7 @@ import { NgForm } from '@angular/forms';
             const selectedRole = this.roles.find((role: any) => role.id === this.rolSeleccionado);
 
             if (selectedRole) {
-              this.user.rol.id = this.rolSeleccionado;
+              this.user.rol.id = selectedRole.rolSeleccionado;
               this.user.rol.nombreRol = selectedRole.nombreRol;
               this.user.rol.descripcion = selectedRole.descripcion;
               this.user.rol.rolesPermisos = [];
