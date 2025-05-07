@@ -1,0 +1,58 @@
+<div class="container">
+  <app-header></app-header>
+
+  <div class="contenido">
+    <div class="profile-container">
+      <h2>User profile</h2>
+      <div class="profile-card">
+        <div class="profile-left">
+          <img [src]="user.perfil" alt="Perfil" class="foto-perfil" />
+          <h3>{{user.nombre}} {{user.apellidos}}</h3>
+          <div class="rating">
+            <span class="trust">  {{ user.rol.nombreRol }}
+            </span>
+          </div>
+        </div>
+        <div class="profile-right">
+          <div class="profile-section">
+            <label>Username:</label><span>{{user.username}}</span>
+
+            <label>Nombre:</label><span>{{user.nombre}}</span>
+            <label>Apellidos:</label><span>{{user.apellidos}}</span>
+
+          </div>
+
+          <div class="profile-section">
+            <label>Telefono:</label><span>{{user.telefono}}</span>
+
+            <label>Correo: </label><span>{{user.email}}</span>
+            <label>Rol: </label><span>{{user.rol.nombreRol}}</span>
+
+          </div>
+
+
+          <div class="profile-section">
+            <button (click)="mostrarFormularioCambio = !mostrarFormularioCambio">
+              Cambiar contraseña
+            </button>
+
+            <div *ngIf="mostrarFormularioCambio" class="form-cambio-password">
+              <label for="actual">Contraseña actual:</label>
+              <input type="password" id="actual" [(ngModel)]="passwordActual">
+
+              <label for="nueva">Nueva contraseña:</label>
+              <input type="password" id="nueva" [(ngModel)]="nuevaPassword">
+
+              <button (click)="cambiarPassword()">Guardar</button>
+            </div>
+
+            <div *ngIf="mensajeCambio" class="mensaje">{{ mensajeCambio }}</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

@@ -27,4 +27,9 @@ public añadirUsuarioPerfiles(user: any) {
     return this.httpClient.get(`${baseUrl}/usuarios/${id}`);
   }
 
+  cambiarPassword(idUsuario: number, nuevaContraseña: string) {
+    const url = `${baseUrl}/usuarios/${idUsuario}/cambiar-password`;
+    return this.httpClient.put(url, { nuevaContraseña }, { responseType: 'text' });
+  }
+
 }

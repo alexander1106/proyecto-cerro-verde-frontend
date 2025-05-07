@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import { AdminGuard } from './guards/admin.guard';
+import {  AuthGuard } from './guards/AuthGuard ';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 import { WelcomeComponent } from './pages/admin/welcome/welcome.component';
 import { PerfilComponent } from './pages/admin/perfil/perfil.component';
@@ -26,6 +26,7 @@ import { TransaccionesHistorialComponent } from './pages/admin/transacciones-his
 import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/actualizar-user.component';
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
+import { PerfilUserComponent } from './pages/admin/perfil-user/perfil-user.component';
 
 
 const routes: Routes = [{
@@ -48,7 +49,7 @@ const routes: Routes = [{
 {
   path:'admin',
   component: DashboardComponent,
-  canActivate:[AdminGuard],
+  canActivate:[AuthGuard ],
   children:[
     {
       path:'perfil',
@@ -123,6 +124,9 @@ const routes: Routes = [{
     }, {
       path: 'add-producto',
       component: AddProductoComponent
+    },{
+      path: 'perfil-user',
+      component:PerfilUserComponent
     }
   ]
 },

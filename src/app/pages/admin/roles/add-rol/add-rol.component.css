@@ -10,12 +10,15 @@ form {
   gap: 16px;
   flex-wrap: wrap; /* Para que se acomoden en pantallas pequeñas */
 }
-app-header{
+
+app-header {
   margin-top: 20px !important;
 }
-.header{
+
+.header {
   margin-top: 10px !important;
 }
+
 .form-item {
   flex: 1;
   min-width: 200px;
@@ -24,12 +27,78 @@ app-header{
 mat-form-field {
   width: 100%;
 }
-.contenido{
+
+.contenido {
   margin-top: 20px;
   padding: 20px;
   border-radius: 15px;
   background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
-h2{
-  margin-left: 20px !important;
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modulos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+h3{
+  text-align: center;
+
+}
+.modulo-card {
+  width: 270px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9f9f9; /* Fondo gris claro */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modulo-card:hover {
+  transform: translateY(-4px); /* Elevación al pasar el ratón */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada al pasar el ratón */
+}
+
+mat-card-header {
+  margin-bottom: 10px;
+
+  background-color: #416daf; /* Color de fondo para el encabezado */
+  border-radius: 4px;
+  padding: 8px;
+}
+mat-card-header p{
+  color: white !important;
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 0px      ;
+
+}
+#permisos{
+  margin-left: 10px;
+  color: rebeccapurple !important;
+  text-transform: capitalize;
+}
+.permisos{
+  font-size: 14px !important;
+  margin-bottom: 0px !important;
+
+}
+
+.permisos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mat-checkbox {
+  margin-left: 16px; /* Indentación para los permisos */
+}
+
+button {
+  margin-top: 20px;
 }

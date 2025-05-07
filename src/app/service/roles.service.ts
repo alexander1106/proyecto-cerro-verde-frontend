@@ -7,6 +7,9 @@ import baseUrl from '../components/helper';
   providedIn: 'root'
 })
 export class RolesService {
+  buscarRolPorNombre(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   actualizarEstado(idRol: number, nuevoEstado: boolean) {
     return this.http.put(`${baseUrl}/roles/${idRol}/estado`, {
       estado: nuevoEstado

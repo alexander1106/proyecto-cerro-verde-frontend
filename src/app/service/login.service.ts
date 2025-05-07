@@ -31,7 +31,6 @@ export class LoginService {
   public logout(){
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
     return true;
 
   }
@@ -60,6 +59,7 @@ export class LoginService {
 
     if (user && user.rol && user.rol.nombreRol) {
       console.log("Rol detectado:", user.rol.nombreRol);
+
       return user.rol.nombreRol;
     }
 

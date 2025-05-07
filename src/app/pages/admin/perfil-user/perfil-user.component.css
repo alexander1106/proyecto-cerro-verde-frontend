@@ -1,0 +1,146 @@
+/* General container styling */
+.profile-container {
+  font-family: 'Arial', sans-serif;
+  padding: 40px;
+  background: #f7f7f7;
+  border-radius: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  color: #333;
+  font-size: 28px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.profile-card {
+  display: flex;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  gap: 40px;
+  overflow: hidden;
+}
+
+.profile-left {
+  text-align: center;
+  border-right: 2px solid #f0f0f0;
+  padding-right: 40px;
+  width: 25%;
+}
+
+.foto-perfil {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-bottom: 20px;
+  border: 3px solid #4CAF50;
+}
+
+h3 {
+  margin: 10px 0;
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+.rating {
+  font-size: 14px;
+  color: #888;
+}
+
+.trust {
+  display: block;
+  margin-top: 5px;
+  font-weight: 500;
+  color: #4CAF50;
+}
+
+.profile-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 16px;
+}
+
+label {
+  font-weight: bold;
+  color: #666;
+  font-size: 16px;
+}
+
+span,
+a {
+  color: #333;
+  font-weight: 500;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.2);
+  accent-color: #4CAF50;
+}
+
+.profile-section:last-child {
+  border-bottom: none;
+}
+
+.form-cambio-password {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+input[type="password"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+input[type="password"]:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  background: #4CAF50;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.mensaje {
+  margin-top: 20px;
+  color: #4CAF50;
+  font-weight: 600;
+}

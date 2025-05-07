@@ -27,13 +27,13 @@
 
             <div class="submodulo-buttons">
               <button
-              *ngFor="let submodulo of modulo.submodulos"
+              *ngFor="let permiso of modulo.permisos"
               mat-list-item
-              routerLink="/admin/{{ submodulo.nombre | lowercase | replaceSpaces }}"
+              routerLink="/admin/{{ permiso.nombrePermiso | lowercase | replaceSpaces }}"
               class="nav-button submodulo-nav-button"
             >
-              <mat-icon mat-list-icon>{{ submodulo.icon }}</mat-icon>
-              <span class="capitalize-first">> {{ submodulo.nombre }}</span>
+              <mat-icon mat-list-icon>{{ permiso.icon }}</mat-icon>
+              <span class="capitalize-first">> {{ permiso.nombrePermiso }}</span>
             </button>
             </div>
           </mat-expansion-panel>

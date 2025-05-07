@@ -8,7 +8,6 @@ import baseUrl from '../components/helper';
 })
 export class ModulosService {
 
-
   constructor(private http: HttpClient) { }
 
   // Listar todos los módulos
@@ -36,14 +35,18 @@ export class ModulosService {
     return this.http.delete(`${baseUrl}/modulos/${id}`);
   }
 
-    // Obtener submódulos por ID de módulo
-    public obtenerSubmodulosPorModulo(idModulo: number): Observable<any> {
-      return this.http.get(`${baseUrl}/submodulos/modulos/${idModulo}`);
-    }
+  // Obtener permisos por ID de módulo
+  public obtenerPermisosPorModulo(idModulo: number): Observable<any> {
+    return this.http.get(`${baseUrl}/modulos/${idModulo}/permisos`);
+  }
 
-    // (Opcional) Obtener todos los submódulos
-    public obtenerTodos(): Observable<any> {
-      return this.http.get(`${baseUrl}/submodulos/`);
-    }
+  // Obtener submódulos por ID de módulo
+  public obtenerSubmodulosPorModulo(idModulo: number): Observable<any> {
+    return this.http.get(`${baseUrl}/submodulos/modulos/${idModulo}`);
+  }
 
+  // (Opcional) Obtener todos los submódulos
+  public obtenerTodos(): Observable<any> {
+    return this.http.get(`${baseUrl}/submodulos/`);
+  }
 }

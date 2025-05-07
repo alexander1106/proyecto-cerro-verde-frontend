@@ -51,6 +51,7 @@ import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { TransaccionesHistorialComponent } from './pages/admin/transacciones-historial/transacciones-historial.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
+import { PerfilUserComponent } from './pages/admin/perfil-user/perfil-user.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,6 +80,7 @@ import { AddProductoComponent } from './pages/admin/productos/add-producto/add-p
     ActualizarUserComponent,
     AddProductoComponent,
     TransaccionesHistorialComponent,
+    PerfilUserComponent,
 
   ],
   imports: [
