@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ComprasService } from '../../../../service/compras.service';
-import { Router } from '@angular/router';
 import { ProductosService } from '../../../../service/productos.service';
 import { ProveedoresService } from '../../../../service/proveedores.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-list-compra',
@@ -20,6 +21,8 @@ export class ListCompraComponent {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   productoBusqueda: string = '';
+  columnasTabla: string[] = ['nombre', 'unidad', 'cantidad', 'precio', 'subtotal', 'acciones'];
+  dataSource = new MatTableDataSource<any>();
   //Proveedores
   proveedores: any[] = [];
   proveedorFiltrado: any[] = [];
@@ -28,8 +31,6 @@ export class ListCompraComponent {
   mostrarModal: boolean = false;
   modalRegistro: boolean = false;
   compraSeleccionada: any = null;
-  paginaActual = 1;
-  elementosPorPagina = 5;
   public compra = {
     id_compra: '',
     numeroDoc: '',
@@ -71,23 +72,28 @@ export class ListCompraComponent {
       }
     }>
   }
-  fechaDesde: Date | null = null;
-  fechaHasta: Date | null = null;
   customers: any;
+  paginaActual = 1;
+  elementosPorPagina = 5;
+  paginaActualCompra = 1;
+  elementosPorPaginaCompra = 5;
 
   constructor(
-    private comprasService: ComprasService, 
+    private comprasService: ComprasService,
     private productosService: ProductosService,
-    private proveedoresService: ProveedoresService
+    private proveedoresService: ProveedoresService,
+    private snack: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
     this.listarCompras();
+    this.cargarProveedores();
+    this.cargarProductos();
+    this.dataSource.data = this.compra.detallecompra;
   }
 
   //MODAL DE DETALLE COMPRA
   verModal(id: number) {
-    console.log("Si")
     this.comprasService.buscarCompraId(id).subscribe({
       next: (compra) => {
         this.compraSeleccionada = compra;
@@ -109,7 +115,18 @@ export class ListCompraComponent {
     this.modalRegistro = true;
   }
   cerrarMordalRegistro() {
+    this.compra.numeroDoc = '';
+    this.compra.fecha_compra = '';
+    this.compra.proveedor.razon_social = '';
+    this.compra.proveedor.ruc_proveedor = '';
+    this.compra.descuento = '';
+    this.compra.flete = '';
+    this.compra.igv = '';
+    this.compra.total = '0';
+    this.dataSource.data = [];
+    this.compra.detallecompra = [];
     this.modalRegistro = false;
+    this.cargarProveedores();
   }
 
   //LISTAR COMPRAS
@@ -117,7 +134,8 @@ export class ListCompraComponent {
     this.comprasService.listarCompra().subscribe(
       (data: any) => {
         this.compras = data;
-        console.log("Compras:" + this.compras);
+        this.comprasFiltrados = [...this.compras];
+        this.actualizarPaginacion();
       }, (error) => {
         console.log(error);
         Swal.fire("error !!", "Al cargar el listado de las compras", 'error')
@@ -125,17 +143,52 @@ export class ListCompraComponent {
     )
   }
 
-  formSubmit(){
-
-  }
-
   //REGISTRAR COMPRA
-  registrarCompra(){
-    this.comprasService.registrarCompra(this.compra).subscribe(
+  formSubmit() {
+    const sumaSubTotales = Number(this.compra.detallecompra.reduce((acc, item) => acc + item.subtotal, 0));
+    const flete = Number(this.compra.flete) || 0;
+    const descuento = Number(this.compra.descuento) || 0;
 
+    if (descuento > (sumaSubTotales + flete)) {
+      this.snack.open('Error: El descuento no puede ser mayor al total', 'Aceptar', {
+        duration: 3000,
+      });
+      return;
+    }
+    const fecha = new Date(this.compra.fecha_compra);
+    const fechaFormateada = fecha.toISOString().split('T')[0]; // "2025-05-15"
+    this.compra.fecha_compra = fechaFormateada;
+    this.comprasService.registrarCompra(this.compra).subscribe(
+      (data) => {
+        Swal.fire("Excelente", "La compra fue registrado con éxito", "success");
+        this.listarCompras();
+        this.cerrarMordalRegistro();
+        console.log(this.compra)
+      }, (error) => {
+        console.log(error);
+        this.snack.open('Rellene el formulario', 'Aceptar', {
+          duration: 3000,
+        });
+      }
     )
   }
 
+  //EDITAR COMPRA
+  editarCompra(id: number) {
+    this.comprasService.buscarCompraId(id).subscribe({
+      next: (data: any) => {
+        this.compra = data;
+        this.dataSource.data = this.compra.detallecompra;
+        this.abrirModalRegistro();
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire("Error", "No se pudo obtener los datos de la categoria", "error");
+      }
+    });
+  }
+
+  //ELIMINAR COMPRAS
   eliminarCompra(id: number) {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -169,52 +222,59 @@ export class ListCompraComponent {
     });
   }
 
+  //BUSQUEDA DE COMPRAS
   buscarCompras() {
     const filtro = this.filtroBusqueda.toLowerCase();
     this.comprasFiltrados = this.compras.filter(c =>
-      c.correlativo.toLowerCase().includes(filtro)
+      c.numeroDoc.toLowerCase().includes(filtro) ||
+      c.proveedor.razon_social.toLowerCase().includes(filtro)
     );
   }
 
-  filtrarPorFechar() {
-    if (!this.fechaDesde || !this.fechaHasta) return;
-    const desde = new Date(this.fechaDesde);
-    const hasta = new Date(this.fechaHasta);
 
-    this.comprasFiltrados = this.compras.filter(f => {
-      const fechaItem = new Date(f.fecha_compra);
-      return fechaItem >= desde && fechaItem <= hasta;
-    })
+  // Actualiza las compras por página
+  actualizarPaginacion() {
+    const inicio = (this.paginaActualCompra - 1) * this.elementosPorPaginaCompra;
+    const fin = inicio + this.elementosPorPaginaCompra;
+    this.comprasFiltrados = this.compras.slice(inicio, fin);
+    console.log(this.comprasFiltrados)
+  }
+  // Obtener productos de la página actual
+  get comprasPaginados() {
+    return this.comprasFiltrados;
+  }
+  get totalPagina(): number {
+    return Math.ceil(this.compras.length / this.elementosPorPaginaCompra);
   }
 
-  
+  // Cambiar de página
+  cambiarPaginaCompra(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPagina) {
+      this.paginaActualCompra = pagina;
+      this.actualizarPaginacion();
+    }
+  }
 
-  
-  
+  //PAGINACION DE COMPRA
   productosPaginados() {
     if (!this.compraSeleccionada || !this.compraSeleccionada.detallecompra) {
       return [];
     }
-
     const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
     const fin = inicio + this.elementosPorPagina;
     return this.compraSeleccionada.detallecompra.slice(inicio, fin);
   }
-
   get totalPaginas(): number {
     if (!this.compraSeleccionada || !this.compraSeleccionada.detallecompra) {
       return 0;
     }
-
     return Math.ceil(this.compraSeleccionada.detallecompra.length / this.elementosPorPagina);
   }
-
   cambiarPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
       this.paginaActual = pagina;
     }
   }
-
 
   //CARGAR PROVEEDORES
   cargarProveedores() {
@@ -223,9 +283,8 @@ export class ListCompraComponent {
       this.proveedorFiltrado = [...this.proveedores];
     })
   }
-
   filtrarProveedores() {
-    const filtro = this.proveedorBusqueda.trim().toLowerCase();
+    const filtro = String(this.compra.proveedor).trim().toLowerCase();
     if (filtro === '') {
       this.proveedorFiltrado = [...this.proveedores];
       this.cargarProveedores();
@@ -234,16 +293,88 @@ export class ListCompraComponent {
         proveedor.ruc_proveedor.toLowerCase().includes(filtro) ||
         proveedor.razon_social.toLowerCase().includes(filtro)
       );
-      console.log(this.proveedorFiltrado)
     }
   }
-
   seleccionarProveedor(proveedorSeleccionado: string) {
-    const seleccionada = this.proveedores.find(p => p.razon_social === proveedorSeleccionado);
+    const seleccionada = this.proveedores.find(p => p.ruc_proveedor === proveedorSeleccionado);
     if (seleccionada) {
       this.compra.proveedor.ruc_proveedor = seleccionada.ruc_proveedor;
       this.compra.proveedor.razon_social = seleccionada.razon_social;
       this.compra.proveedor.direccion = seleccionada.direccion;
     }
+    console.log(seleccionada)
+  }
+  mostrarProveedor = (proveedor: any): string => {
+    if (!proveedor || !proveedor.ruc_proveedor || !proveedor.razon_social) {
+      return '';
+    }
+    return `${proveedor.ruc_proveedor} | ${proveedor.razon_social}`;
+  };
+
+  //CARGAR PRODUCTOS
+  cargarProductos() {
+    this.productosService.listarProductosActivos().subscribe((data) => {
+      this.productos = data;
+      this.productosFiltrados = [...this.productos];
+    })
+  }
+  filtrarProductos() {
+    const filtro = this.productoBusqueda.trim().toLowerCase();
+    if (filtro === '') {
+      this.productosFiltrados = [...this.productos];
+      this.cargarProductos();
+    } else {
+      this.productosFiltrados = this.productos.filter(producto =>
+        producto.nombre.toLowerCase().includes(filtro)
+      );
+    }
+  }
+  agregarProducto(producto: any) {
+    const yaExiste = this.compra.detallecompra.find(d => d.producto && d.producto.id_producto == producto.id_producto);
+    if (!yaExiste) {
+      this.compra.detallecompra.push({
+        id_detalle_compra: null,
+        cantidad: 1,
+        precio: 0,
+        subtotal: 0,
+        estado: 1,
+        producto: producto
+      });
+      this.dataSource.data = this.compra.detallecompra;
+    }
+    this.cargarProductos();
+    this.productoBusqueda = '';
+    this.productosFiltrados = [];
+    this.actualizarTotales();
+  }
+  actualizarSubtotal(item: any) {
+    item.subtotal = (item.cantidad * item.precio) || 0;
+    this.actualizarTotales();
+  }
+  eliminarProducto(index: number) {
+    this.compra.detallecompra.splice(index, 1);
+    this.dataSource.data = this.compra.detallecompra;
+    this.actualizarTotales();
+  }
+  actualizarTotales() {
+    let sumaSubTotales = Number(this.compra.detallecompra.reduce((acc, item) => acc + item.subtotal, 0));
+    let flete = this.compra.flete || 0;
+    let descuento = this.compra.descuento || 0;
+    let igv = this.compra.igv || 0;
+    if (Number(descuento) > (sumaSubTotales + Number(flete))) {
+      this.snack.open('Error: El descuento no puede ser mayor al total', 'Aceptar', {
+        duration: 3000,
+      });
+      return
+    }
+    if (Number(igv) > 0) {
+      let conIgv = Number(sumaSubTotales + Number(flete) - Number(descuento)) * (Number(igv) / 100);
+      this.compra.total = String(sumaSubTotales + Number(flete) - Number(descuento) + conIgv);
+    } else {
+      this.compra.total = String(sumaSubTotales + Number(flete) - Number(descuento));
+    }
+  }
+  mostrarNombreProducto(producto: any): string {
+    return producto ? producto.nombre : '';
   }
 }

@@ -193,7 +193,7 @@ export class ListProductoComponent {
     }
   }
 
-  // Actualiza las categorias por página
+  // Actualiza los productos por página
   actualizarPaginacion() {
     const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
     const fin = inicio + this.elementosPorPagina;

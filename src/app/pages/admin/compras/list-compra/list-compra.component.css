@@ -323,7 +323,7 @@
     flex-direction: column;
     gap: 10px;
 
-    & p{
+    & p {
         margin: 0;
     }
 
@@ -371,4 +371,38 @@
     color: #aaa;
     cursor: pointer;
     transition: color 0.2s;
+}
+
+.tabla-scrollable {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.form-field-small .mat-form-field-wrapper {
+    padding-bottom: 0px;
+    /* reduce el espacio interno */
+}
+
+.form-field-small .mat-form-field-infix {
+    padding: 2px 0;
+    /* ajusta el relleno vertical */
+    min-height: 30px;
+    /* opcional: define una altura mínima */
+}
+
+.fletes {
+    width: 100px;
+}
+
+.descuento {
+    width: 150px;
+}
+
+.igv {
+    width: 100px;
+}
+
+.ultimos {
+    display: flex;
+    justify-content: space-between;
 }
