@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CajaService } from '../../../service/caja.service';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router'; // 👈 agregado
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class TransaccionesComponent implements OnInit {
   transacciones: any[] = [];
+  cajaId: number | null = null; // 👈 nuevo
   nuevaTransaccion = {
     montoTransaccion: null,
     tipo: {
@@ -21,17 +22,32 @@ export class TransaccionesComponent implements OnInit {
     }
   };
 
-
-  constructor(private cajaService: CajaService, private router: Router) {}
+  constructor(
+    private cajaService: CajaService,
+    private router: Router,
+    private route: ActivatedRoute // 👈 nuevo
+  ) {}
 
   ngOnInit() {
-    this.cargarTransacciones();
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      this.cajaId = id ? +id : null;
+      this.cargarTransacciones();
+    });
   }
 
   cargarTransacciones() {
-    this.cajaService.obtenerTransaccionesCajaActual().subscribe((data: any) => {
-      this.transacciones = data;
-    });
+    if (this.cajaId) {
+      // Transacciones de caja específica
+      this.cajaService.obtenerTransaccionesPorCajaId(this.cajaId).subscribe((data: any) => {
+        this.transacciones = data;
+      });
+    } else {
+      // Transacciones de caja actual
+      this.cajaService.obtenerTransaccionesCajaActual().subscribe((data: any) => {
+        this.transacciones = data;
+      });
+    }
   }
 
   guardarTransaccion() {
@@ -50,6 +66,6 @@ export class TransaccionesComponent implements OnInit {
   }
 
   volver() {
-    this.router.navigate(['/detalle']);
+    this.router.navigate(['/admin/caja']);
   }
 }

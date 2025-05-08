@@ -126,8 +126,10 @@ const routes: Routes = [{
     },{
       path: 'transacciones',
       component:TransaccionesComponent
-    },
-    {
+    },{
+      path: 'transacciones/:id',
+      component: TransaccionesComponent
+    },{
       path: 'transacciones/historial',
       component: TransaccionesHistorialComponent
     }, {

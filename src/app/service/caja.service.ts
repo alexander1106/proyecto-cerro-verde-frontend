@@ -84,5 +84,9 @@ export class CajaService {
     return this.http.get(`${this.baseUrl}/arqueo/caja/${cajaId}`);
   }
   
+  obtenerTransaccionesPorCajaId(cajaId: number) {
+    return this.http.get(`${this.baseUrl}/transacciones/caja/${cajaId}`);
+  }
+  
 
 }

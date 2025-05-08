@@ -1,5 +1,12 @@
 <div class="arqueo-caja">
-  <h2>{{ modoActualizar ? 'Editar Arqueo de Caja' : 'Nuevo Arqueo de Caja' }}</h2>
+  <h2>
+    {{ 
+      soloLectura 
+        ? 'Visualización de Arqueo de Caja' 
+        : (modoActualizar ? 'Editar Arqueo de Caja' : 'Nuevo Arqueo de Caja') 
+    }}
+  </h2>
+  
   <div class="denominaciones">
     <div class="monedas">
       <h3>Monedas</h3>
@@ -21,7 +28,9 @@
                 class="form-control"
                 [(ngModel)]="d.cantidad"
                 (input)="validarEntero($event)"
+                [disabled]="soloLectura"
               />
+              
               
               </td>
               <td>{{ d.valor * d.cantidad | currency:'S/. ':'symbol' }}</td>
@@ -54,7 +63,9 @@
                 class="form-control"
                 [(ngModel)]="d.cantidad"
                 (input)="validarEntero($event)"
+                [disabled]="soloLectura"
               />
+              
               
               </td>
               <td>{{ d.valor * d.cantidad | currency:'S/. ':'symbol' }}</td>
@@ -74,17 +85,24 @@
   <div class="form-group">
     <label for="observaciones"><strong>Observaciones:</strong></label>
     <textarea
-      id="observaciones"
-      [(ngModel)]="observaciones"
-      rows="3"
-      class="form-control"
-      placeholder="Ingrese alguna observación...">
-    </textarea>
+    id="observaciones"
+    [(ngModel)]="observaciones"
+    rows="3"
+    class="form-control"
+    placeholder="Ingrese alguna observación..."
+    [disabled]="soloLectura"
+  ></textarea>
+  
   </div>
-    <a class="btn btn-warning btn-lg" [routerLink]="['/admin/detalle-caja']">
-    <i class="bi bi-eye me-1"></i> Volver
-  </a>
-  <button (click)="guardarArqueo()" [disabled]="calcularTotal() === 0">Guardar Arqueo</button>
+  <a 
+  class="btn btn-warning btn-lg" 
+  [routerLink]="soloLectura ? ['/admin/caja'] : ['/admin/detalle-caja']">
+  <i class="bi bi-eye me-1"></i> Volver
+</a>
+
+  <button (click)="guardarArqueo()" [disabled]="soloLectura || calcularTotal() === 0">
+    Guardar Arqueo
+  </button>  
 
   <div *ngIf="arqueoGuardado" class="success-message">
     ✅ Arqueo guardado correctamente.

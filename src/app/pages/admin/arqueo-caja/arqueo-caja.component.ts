@@ -18,6 +18,7 @@ export class ArqueoCajaComponent implements OnInit {
   arqueoGuardado: any = null;
   observaciones: string = '';
   modoActualizar: boolean = false;
+  soloLectura: boolean = false;
 
   constructor(private cajaService: CajaService, private http: HttpClient, private router: Router, private route: ActivatedRoute) {}
 
@@ -146,7 +147,6 @@ export class ArqueoCajaComponent implements OnInit {
   verificarArqueoPorCajaId(id: number) {
     this.cajaService.obtenerArqueoPorCajaId(id).subscribe({
       next: (res: any) => {
-        this.modoActualizar = false; // Solo lectura si es cerrada
         this.arqueoGuardado = res;
   
         const arqueoDetalles = res.detalles;
@@ -162,6 +162,11 @@ export class ArqueoCajaComponent implements OnInit {
         });
   
         this.observaciones = res.observaciones;
+  
+        // 🔍 Verifica si la caja está cerrada
+        this.cajaService.obtenerPorId(id).subscribe((caja: any) => {
+          this.soloLectura = !!caja.fechaCierre; // si tiene fecha de cierre → solo lectura
+        });
       },
       error: () => {
         Swal.fire({
@@ -172,5 +177,6 @@ export class ArqueoCajaComponent implements OnInit {
       }
     });
   }
+  
   
 }
