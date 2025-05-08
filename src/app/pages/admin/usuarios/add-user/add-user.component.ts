@@ -20,6 +20,9 @@ rolSeleccionado: number | null = null;
   modulos: any[] = [];
   imagenPrevia: string | ArrayBuffer | null = null;
 
+
+  mostrarPassword: boolean = false;
+
   public user = {
     username: '',
     password: '',
@@ -41,12 +44,7 @@ rolSeleccionado: number | null = null;
       }
     ]
     },
-    usuariosPermisos:[
-      {
-      permisos:{
-        id:0
-      }
-    }]
+
   };
 
   constructor(
@@ -97,12 +95,25 @@ rolSeleccionado: number | null = null;
     });
   }
   formSubmit(form: NgForm) {
-    if (!form.valid) {
-      this.snack.open('Por favor complete todos los campos obligatorios', 'Aceptar', {
-        duration: 3000,
-      });
-      return;
-    }
+
+   if (!form.valid) {
+    this.snack.open('Por favor complete todos los campos obligatorios', 'Aceptar', {
+      duration: 3000,
+    });
+    return;
+  }
+  // Validación de la contraseña
+  const password = this.user.password;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  if (!passwordRegex.test(this.user.password)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Contraseña no válida',
+      text: 'La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un símbolo.',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
 
     // Asegúrate de que el rol seleccionado es el correcto
     const selectedRole = this.roles.find((role: any) => role.id === this.rolSeleccionado);
@@ -112,28 +123,10 @@ rolSeleccionado: number | null = null;
 
       this.user.rol.nombreRol = selectedRole.nombreRol;
       this.user.rol.descripcion = selectedRole.descripcion;
-      this.user.rol.rolesPermisos = [];
-      this.user.usuariosPermisos = [];
 
-
-      // Recopilar los submódulos seleccionados
-      this.modulos.forEach(modulo => {
-        modulo.submodulos.forEach((sub: { seleccionado: boolean; idSubModulo: number }) => {
-          if (sub.seleccionado) {
-            this.user.rol.rolesPermisos.push({
-              permisos: {
-                id: sub.idSubModulo
-              }
-            });
-            this.user.usuariosPermisos.push({
-              permisos: {
-                id: sub.idSubModulo
-              }
-            });
-          }
-        });
-      });
     }
+
+
 
     console.log('Usuario con permisos:', this.user); // Verifica el objeto `user` con los permisos agregados
     this.userService.añadirUsuario(this.user).subscribe(

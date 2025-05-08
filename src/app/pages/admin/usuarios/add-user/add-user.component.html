@@ -46,10 +46,24 @@
                   required
                   [(ngModel)]="user.password"
                   name="password"
-                  type="password"
+                  [type]="mostrarPassword ? 'text' : 'password'"
                   placeholder="Contraseña"
                 />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="mostrarPassword = !mostrarPassword"
+                  [attr.aria-label]="'Mostrar/ocultar contraseña'"
+                  [attr.aria-pressed]="mostrarPassword"
+                >
+                  <mat-icon>{{ mostrarPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-hint>
+                  Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo
+                </mat-hint>
               </mat-form-field>
+
 
               <mat-form-field class="full-width" appearance="outline">
                 <mat-label>Email</mat-label>

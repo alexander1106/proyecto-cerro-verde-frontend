@@ -3,7 +3,7 @@
 
   <div class="card">
     <div class="info-trabajadores-linea">
-      <h5>Trabajadores registrados</h5>
+      <h4>Trabajadores registrados</h4>
       <!-- Buscador personalizado sin Angular Material -->
       <div class="mover">
         <div class="buscador">
@@ -26,12 +26,11 @@
       </div>
     </div>
 
-
     <table class="tabla-trabajadores">
       <thead>
         <tr>
+          <th>#</th> <!-- Nueva columna para el índice -->
           <th>Foto</th>
-          <th>ID</th>
           <th>Nombre y apellidos</th>
           <th>Usuario</th>
           <th>Email</th>
@@ -39,29 +38,26 @@
           <th>Estado</th>
           <th>Puesto</th>
           <th>Acciones</th>
-
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let trabajador of (filtroBusqueda ? trabajadoresFiltrados : usuarios)">
+        <tr *ngFor="let trabajador of (filtroBusqueda ? trabajadoresFiltrados : usuarios); let i = index">
+          <td>{{ i + 1 }}</td> <!-- Mostrar el índice de cada trabajador -->
           <td>
             <img [src]="trabajador.perfil" alt="Perfil" class="foto-perfil" />
           </td>
-          <td>{{ trabajador.idUsuario }}</td>
-          <td>{{ trabajador.nombre}} {{ trabajador.apellidos }}</td>
+          <td style="display: none;">{{ trabajador.idUsuario }}</td>
+          <td>{{ trabajador.nombre }} {{ trabajador.apellidos }}</td>
           <td>{{ trabajador.username }}</td>
           <td>{{ trabajador.email }}</td>
           <td>{{ trabajador.telefono }}</td>
           <td>{{ trabajador.enable ? 'Activo' : 'Inactivo' }}</td>
           <td>{{ trabajador.rol.nombreRol }}</td>
           <td class="acciones">
-
             <button class="btn-accion editar" [routerLink]="['/admin/edit-user', trabajador.idUsuario]">
-              <mat-icon class="edit" color="primary">edit {{trabajador.idUsuarios}}</mat-icon>
+              <mat-icon class="edit" color="primary">edit {{trabajador.idUsuario}}</mat-icon>
             </button>
-
           </td>
-
         </tr>
       </tbody>
     </table>

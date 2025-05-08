@@ -6,7 +6,7 @@
   <div class="contenido">
     <h2>Agregar nuevo rol</h2>
 
-    <form (ngSubmit)="formSubmit()" #rolForm="ngForm">
+    <form (ngSubmit)="formSubmit(rolForm)" #rolForm="ngForm">
       <!-- Nombre del rol -->
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Nombre del rol</mat-label>

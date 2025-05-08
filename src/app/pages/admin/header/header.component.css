@@ -61,6 +61,7 @@
 
 /* Usuario */
 .user-box {
+  cursor: pointer;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -87,4 +88,73 @@
 .user-role {
   font-size: 0.8rem;
   color: #888;
+}
+.dropdown-menu-user {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 12px;
+  margin-top: 10px;
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.cuadro {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: linear-gradient(135deg, rgb(2, 57, 80), #062e5f);
+  color: white !important;
+}
+
+.user-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid #fff;
+}
+
+.user-info {
+  color: white !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+h3{
+  color: gray !important;
+  font-size: 25px !important;
+}
+.user-email {
+  margin: 2px 0 0;
+  font-size: 14px !important;
+  opacity: 0.9;
+}
+
+.dropdown-item {
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s ease;
+  color: #333;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f3f5;
+}
+
+.dropdown-item.logout {
+  color: #e74c3c;
 }

@@ -23,11 +23,29 @@
   </div>
 
   <!-- Usuario -->
-  <div class="user-box d-flex align-items-center gap-2 px-3 py-2 ms-3" routerLink="/admin/perfil-user">
-    <img src="{{ user?.perfil }}" alt="{{ user?.username }}" class="user-image" />
+<!-- Usuario -->
+<div class="user-box d-flex align-items-center gap-2 px-3 py-2 ms-3 position-relative" (click)="toggleDropdown()">
+  <div class="user-info">
+    <div class="user-name">{{ user?.username }}</div>
+    <div class="user-role">Administrador</div>
+  </div>
+  <img [src]="user?.perfil" alt="{{ user?.username }}" class="user-image" />
+<!-- Dropdown -->
+<div class="dropdown-menu-user shadow-sm" *ngIf="dropdownVisible">
+  <div class="cuadro">
+    <img [src]="user?.perfil" alt="{{ user?.username }}" class="user-image" />
     <div class="user-info">
-      <div class="user-name">{{ user?.username }}</div>
-      <div class="user-role">Administrador</div>
+      <h3 class="user-name">{{ user?.nombre }} {{ user?.apellidos }}</h3>
+      <p class="user-email">{{ user?.email }}</p>
     </div>
   </div>
+
+  <div class="dropdown-item" routerLink="/admin/perfil-user">
+    <i class="fas fa-user-circle"></i> Mi Perfil
+  </div>
+  <div class="dropdown-item logout" (click)="logout()">
+    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+  </div>
+</div>
+
 </div>

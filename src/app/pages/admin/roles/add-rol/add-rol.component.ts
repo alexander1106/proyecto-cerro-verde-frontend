@@ -31,21 +31,28 @@ export class AddRolComponent implements OnInit {
   ngOnInit(): void {
     this.cargarModulos();
   }
-  formSubmit() {
-      // Limpiar lista de permisos antes de llenarla
- // Limpiar lista de permisos antes de llenarla
-this.rol.rolesPermisos = [];
-
-// Recorrer módulos y agregar permisos seleccionados
-this.modulos.forEach((modulo) => {
-  modulo.permisos.forEach((permiso: any) => {
-    if (permiso.seleccionado) {
-      this.rol.rolesPermisos.push({
-        permisos: { id: permiso.id }  // Este formato es compatible con tu backend
+  formSubmit(form: any) {
+    if (!form.valid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos obligatorios',
+        text: 'Por favor, complete todos los campos obligatorios.',
+        confirmButtonText: 'Cerrar'
       });
+      return;
     }
-  });
-});
+
+    this.rol.rolesPermisos = [];
+
+    this.modulos.forEach((modulo) => {
+      modulo.permisos.forEach((permiso: any) => {
+        if (permiso.seleccionado) {
+          this.rol.rolesPermisos.push({
+            permisos: { id: permiso.id }
+          });
+        }
+      });
+    });
 
     console.log(this.rol);
     console.log(this.rol.rolesPermisos);
@@ -54,20 +61,16 @@ this.modulos.forEach((modulo) => {
       (data) => {
         Swal.fire("Excelente", "El rol fue registrado con éxito en el sistema", "success");
         this.router.navigate(["/admin/roles"]);
-        console.log(data);
       },
       (error) => {
         if (error.status === 409) {
-          // Error por nombre de rol ya existente
           Swal.fire("Error", error.error || "El nombre del rol ya existe en el sistema", "error");
         } else {
-          // Otro tipo de error
           Swal.fire("Error", "Ocurrió un error al registrar el rol", "error");
           console.error("Error al registrar el rol:", error);
         }
       }
     );
-
   }
 
   cargarModulos(): void {

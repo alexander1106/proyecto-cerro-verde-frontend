@@ -25,7 +25,7 @@
 }
 
 .mover{
-  width: 35vw !important;
+  width: 26.4vw !important;
   float: right;
   display: flex;
 }
@@ -129,7 +129,7 @@
 .tabla-categorias th,
 .tabla-categoriass td {
   padding: 14px;
-  text-align: left;
+  text-align: center !important;
   border-bottom: 1px solid #eee;
   font-size: 15px;
   color: #444;
@@ -147,7 +147,9 @@
   background-color: #f1f1f1;
   cursor: pointer;
 }
-
+.tabla-categorias tbody tr td{
+  text-align: center;
+}
 @media (max-width: 768px) {
   .buscador,
   .btn-agregar {

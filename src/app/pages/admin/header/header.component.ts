@@ -14,6 +14,11 @@ export class HeaderComponent  implements OnInit  {
 
   isLoggedIn = false;
   user:any = null;
+  dropdownVisible: boolean = false;
+
+  toggleDropdown() {
+    this.dropdownVisible = !this.dropdownVisible;
+  }
 
   ngOnInit(): void {
     this.isLoggedIn = this.loginService.isLoggedIn();

@@ -76,34 +76,12 @@ export class ActualizarUserComponent implements OnInit {
               }
             );
 
-            // Cargar módulos y submódulos
-            this.modulosService.listarModulos().subscribe(
-              (modulos) => {
-                const modulosConSubmodulos = modulos.map((modulo: any) => {
-                  return this.modulosService.obtenerSubmodulosPorModulo(modulo.idModulo).toPromise()
-                    .then((submodulos) => {
-                      modulo.submodulos = submodulos;
-                      return modulo;
-                    });
-                });
-
-                Promise.all(modulosConSubmodulos).then((result) => {
-                  this.modulos = result;
-
                   // Luego de tener módulos cargados, obtenemos al usuario
                   this.userService.obtenerUsuario(this.idUser).subscribe(
                     (data: any) => {
                       this.user = data;
                       this.rolSeleccionado = this.user.rol?.id ?? null;
 
-                      // Marcar los permisos seleccionados
-                      this.modulos.forEach(modulo => {
-                        modulo.submodulos.forEach((sub: any) => {
-                          sub.seleccionado = this.user.usuariosPermisos.some((permiso: any) => {
-                            return permiso.permisos.id === sub.idSubModulo;
-                          });
-                        });
-                      });
 
                     },
                     (error) => {
@@ -112,13 +90,7 @@ export class ActualizarUserComponent implements OnInit {
                     }
                   );
 
-                });
-              },
-              (error) => {
-                console.error('Error al cargar los módulos:', error);
-              }
-            );
-          }
+                }
 
           onFileSelected(event: any): void {
             const file = event.target.files[0];
@@ -160,26 +132,9 @@ export class ActualizarUserComponent implements OnInit {
               this.user.rol.nombreRol = selectedRole.nombreRol;
               this.user.rol.descripcion = selectedRole.descripcion;
               this.user.rol.rolesPermisos = [];
-              this.user.usuariosPermisos = [];
 
 
-              // Recopilar los submódulos seleccionados
-              this.modulos.forEach(modulo => {
-                modulo.submodulos.forEach((sub: { seleccionado: boolean; idSubModulo: number }) => {
-                  if (sub.seleccionado) {
-                    this.user.rol.rolesPermisos.push({
-                      permisos: {
-                        id: sub.idSubModulo
-                      }
-                    });
-                    this.user.usuariosPermisos.push({
-                      permisos:{
-                        id: sub.idSubModulo
-                      }
-                    })
-                  }
-                });
-              });
+
             }
 
             console.log('Usuario con permisos:', this.user); // Verifica el objeto `user` con los permisos agregados
@@ -228,23 +183,4 @@ export class ActualizarUserComponent implements OnInit {
             );
           }
 
-          cargarModulos(): void {
-            this.modulosService.listarModulos().subscribe(
-              (modulos) => {
-                const modulosConSubmodulos = modulos.map((modulo: any) => {
-                  return this.modulosService.obtenerSubmodulosPorModulo(modulo.idModulo).toPromise()
-                    .then((submodulos) => {
-                      modulo.submodulos = submodulos;
-                      return modulo;
-                    });
-                });
-                Promise.all(modulosConSubmodulos).then((result) => {
-                  this.modulos = result;
-                });
-              },
-              (error) => {
-                console.error('Error al cargar los módulos:', error);
-              }
-            );
-          }
         }
