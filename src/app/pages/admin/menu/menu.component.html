@@ -1,50 +1,50 @@
-  <mat-card class="sidebar-card">
-    <mat-card-header class="sidebar-header">
-      <div class="logo-container">
-        <img src="../../../../assets/logo.png" alt="Logo" />
-        <h5>Cerro Verde</h5>
-      </div>
-    </mat-card-header>
+<mat-card class="sidebar-card">
+  <mat-card-header class="sidebar-header">
+    <div class="logo-container">
+      <img src="../../../../assets/logo.png" alt="Logo" />
+      <h5>Cerro Verde</h5>
+    </div>
+  </mat-card-header>
 
-    <mat-card-content class="sidebar-content">
-      <mat-action-list>
+  <mat-card-content class="sidebar-content">
+    <mat-action-list>
 
-        <!-- Inicio -->
-        <button mat-list-item routerLink="/admin" class="nav-button">
-          <mat-icon mat-list-icon>dashboard</mat-icon>
-          <span class="capitalize-first inicio">Inicio</span>
-        </button>
+      <!-- Inicio -->
+      <button mat-list-item routerLink="/admin" class="nav-button">
+        <mat-icon mat-list-icon>dashboard</mat-icon>
+        <span class="capitalize-first inicio">Inicio</span>
+      </button>
 
-        <!-- Módulos -->
-        <mat-accordion>
-          <mat-expansion-panel *ngFor="let modulo of modulos" class="modulo-panel">
-            <mat-expansion-panel-header>
-              <div class="modulo-header">
-                <mat-icon mat-list-icon>{{ modulo.icon }}</mat-icon>
-                <span class="nombre_modulo">{{ modulo.nombre }}</span>
-              </div>
-            </mat-expansion-panel-header>
-
-            <div class="submodulo-buttons">
-              <button
-              *ngFor="let submodulo of modulo.submodulos"
-              mat-list-item
-              routerLink="/admin/{{ submodulo.nombre | lowercase | replaceSpaces }}"
-              class="nav-button submodulo-nav-button"
-            >
-              <mat-icon mat-list-icon>{{ submodulo.icon }}</mat-icon>
-              <span class="capitalize-first">> {{ submodulo.nombre }}</span>
-            </button>
+      <!-- Módulos -->
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let modulo of modulos" class="modulo-panel">
+          <mat-expansion-panel-header>
+            <div class="modulo-header">
+              <mat-icon mat-list-icon>{{ modulo.icon }}</mat-icon>
+              <span class="nombre_modulo">{{ modulo.nombre }}</span>
             </div>
-          </mat-expansion-panel>
-        </mat-accordion>
+          </mat-expansion-panel-header>
 
-        <!-- Cerrar sesión -->
-        <button mat-list-item (click)="cerrar()" class="nav-button logout">
-          <mat-icon mat-list-icon>logout</mat-icon>
-          <span>Salir</span>
-        </button>
+          <div class="submodulo-buttons">
+            <button
+            *ngFor="let permiso of modulo.permisos"
+            mat-list-item
+            routerLink="/admin/{{ permiso.nombrePermiso | lowercase | replaceSpaces }}"
+            class="nav-button submodulo-nav-button"
+          >
+            <mat-icon mat-list-icon>{{ permiso.icon }}</mat-icon>
+            <span class="capitalize-first">> {{ permiso.nombrePermiso }}</span>
+          </button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
 
-      </mat-action-list>
-    </mat-card-content>
-  </mat-card>
+      <!-- Cerrar sesión -->
+      <button mat-list-item (click)="cerrar()" class="nav-button logout">
+        <mat-icon mat-list-icon>logout</mat-icon>
+        <span>Salir</span>
+      </button>
+
+    </mat-action-list>
+  </mat-card-content>
+</mat-card>

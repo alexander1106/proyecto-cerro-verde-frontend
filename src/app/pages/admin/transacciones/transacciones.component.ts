@@ -18,8 +18,7 @@ export class TransaccionesComponent implements OnInit {
     montoTransaccion: null,
     tipo: {
       id: 1
-    },
-    metodo: '' // ahora es un string vacío
+    }
   };
 
 
@@ -43,7 +42,6 @@ export class TransaccionesComponent implements OnInit {
         this.nuevaTransaccion = {
           montoTransaccion: null,
           tipo: { id: 1 },
-          metodo: ''
         };
         this.cargarTransacciones();
       },

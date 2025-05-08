@@ -23,7 +23,8 @@
                     </span>
                   </div>
                   <small class="text-muted">{{ trans.tipo.nombre }}</small>
-                  <small class="text-muted"> Método: {{ trans.metodo }}</small>
+                  <small class="text-muted"> ; Usuario: {{ trans.caja.usuario.nombre }}</small>
+                  <small class="text-muted"> ; ID Caja: {{ trans.caja.id }}</small>
                 </div>
               </div>
             </div>
@@ -37,9 +38,9 @@
           </div>
 
           <div class="navigation-buttons">
-            <a class="btn btn-outline-secondary" [routerLink]="['/admin/transacciones']">
+            <a class="btn btn-outline-secondary" [routerLink]="['/admin/caja']">
               <i class="bi bi-arrow-left me-2"></i>
-              Volver a Transacciones
+              Volver a Caja
             </a>
           </div>
         </div>

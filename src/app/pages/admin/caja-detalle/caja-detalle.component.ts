@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CajaService } from '../../../service/caja.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-caja-detalle',
@@ -16,34 +18,102 @@ export class CajaDetalleComponent implements OnInit {
   caja: any = null;
   historial: any[] = [];
   montoCierre: number = 0;
+  readOnly: boolean = false;
+  
 
   constructor(
-    private router: Router
-  ) {}
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}  
 
   ngOnInit() {
-    this.cajaService.obtenerCajaAperturada().subscribe(caja => {
-      this.caja = caja;
-      this.cajaService.cajaActual.set(caja);
-    });
-  }
+    const id = this.route.snapshot.paramMap.get('id');
+  
+    if (id) {
+      // Modo solo lectura para caja cerrada
+      this.cajaService.obtenerPorId(+id).subscribe(caja => {
+        this.caja = caja;
+        this.readOnly = true; // flag
+      });
+    } else {
+      // Caja actual en uso
+      this.cajaService.obtenerCajaAperturada().subscribe(caja => {
+        this.caja = caja;
+        this.cajaService.cajaActual.set(caja);
+        this.readOnly = false;
+      });
+    }
+  }  
 
   cerrarCaja() {
-    if (this.montoCierre <= 0) {
-      alert('Por favor ingrese un monto válido');
-      return;
-    }
-
-    this.cajaService.cerrarCaja(this.montoCierre).subscribe({
-      next: () => {
-        this.showSuccessMessage('Caja cerrada correctamente ✅');
-        this.caja = null;
-        this.cajaService.cajaActual.set(null);
-        this.router.navigate(['/apertura']);
+    if (!this.caja) return;
+  
+    // Paso 1: Verificar si existe arqueo
+    this.cajaService.verificarExistenciaArqueo().subscribe({
+      next: (res: any) => {
+        // Si hay arqueo, continuar con cierre normal
+        this.confirmarCierreCaja();
       },
-      error: err => this.showErrorMessage('Error al cerrar la caja: ' + err.error)
+      error: err => {
+        if (err.status === 404) {
+          // No hay arqueo: mostrar SweetAlert personalizado
+          Swal.fire({
+            title: 'Por favor realice el arqueo antes de cerrar la caja',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ir al Arqueo',
+            cancelButtonText: 'Cancelar'
+          }).then(result => {
+            if (result.isConfirmed) {
+              this.router.navigate(['/admin/caja/arqueo']);
+            }
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al verificar arqueo',
+            text: 'Ocurrió un error inesperado al verificar el arqueo.'
+          });
+        }
+      }
     });
   }
+  
+  private confirmarCierreCaja() {
+    Swal.fire({
+      title: '¿Estás seguro de cerrar la caja?',
+      text: `Saldo actual: S/. ${this.caja.saldo.toFixed(2)}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.cajaService.cerrarCaja(0).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Caja cerrada correctamente ✅',
+              showConfirmButton: false,
+              timer: 1500
+            });
+  
+            this.caja = null;
+            this.cajaService.cajaActual.set(null);
+            this.router.navigate(['/admin/caja']);
+          },
+          error: err => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al cerrar la caja',
+              text: err.error || 'Ocurrió un error inesperado.'
+            });
+          }
+        });
+      }
+    });
+  }
+  
 
   private showSuccessMessage(message: string) {
     const alertPlaceholder = document.createElement('div');

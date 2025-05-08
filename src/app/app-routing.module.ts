@@ -26,6 +26,7 @@ import { TransaccionesHistorialComponent } from './pages/admin/transacciones-his
 import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/actualizar-user.component';
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
+import { ArqueoCajaComponent } from './pages/admin/arqueo-caja/arqueo-caja.component';
 
 
 const routes: Routes = [{
@@ -114,6 +115,15 @@ const routes: Routes = [{
       component:CajaDetalleComponent
     },
     {
+      path: 'detalle-caja/:id',
+      component: CajaDetalleComponent
+    },{
+      path: 'caja/arqueo',
+      component:ArqueoCajaComponent
+    },{
+      path: 'caja/arqueo/:id',
+      component: ArqueoCajaComponent
+    },{
       path: 'transacciones',
       component:TransaccionesComponent
     },
