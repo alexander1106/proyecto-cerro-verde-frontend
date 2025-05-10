@@ -127,7 +127,7 @@
 }
   
 .tabla-categorias th,
-.tabla-categoriass td {
+.tabla-categorias td {
     padding: 14px;
     text-align: left;
     border-bottom: 1px solid #eee;
@@ -242,3 +242,76 @@
     color: #1976d2;
 }
   
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro translúcido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 35rem;
+    min-height: 225px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease-out;
+    position: relative;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.modal-content p {
+    margin: 12px 0;
+    font-size: 16px;
+    color: #444;
+}
+
+.modal .close {
+    position: absolute;
+    right: 16px;
+    top: 14px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal .close:hover {
+    color: #f44336;
+}
+
+.auxiliar {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}

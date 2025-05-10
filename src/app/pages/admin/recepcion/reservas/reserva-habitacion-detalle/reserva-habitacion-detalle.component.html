@@ -1,0 +1,25 @@
+<ng-container *ngIf="reserva as r">
+    <div class="reserva-container">
+      <h2>Detalle de Reserva #{{ r.id_reserva }}</h2>
+      <p><strong>Cliente:</strong> {{ r.cliente.nombre }}</p>
+      <p><strong>Fecha Inicio:</strong> {{ r.fecha_inicio | date:'short' }}</p>
+      <p><strong>Fecha Fin:</strong> {{ r.fecha_fin | date:'short' }}</p>
+      <p><strong>Estado:</strong> {{ r.estado_reserva }}</p>
+      <p><strong>Tipo:</strong> {{ r.tipo }}</p>
+      <p><strong>Comentarios:</strong> {{ r.comentarios }}</p>
+
+      <h3>Habitaciones Reservadas</h3>
+      <div *ngIf="r.habitacionesXReserva && r.habitacionesXReserva.length > 0; else noHabitaciones">
+        <ul>
+          <li *ngFor="let hr of r.habitacionesXReserva">
+            Habitación #{{ hr.habitacion.numero }} - Tipo: {{ hr.habitacion.tipo_habitacion?.nombre }}
+            (Piso: {{ hr.habitacion.piso }})
+          </li>
+        </ul>
+      </div>
+      <button routerLink="/admin/reservas">Cancelar</button>
+      <ng-template #noHabitaciones>
+        <p>No hay habitaciones asociadas a esta reserva.</p>
+      </ng-template>
+    </div>
+  </ng-container>

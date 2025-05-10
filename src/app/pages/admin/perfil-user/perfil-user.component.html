@@ -24,43 +24,64 @@
             <form class="profile-section-form">
               <div class="profile-section">
                 <label for="username">Username:</label>
-                <input id="username" type="text" [(ngModel)]="user.username" name="username" />
+                <input id="username" type="text" [(ngModel)]="user.username" name="username" readonly />
 
                 <label for="nombre">Nombre:</label>
-                <input id="nombre" type="text" [(ngModel)]="user.nombre" name="nombre" />
+                <input id="nombre" type="text" [(ngModel)]="user.nombre" name="nombre" readonly />
 
                 <label for="apellidos">Apellidos:</label>
-                <input id="apellidos" type="text" [(ngModel)]="user.apellidos" name="apellidos" />
+                <input id="apellidos" type="text" [(ngModel)]="user.apellidos" name="apellidos" readonly />
               </div>
 
               <div class="profile-section">
                 <label for="telefono">Teléfono:</label>
-                <input id="telefono" type="text" [(ngModel)]="user.telefono" name="telefono" />
+                <input id="telefono" type="text" [(ngModel)]="user.telefono" name="telefono" readonly />
 
                 <label for="email">Correo:</label>
-                <input id="email" type="email" [(ngModel)]="user.email" name="email" />
+                <input id="email" type="email" [(ngModel)]="user.email" name="email" readonly />
 
                 <label for="rol">Rol:</label>
                 <input id="rol" type="text" [value]="user.rol.nombreRol" disabled />
               </div>
-
-              <button type="button" class="btn-primary">Guardar cambios</button>
             </form>
+
           </ng-container>
 
           <!-- Formulario de cambio de contraseña -->
           <ng-template #formularioCambio>
             <div class="form-cambio-password">
+              <!-- Contraseña actual -->
               <label for="actual">Contraseña actual:</label>
-              <input type="password" id="actual" [(ngModel)]="passwordActual" />
+              <div class="password-input">
+                <input [type]="verActual ? 'text' : 'password'" id="actual" [(ngModel)]="passwordActual" />
+                <button type="button" (click)="verActual = !verActual">
+                  <i class="fa" [ngClass]="verActual ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
+              </div>
 
+              <!-- Nueva contraseña -->
               <label for="nueva">Nueva contraseña:</label>
-              <input type="password" id="nueva" [(ngModel)]="nuevaPassword" />
+              <div class="password-input">
+                <input [type]="verNueva ? 'text' : 'password'" id="nueva" [(ngModel)]="nuevaPassword" />
+                <button type="button" (click)="verNueva = !verNueva">
+                  <i class="fa" [ngClass]="verNueva ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
+              </div>
+
+              <!-- Repetir contraseña -->
+              <label for="repetir">Repetir nueva contraseña:</label>
+              <div class="password-input">
+                <input [type]="verRepetir ? 'text' : 'password'" id="repetir" [(ngModel)]="repetirPassword" />
+                <button type="button" (click)="verRepetir = !verRepetir">
+                  <i class="fa" [ngClass]="verRepetir ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
+              </div>
 
               <button class="btn-primary" (click)="cambiarPassword()">Guardar</button>
             </div>
             <div *ngIf="mensajeCambio" class="mensaje">{{ mensajeCambio }}</div>
           </ng-template>
+
         </div>
 
       </div>

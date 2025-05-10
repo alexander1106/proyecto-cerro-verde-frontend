@@ -1,0 +1,24 @@
+<ng-container *ngIf="reserva as r">
+    <div class="reserva-container">
+      <h2>Detalle de Reserva #{{ r.id_reserva }}</h2>
+      <p><strong>Cliente:</strong> {{ r.cliente.nombre }}</p>
+      <p><strong>Fecha Inicio:</strong> {{ r.fecha_inicio | date:'short' }}</p>
+      <p><strong>Fecha Fin:</strong> {{ r.fecha_fin | date:'short' }}</p>
+      <p><strong>Estado:</strong> {{ r.estado_reserva }}</p>
+      <p><strong>Tipo:</strong> {{ r.tipo }}</p>
+      <p><strong>Comentarios:</strong> {{ r.comentarios }}</p>
+
+      <h3>Salones Reservados</h3>
+      <div *ngIf="r.salonesXReserva && r.salonesXReserva.length > 0; else noSalones">
+        <ul>
+          <li *ngFor="let hr of r.salonesXReserva">
+            Salón {{ hr.salon.nombre }} - Precio: {{ hr.salon.precio_diario }}
+          </li>
+        </ul>
+      </div>
+      <button routerLink='/admin/reservas'>Volver</button>
+      <ng-template #noSalones>
+        <p>No hay salones asociados a esta reserva.</p>
+      </ng-template>
+    </div>
+  </ng-container>

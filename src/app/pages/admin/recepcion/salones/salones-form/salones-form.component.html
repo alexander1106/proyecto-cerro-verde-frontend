@@ -1,0 +1,50 @@
+<form [formGroup]="salonForm" (ngSubmit)="onSubmit()" novalidate class="form-container shadow rounded bg-white">
+
+  <h3>Nuevo Salón</h3>
+
+  <div class="mb-3">
+    <label for="nombre" class="form-label">Nombre de Salón</label>
+    <input type="text" id="nombre" formControlName="nombre" class="form-control"
+           [ngClass]="{'is-invalid': submitted && f['nombre'].invalid}">
+    <div *ngIf="submitted && f['nombre'].invalid" class="invalid-feedback">
+      Nombre de salón es requerido.
+    </div>
+    <div *ngIf="submitted && f['nombre'].errors?.['nombreDuplicado']" class="invalid-feedback">
+      Ya existe una salón con este nombre.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="precio_hora">Precio por hora</label>
+    <div class="input-group">
+      <span class="input-group-text">S/.</span>
+      <input type="number" id="precio_hora" formControlName="precio_hora" class="form-control" 
+            [ngClass]="{'is-invalid': submitted && f['precio_hora'].errors}" step="0.01">
+    </div>
+    <div *ngIf="submitted && f['precio_hora'].errors" class="invalid-feedback">
+      <div *ngIf="f['precio_hora'].errors['required']">Precio por hora es requerido</div>
+      <div *ngIf="f['precio_hora'].errors['min']">Precio debe ser mayor a 0</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="precio_diario">Precio por día</label>
+    <div class="input-group">
+      <span class="input-group-text">S/.</span>
+      <input type="number" id="precio_diario" formControlName="precio_diario" class="form-control" 
+            [ngClass]="{'is-invalid': submitted && f['precio_diario'].errors}" step="0.01">
+    </div>
+    <div *ngIf="submitted && f['precio_diario'].errors" class="invalid-feedback">
+      <div *ngIf="f['precio_diario'].errors['required']">Precio por día es requerido</div>
+      <div *ngIf="f['precio_diario'].errors['min']">Precio debe ser mayor a 0</div>
+    </div>
+  </div>
+
+  <div class="form-buttons">
+    <button type="submit" class="btn btn-success">
+      {{ isEditing ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="volver()">Cancelar</button>
+  </div>
+
+</form>

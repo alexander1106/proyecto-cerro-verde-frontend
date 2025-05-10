@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -10,6 +10,10 @@ export class ProveedoresService {
 
   listarProveedores(){
     return this.http.get<any[]>("http://localhost:8080/api/proveedores")
+  }
+
+  listarProveedoresActivo(){
+    return this.http.get<any[]>("http://localhost:8080/api/proveedoresActivos")
   }
 
   buscarProveedorId(id: string){
@@ -26,5 +30,9 @@ export class ProveedoresService {
 
   eliminarProveedor(id: string) {
     return this.http.delete(`http://localhost:8080/api/proveedores/${id}`)
+  }
+
+  buscarRuc(numeroRuc: string, headers: HttpHeaders) {
+    return this.http.get<any>(`http://localhost:8080/api/ruc/${numeroRuc}`, {headers});
   }
 }

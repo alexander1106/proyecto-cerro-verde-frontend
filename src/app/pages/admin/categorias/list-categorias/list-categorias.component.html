@@ -1,47 +1,76 @@
 <div class="container">
-    <app-header></app-header>
+  <app-header></app-header>
 
-    <div class="card">
-      <div class="info-categorias-linea">
-        <h5>Categorias de Productos registrados</h5>
-        <!-- Buscador personalizado sin Angular Material -->
-        <div class="mover">
-          <div class="buscador">
-            <div class="input-wrapper">
-              <input type="text" id="searchInput" placeholder="Buscador categoria" [(ngModel)]="filtroBusqueda"
-                (ngModelChange)="buscarCategorias()" />
-              <button type="button" class="btn-icono">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
+  <div class="card">
+    <div class="info-categorias-linea">
+      <h5>Categorias registrados</h5>
+      <!-- Buscador personalizado sin Angular Material -->
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" id="searchInput" placeholder="Buscador categoria" [(ngModel)]="filtroBusqueda"
+              (ngModelChange)="buscarCategorias()" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
           </div>
-
-          <button class="btn-agregar">
-            <a routerLink="/admin/add-categoria">+ Categoria</a>
-          </button>
         </div>
-      </div>
 
-      <table class="tabla-categorias">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let categoria of (filtroBusqueda ? categoriasFiltrados : categorias)">
-            <td>{{ categoria.nombre }}</td>
-            <td class="acciones">
-              <button class="btn-accion editar" (click)="editarCategoria(categoria.id_categoria)">
-                <mat-icon class="edit" color="primary">edit</mat-icon>
-              </button>
-              <button class="btn-accion eliminar" (click)="eliminarCategoria(categoria.id_categoria)">
-                <mat-icon class="delete" color="warn">delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <button (click)="verModal()" class="btn-agregar">
+          + Categoria
+        </button>
+      </div>
+    </div>
+
+    <table class="tabla-categorias mb-5">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let categoria of (categoriasFiltrados.length ? categoriasFiltrados : categorias)">
+          <td>{{ categoria.nombre }}</td>
+          <td class="acciones">
+            <button class="btn-accion editar" (click)="editarCategoria(categoria.id_categoria)">
+              <mat-icon class="edit" color="primary">edit</mat-icon>
+            </button>
+            <button class="btn-accion eliminar" (click)="eliminarCategoria(categoria.id_categoria)">
+              <mat-icon class="delete" color="warn">delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="totalPaginas > 1"
+      class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+      <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual === totalPaginas">Siguiente</button>
     </div>
   </div>
+
+  <!-- MODAL -->
+  <div *ngIf="mostrarModal" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal()">&times;</span>
+      <h2>Categoria</h2>
+      <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input id="nombre" [(ngModel)]="categoria.nombre" name="nombre" #nombre="ngModel" required matInput
+            placeholder="Digite Nombre" type="text" minlength="1"/>
+        </mat-form-field>
+        <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
+          <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary" class="btn-primary">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

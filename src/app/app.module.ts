@@ -52,6 +52,23 @@ import { ListProductoComponent } from './pages/admin/productos/list-producto/lis
 import { TransaccionesHistorialComponent } from './pages/admin/transacciones-historial/transacciones-historial.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 import { PerfilUserComponent } from './pages/admin/perfil-user/perfil-user.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ListUnidadComponent } from './pages/admin/unidad/list-unidad/list-unidad.component';
+import { ListCompraComponent } from './pages/admin/compras/list-compra/list-compra.component';
+import { ArqueoCajaComponent } from './pages/admin/arqueo-caja/arqueo-caja.component';
+import { HabitacionesListComponent } from './pages/admin/recepcion/habitaciones/habitaciones-list/habitaciones-list.component';
+import { HabitacionesFormComponent } from './pages/admin/recepcion/habitaciones/habitaciones-form/habitaciones-form.component';
+import { TipoHabitacionListComponent } from './pages/admin/recepcion/habitaciones/tipo-habitacion/tipo-habitacion-list/tipo-habitacion-list.component';
+import { TipoHabitacionFormComponent } from './pages/admin/recepcion/habitaciones/tipo-habitacion/tipo-habitacion-form/tipo-habitacion-form.component';
+import { ReservasListComponent } from './pages/admin/recepcion/reservas/reservas-list/reservas-list.component';
+import { ReservaSalonDetalleComponent } from './pages/admin/recepcion/reservas/reserva-salon-detalle/reserva-salon-detalle.component';
+import { ReservaHabitacionDetalleComponent } from './pages/admin/recepcion/reservas/reserva-habitacion-detalle/reserva-habitacion-detalle.component';
+import { HabitacionReservaFormComponent } from './pages/admin/recepcion/reservas/habitacion-reserva-form/habitacion-reserva-form.component';
+import { SalonReservaFormComponent } from './pages/admin/recepcion/reservas/salon-reserva-form/salon-reserva-form.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { SalonesListComponent } from './pages/admin/recepcion/salones/salones-list/salones-list.component';
+import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-form/salones-form.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -81,12 +98,26 @@ import { PerfilUserComponent } from './pages/admin/perfil-user/perfil-user.compo
     AddProductoComponent,
     TransaccionesHistorialComponent,
     PerfilUserComponent,
+    ListUnidadComponent,
+    ListCompraComponent,
+    ArqueoCajaComponent,
+    HabitacionesFormComponent,
+    HabitacionesListComponent,
+    TipoHabitacionListComponent,
+    TipoHabitacionFormComponent,
+    ReservasListComponent,
+    ReservaSalonDetalleComponent,
+    ReservaHabitacionDetalleComponent,
+    HabitacionReservaFormComponent,
+    SalonReservaFormComponent,
+    SalonesListComponent,
+    SalonesFormComponent
 
   ],
   imports: [
-    BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,
+    BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,MatAutocompleteModule,
     MatToolbarModule,MatDatepickerModule,MatSelectModule,MatSlideToggleModule,
-    AppRoutingModule,HttpClientModule,MatDialogModule,
+    AppRoutingModule,HttpClientModule,MatDialogModule,NgSelectModule,
     MatListModule,MatExpansionModule,MatNativeDateModule,FormsModule,MatInputModule,MatButtonModule,MatCardModule,
     MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe
   ],

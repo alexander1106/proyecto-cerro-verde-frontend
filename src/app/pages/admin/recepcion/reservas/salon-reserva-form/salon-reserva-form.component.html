@@ -1,0 +1,144 @@
+<div class="container">
+  <app-header></app-header>
+<div class="form-container">
+  <h2>{{ isEditing ? 'Editar' : 'Nueva' }} Reserva de Salón</h2>
+
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="loading" class="loading">Cargando datos...</div>
+
+  <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <div class="form-section">
+      <h3>Información de la Reserva</h3>
+
+      <div class="form-group">
+        <label for="cliente">Cliente:</label>
+        <ng-select
+          [items]="clientes"
+          bindLabel="dniRuc"
+          bindValue="idCliente"
+          placeholder="Buscar cliente..."
+          formControlName="cliente"
+          [searchFn]="customSearch"
+          [searchable]="true"
+          [class.invalid]="reservaForm.get('cliente')?.invalid && reservaForm.get('cliente')?.touched">
+          <ng-template ng-option-tmp let-item="item">
+            {{ item.nombre }} ({{ item.dniRuc }})
+          </ng-template>
+
+          <ng-template ng-label-tmp let-item="item">
+            {{ item.nombre }} <span *ngIf="item.dniRuc">({{ item.dniRuc }})</span>
+          </ng-template>
+        </ng-select>
+
+        <div class="error-hint" *ngIf="reservaForm.get('cliente')?.invalid && reservaForm.get('cliente')?.touched">
+          Cliente es requerido
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fecha_inicio">Fecha de Inicio:</label>
+        <input
+          type="datetime-local"
+          id="fecha_inicio"
+          formControlName="fecha_inicio"
+          [class.invalid]="reservaForm.get('fecha_inicio')?.invalid && reservaForm.get('fecha_inicio')?.touched">
+        <div class="error-hint" *ngIf="reservaForm.get('fecha_inicio')?.invalid && reservaForm.get('fecha_inicio')?.touched">
+          Fecha de inicio es requerida
+        </div>
+        <div class="error-hint" *ngIf="reservaForm.get('fecha_inicio')?.errors?.['fechaPasada'] && reservaForm.get('fecha_inicio')?.touched">
+          La fecha de inicio no puede ser anterior a hoy.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fecha_fin">Fecha de Fin:</label>
+        <input
+          type="datetime-local"
+          id="fecha_fin"
+          formControlName="fecha_fin"
+          [class.invalid]="reservaForm.get('fecha_fin')?.invalid && reservaForm.get('fecha_fin')?.touched">
+        <div class="error-hint" *ngIf="reservaForm.get('fecha_fin')?.invalid && reservaForm.get('fecha_fin')?.touched">
+          Fecha de fin es requerida
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="estado_reserva">Estado de la Reserva:</label>
+        <select id="estado_reserva" formControlName="estado_reserva">
+          <option value="Pendiente">Pendiente</option>
+          <option value="Confirmada">Confirmada</option>
+          <option value="Cancelada">Cancelada</option>
+          <option value="Completada">Completada</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="comentarios">Comentarios:</label>
+        <textarea id="comentarios" formControlName="comentarios" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Selección de Salones</h3>
+
+      <div class="form-group">
+        <label for="search">Buscar salón:</label>
+        <input
+          id="search"
+          type="text"
+          [(ngModel)]="filtroSalones"
+          placeholder="Buscar salón por nombre o estado"
+          [ngModelOptions]="{ standalone: true }">
+      </div>
+
+      <table class="habitaciones-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio/hora</th>
+            <th>Precio diario</th>
+            <th>Estado</th>
+            <th>Seleccionar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let salon of salonesFiltrados()">
+            <td>{{ salon.nombre }}</td>
+            <td>${{ salon.precio_hora }}</td>
+            <td>${{ salon.precio_diario }}</td>
+            <td>{{ salon.estado_salon }}</td>
+            <td>
+              <input
+                type="checkbox"
+                [checked]="isSalonSelected(salon)"
+                (change)="toggleSalon(salon)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="error-hint" *ngIf="salonesArray.invalid && reservaForm.touched && salonesArray.length === 0">
+        Debe seleccionar al menos un salón
+      </div>
+
+      <div class="selected-summary" *ngIf="salonesArray.length > 0">
+        <h5>Salones Seleccionados:</h5>
+        <ul>
+          <li *ngFor="let s of salonesArray.value">
+            {{ s.nombre }} - ${{ s.precio_hora }}/h - Estado: {{ s.estado_salon }}
+            <button type="button" (click)="toggleSalon(s)">Quitar</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting">
+        {{ submitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar') }}
+      </button>
+    </div>
+  </form>
+</div>
+</div>

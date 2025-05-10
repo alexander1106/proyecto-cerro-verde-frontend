@@ -27,6 +27,20 @@ import { ActualizarUserComponent } from './pages/admin/usuarios/actualizar-user/
 import { ListProductoComponent } from './pages/admin/productos/list-producto/list-producto.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 import { PerfilUserComponent } from './pages/admin/perfil-user/perfil-user.component';
+import { ListUnidadComponent } from './pages/admin/unidad/list-unidad/list-unidad.component';
+import { ListCompraComponent } from './pages/admin/compras/list-compra/list-compra.component';
+import { ArqueoCajaComponent } from './pages/admin/arqueo-caja/arqueo-caja.component';
+import { HabitacionesListComponent } from './pages/admin/recepcion/habitaciones/habitaciones-list/habitaciones-list.component';
+import { HabitacionesFormComponent } from './pages/admin/recepcion/habitaciones/habitaciones-form/habitaciones-form.component';
+import { TipoHabitacionListComponent } from './pages/admin/recepcion/habitaciones/tipo-habitacion/tipo-habitacion-list/tipo-habitacion-list.component';
+import { TipoHabitacionFormComponent } from './pages/admin/recepcion/habitaciones/tipo-habitacion/tipo-habitacion-form/tipo-habitacion-form.component';
+import { ReservasListComponent } from './pages/admin/recepcion/reservas/reservas-list/reservas-list.component';
+import { HabitacionReservaFormComponent } from './pages/admin/recepcion/reservas/habitacion-reserva-form/habitacion-reserva-form.component';
+import { SalonReservaFormComponent } from './pages/admin/recepcion/reservas/salon-reserva-form/salon-reserva-form.component';
+import { SalonesListComponent } from './pages/admin/recepcion/salones/salones-list/salones-list.component';
+import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-form/salones-form.component';
+import { ReservaSalonDetalleComponent } from './pages/admin/recepcion/reservas/reserva-salon-detalle/reserva-salon-detalle.component';
+import { ReservaHabitacionDetalleComponent } from './pages/admin/recepcion/reservas/reserva-habitacion-detalle/reserva-habitacion-detalle.component';
 
 
 const routes: Routes = [{
@@ -88,6 +102,16 @@ const routes: Routes = [{
     {
       path: 'productos',
       component:ListProductoComponent,
+    }, {
+      path: 'categorias',
+      component:ListCategoriasComponent,
+    },
+    {
+      path: 'unidad',
+      component:ListUnidadComponent,
+    },{
+      path: 'compras',
+      component:ListCompraComponent,
     }
     ,{
       path: 'add-proveedor',
@@ -113,12 +137,21 @@ const routes: Routes = [{
     },{
       path: 'detalle-caja',
       component:CajaDetalleComponent
+    },{
+      path: 'detalle-caja/:id',
+      component: CajaDetalleComponent
     },
     {
       path: 'transacciones',
       component:TransaccionesComponent
     },
     {
+      path: 'arqueo-caja',
+      component: ArqueoCajaComponent
+    },{
+      path: 'caja/arqueo/:id',
+      component: ArqueoCajaComponent
+    },{
       path: 'transacciones/historial',
       component: TransaccionesHistorialComponent
     }, {
@@ -127,7 +160,69 @@ const routes: Routes = [{
     },{
       path: 'perfil-user',
       component:PerfilUserComponent
+    },
+    {
+      path: 'habitaciones',
+      component:HabitacionesListComponent
+    },{
+      path: 'recepcion/habitaciones/nuevo',
+      component: HabitacionesFormComponent
+    },{
+      path: 'recepcion/habitaciones/editar/:id',
+      component: HabitacionesFormComponent
+    },
+    {
+      path: 'tipos-habitaciones',
+      component: TipoHabitacionListComponent
+    },
+    {
+      path: 'recepcion/tipos/nuevo',
+      component: TipoHabitacionFormComponent,
+    },
+    {
+      path: 'recepcion/tipos/editar/:id',
+      component:TipoHabitacionFormComponent
+    },{
+    path: 'recepcion/reservas/habitaciones/nuevo',
+    component:HabitacionReservaFormComponent
+  },{
+    path: 'recepcion/reservas/salones/nuevo',
+    component:SalonReservaFormComponent
+  },
+    {
+      path: 'reservas',
+      component:ReservasListComponent
+    },
+    {
+      path: 'salones',
+      component:SalonesListComponent
+    },
+    {
+      path: 'recepcion/salones/nuevo',
+      component:SalonesFormComponent
+    }, {
+      path: 'recepcion/salones/editar/:id',
+      component:SalonesFormComponent
+    },
+    {
+      path: 'recepcion/reservas/salones/ver/:id',
+      component:ReservaSalonDetalleComponent
+    },
+    {
+      path: 'recepcion/reservas/salones/editar/:id',
+      component:SalonReservaFormComponent
+    },
+    {
+      path: 'recepcion/reservas/habitaciones/editar/:id',
+      component:HabitacionReservaFormComponent
+    },{
+      path: 'recepcion/reservas/habitaciones/ver/:id',
+      component:ReservaHabitacionDetalleComponent
     }
+
+
+
+
   ]
 },
 ];

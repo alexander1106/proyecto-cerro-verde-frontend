@@ -1,0 +1,63 @@
+<div class="container">
+  <app-header></app-header>
+<form [formGroup]="tipoForm" (ngSubmit)="onSubmit()" [class.disabled]="loading">
+
+<div class="page-header">
+  <h1>{{ isEditing ? 'Editar' : 'Nuevo' }} Tipo de Habitación</h1>
+  <button class="btn btn-secondary" (click)="volver()">Volver</button>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div class="card">
+  <div class="card-body">
+    <form [formGroup]="tipoForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" formControlName="nombre" class="form-control"
+              [ngClass]="{'is-invalid': submitted && f['nombre'].errors}">
+        <div *ngIf="submitted && f['nombre'].errors" class="invalid-feedback">
+          <div *ngIf="f['nombre'].errors['required']">Nombre es requerido</div>
+        </div>
+        <div *ngIf="submitted && f['nombre'].errors?.['nombreDuplicado']" class="invalid-feedback">
+          Ya existe un tipo con este nombre.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="precio_publico">Precio Público</label>
+        <div class="input-group">
+          <span class="input-group-text">S/.</span>
+          <input type="number" id="precio_publico" formControlName="precio_publico" class="form-control"
+                [ngClass]="{'is-invalid': submitted && f['precio_publico'].errors}" step="0.01">
+        </div>
+        <div *ngIf="submitted && f['precio_publico'].errors" class="invalid-feedback">
+          <div *ngIf="f['precio_publico'].errors['required']">Precio público es requerido</div>
+          <div *ngIf="f['precio_publico'].errors['min']">Precio debe ser mayor a 0</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="precio_corporativo">Precio Corporativo</label>
+        <div class="input-group">
+          <span class="input-group-text">S/.</span>
+          <input type="number" id="precio_corporativo" formControlName="precio_corporativo" class="form-control"
+                [ngClass]="{'is-invalid': submitted && f['precio_corporativo'].errors}" step="0.01">
+        </div>
+        <div *ngIf="submitted && f['precio_corporativo'].errors" class="invalid-feedback">
+          <div *ngIf="f['precio_corporativo'].errors['required']">Precio corporativo es requerido</div>
+          <div *ngIf="f['precio_corporativo'].errors['min']">Precio debe ser mayor a 0</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success">
+          {{ isEditing ? 'Actualizar' : 'Crear' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="volver()" [disabled]="loading">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+</form>
+</div>
