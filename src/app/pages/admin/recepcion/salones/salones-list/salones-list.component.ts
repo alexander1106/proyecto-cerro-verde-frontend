@@ -63,7 +63,7 @@ export class SalonesListComponent implements OnInit {
             });
           },
           error: () => {
-            Swal.fire('Error', 'No se pudo eliminar el salón', 'error');
+            Swal.fire('Error', 'No se pudo eliminar el salón. Tiene una reserva activa.', 'error');
           }
         });
       }

@@ -1,0 +1,135 @@
+<div class="container">
+    <app-header></app-header>
+
+    <div class="card">
+        <div class="info-categorias-linea">
+            <h5>Clientes registrados</h5>
+            <!-- Buscador personalizado sin Angular Material -->
+            <div class="mover">
+                <div class="buscador">
+                    <div class="input-wrapper">
+                        <input type="text" id="searchInput" placeholder="Buscador categoria"
+                            [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarCliente()" />
+                        <button type="button" class="btn-icono">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button (click)="verModal()" class="btn-agregar">
+                    + Cliente
+                </button>
+            </div>
+        </div>
+
+        <table class="tabla-categorias mb-5">
+            <thead>
+                <tr>
+                    <th>Dni/Ruc</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Pais</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let cliente of (clientesFiltrados.length ? clientesFiltrados : clientes)">
+                    <td>{{ cliente.dniRuc }}</td>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.telefono }}</td>
+                    <td>{{ cliente.correo }}</td>
+                    <td>{{ cliente.pais }}</td>
+                    <td class="acciones">
+                        <button class="btn-accion editar" (click)="editarCliente(cliente.idCliente)">
+                            <mat-icon class="edit" color="primary">edit</mat-icon>
+                        </button>
+                        <!-- <button class="btn-accion eliminar" (click)="eliminarCliente(cliente.idCliente)">
+                            <mat-icon class="delete" color="warn">delete</mat-icon>
+                        </button> -->
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="totalPaginas > 1"
+            class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+            <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+                [disabled]="paginaActual === 1">Anterior</button>
+            <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+                [disabled]="paginaActual === totalPaginas">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div *ngIf="mostrarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" (click)="cerrarModal()">&times;</span>
+            <h2>Cliente</h2>
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+
+                <mat-form-field class="w-25 me-2">
+                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="dniORuc(tipo)" required>
+                        <option value="DNI">DNI</option>
+                        <option value="RUC">RUC</option>
+                    </select>
+                </mat-form-field>
+                <mat-form-field class="w-50" appearance="outline">
+                    <mat-label>{{ tipo }}</mat-label>
+                    <input id="dniRuc" [(ngModel)]="cliente.dniRuc" name="dniRuc" #dniRuc="ngModel" required matInput
+                        minlength={{longitud}} maxlength={{longitud}} [pattern]="patronNumerico" type="text" />
+                    <mat-error *ngIf="dniRuc?.errors?.['pattern'] && dniRuc.touched">
+                        Solo se permiten números
+                    </mat-error>
+                    <mat-error *ngIf="(dniRuc.errors?.['minlength'] || dniRuc.errors?.['maxlength']) && dniRuc.touched">
+                        Digite {{ longitud }} dígitos.
+                    </mat-error>
+                </mat-form-field>
+                <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscar(tipo, cliente.dniRuc)">
+                    Buscar
+                </button>
+
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" required matInput placeholder="Digite Nombre" />
+                </mat-form-field>
+
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Correo</mat-label>
+                    <input id="correo" [(ngModel)]="cliente.correo" name="correo" #correo="ngModel" required matInput
+                        placeholder="ejemplo@gmail.com"
+                        [pattern]="patronCorreo" type="email" />
+                    <mat-error *ngIf="correo.errors?.['pattern'] && correo.touched">
+                        El correo electrónico no es válido.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="w-45" appearance="outline">
+                    <mat-label>Teléfono</mat-label>
+                    <input [(ngModel)]="cliente.telefono" #telefono="ngModel" name="telefono" required matInput
+                        minlength="9" maxlength="9" [pattern]="patronNumerico" placeholder="Digite Teléfono" />
+                    <mat-error *ngIf="telefono?.errors?.['pattern'] && telefono.touched">
+                        Solo se permiten números
+                    </mat-error>
+                    <mat-error
+                        *ngIf="(telefono.errors?.['minlength'] || telefono.errors?.['maxlength']) && telefono.touched">
+                        Digite 9 dígitos.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="w-50 ms-4" appearance="outline">
+                    <mat-label>País</mat-label>
+                    <input [(ngModel)]="cliente.pais" name="pais" minlength="1" required matInput placeholder="Digite País" />
+                </mat-form-field>
+
+                <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x">
+                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
+                        class="btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

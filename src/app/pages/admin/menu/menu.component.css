@@ -16,20 +16,18 @@
 
 .logo-container {
   display: flex;
-  text-align: center;
-  padding: 19px 13px;
-  border-radius: 10px;
-  background-color: #F28705;
-  margin-bottom: 5vh;
+  margin-top: -100px;
+  margin-bottom: -110px;
   align-items: center;
 }
 
 .logo-container img {
-  width: 3.5vw;
-  height: auto;
-
-  object-fit: contain;
+  width: 250px;
+  height: 300px;
 }
+ .logo-container h5{
+  align-items: center;
+ }
 
 h5 {
   color: #713a3a;

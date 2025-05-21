@@ -41,6 +41,12 @@ import { SalonesListComponent } from './pages/admin/recepcion/salones/salones-li
 import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-form/salones-form.component';
 import { ReservaSalonDetalleComponent } from './pages/admin/recepcion/reservas/reserva-salon-detalle/reserva-salon-detalle.component';
 import { ReservaHabitacionDetalleComponent } from './pages/admin/recepcion/reservas/reserva-habitacion-detalle/reserva-habitacion-detalle.component';
+import { ConductoresFormComponent } from './pages/admin/recepcion/recojos/conductores-form/conductores-form.component';
+import { ConductoresListComponent } from './pages/admin/recepcion/recojos/conductores-list/conductores-list.component';
+import { RecojosFormComponent } from './pages/admin/recepcion/recojos/recojos-form/recojos-form.component';
+import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-list/recojos-list.component';
+import { ClientesComponent } from './pages/admin/clientes/clientes.component';
+import { FormComponent } from './pages/admin/form/form.component';
 
 
 const routes: Routes = [{
@@ -218,10 +224,34 @@ const routes: Routes = [{
     },{
       path: 'recepcion/reservas/habitaciones/ver/:id',
       component:ReservaHabitacionDetalleComponent
+    },
+    {
+      path: 'recepcion/conductores/nuevo',
+      component:ConductoresFormComponent
+    },
+    {
+      path: 'recepcion/conductores',
+      component:ConductoresListComponent
+    },
+    {
+      path: 'recepcion/conductores/editar/:id',
+      component:ConductoresFormComponent
+    },
+    {
+      path: 'recepcion/recojos/nuevo',
+      component:RecojosFormComponent
+    },
+    {
+      path: 'recepcion/recojos',
+      component:RecojosListComponent
+    },
+    {
+      path: 'recepcion/recojos/editar/:id',
+      component:RecojosFormComponent
+    },{
+      path: 'clientes',
+      component: ClientesComponent
     }
-
-
-
 
   ]
 },

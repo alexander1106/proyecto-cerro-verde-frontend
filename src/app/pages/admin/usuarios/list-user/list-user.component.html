@@ -3,7 +3,7 @@
 
   <div class="card">
     <div class="info-trabajadores-linea">
-      <h4>Trabajadores registrados</h4>
+      <h4>Registro de usuarios</h4>
       <!-- Buscador personalizado sin Angular Material -->
       <div class="mover">
         <div class="buscador">
@@ -51,12 +51,22 @@
           <td>{{ trabajador.username }}</td>
           <td>{{ trabajador.email }}</td>
           <td>{{ trabajador.telefono }}</td>
-          <td>{{ trabajador.enable ? 'Activo' : 'Inactivo' }}</td>
-          <td>{{ trabajador.rol.nombreRol }}</td>
+          <td>
+            <span [ngClass]="trabajador.enable ? 'activo' : 'inactivo'">
+              {{ trabajador.enable ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+                  
+          <td>
+            <span [ngClass]="{
+              'admin': trabajador.rol.nombreRol === 'ADMIN',
+              'usuario': trabajador.rol.nombreRol === 'Cajero'
+            }">
+            {{ trabajador.rol.nombreRol }}</span></td>
           <td class="acciones">
-            <button class="btn-accion editar" [routerLink]="['/admin/edit-user', trabajador.idUsuario]">
-              <mat-icon class="edit" color="primary">edit {{trabajador.idUsuario}}</mat-icon>
-            </button>
+            <button class="btn btn-editar" [routerLink]="['/admin/edit-user', trabajador.idUsuario]">
+              <i class="edit fa-regular fa-pen-to-square"></i>
+            </button>            
           </td>
         </tr>
       </tbody>

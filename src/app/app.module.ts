@@ -34,6 +34,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card'; // ✅ Importar MatCardModule
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatError } from '@angular/material/form-field';
+import { MatLabel } from '@angular/material/form-field';
 
 import { AddRolComponent } from './pages/admin/roles/add-rol/add-rol.component';
 import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
@@ -68,6 +70,12 @@ import { SalonReservaFormComponent } from './pages/admin/recepcion/reservas/salo
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SalonesListComponent } from './pages/admin/recepcion/salones/salones-list/salones-list.component';
 import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-form/salones-form.component';
+import { ConductoresFormComponent } from './pages/admin/recepcion/recojos/conductores-form/conductores-form.component';
+import { ConductoresListComponent } from './pages/admin/recepcion/recojos/conductores-list/conductores-list.component';
+import { RecojosFormComponent } from './pages/admin/recepcion/recojos/recojos-form/recojos-form.component';
+import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-list/recojos-list.component';
+import { ClientesComponent } from './pages/admin/clientes/clientes.component';
+import { FormComponent } from './pages/admin/form/form.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +119,12 @@ import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-fo
     HabitacionReservaFormComponent,
     SalonReservaFormComponent,
     SalonesListComponent,
-    SalonesFormComponent
+    SalonesFormComponent,
+    ConductoresFormComponent,
+    ConductoresListComponent,
+    RecojosFormComponent,
+    RecojosListComponent,
+    ClientesComponent
 
   ],
   imports: [
@@ -119,7 +132,7 @@ import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-fo
     MatToolbarModule,MatDatepickerModule,MatSelectModule,MatSlideToggleModule,
     AppRoutingModule,HttpClientModule,MatDialogModule,NgSelectModule,
     MatListModule,MatExpansionModule,MatNativeDateModule,FormsModule,MatInputModule,MatButtonModule,MatCardModule,
-    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe
+    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe, MatError, MatLabel
   ],
   providers: [
     authInterceptorProviders,

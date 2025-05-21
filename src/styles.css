@@ -1,5 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
-/* Reset and base styles */
+
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: #f8f9fa;
@@ -8,6 +7,47 @@ body {
   padding: 0;
   margin: 0;
 }
+
+h4{
+  color: #0a457f;
+  font-weight: 500;
+  font-size: 28px;
+}
+
+th{
+  background-color: #0a457f !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table th,
+table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+  color: #444;
+}
+
+table th {
+  background-color: #0a457f;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
 
 :root {
   /* Color system */
@@ -72,3 +112,36 @@ body {
 .slide-up {
   animation: slideUp 0.4s ease-out;
 }
+
+.edit{
+  color: #dc8802 !important;
+  font-size: 21px;
+}
+
+.btn-agregar {
+  padding: 10px 24px;
+  background-color: #07bcea !important;
+  border-radius: 6px;
+  color: white;
+  margin-left: 20px;
+  float: right;
+  font-weight: 600;
+  width: 10vw;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-agregar a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.btn-agregar:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Cliente {
-    idCliente?: number;
-    dniRuc: string;
-    nombre: string;
-    telefono: string;
-    correo: string;
-    pais: string;
-    estado: number;
-  }
+  idCliente?: number | null;
+  dniRuc: string;
+  nombre: string;
+  telefono: string;
+  correo: string;
+  pais: string;
+  estado: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,10 @@ export class ClientesService {
 
   getClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
+  }
+
+  getClientesActivos(): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(`${this.apiUrl}/clientesactivos`);
   }
 
   getClienteById(id: number): Observable<Cliente> {
@@ -37,6 +41,10 @@ export class ClientesService {
   }
 
   deleteCliente(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/clientes/eliminar/${id}`);
+    return this.http.delete<string>(`${this.apiUrl}/clientes/${id}`);
+  }
+
+  buscarDni(numeroDni: string, headers: HttpHeaders) {
+    return this.http.get<any>(`${this.apiUrl}/dni/${numeroDni}`, {headers});
   }
 }

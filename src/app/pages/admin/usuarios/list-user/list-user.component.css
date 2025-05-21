@@ -116,9 +116,10 @@
   color: #999;
 }
 
+
 .btn-agregar {
   padding: 10px 24px;
-  background-color: #4caf50;
+  background-color: #07bcea;
   border-radius: 6px;
   color: white;
   margin-left: 20px;
@@ -159,7 +160,7 @@
 }
 
 .tabla-trabajadores th {
-  background-color: rgb(2, 57, 80);
+  background-color: #0a457f;
   color: white;
   font-weight: 600;
   text-transform: uppercase;
@@ -222,7 +223,6 @@
 
 /* Botón de agregar trabajador */
 .btn-agregar {
-  background-color: rgb(2, 57, 80); /* azul */
   border: none;
   color: white;
   padding: 10px 20px;
@@ -282,5 +282,44 @@
   color: rgb(197, 8, 8);
 }
 .edit{
-  color: #1976d2;
+  color: #c94006;
+  font-size: 21px;
 }
+
+.activo {
+  background-color: #249e59; /* verde */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.inactivo {
+  background-color: #a20101; /* rojo */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.admin {
+  background-color: #51b0b4; /* verde */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.usuario {
+  background-color: #78a69e; /* verde */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+

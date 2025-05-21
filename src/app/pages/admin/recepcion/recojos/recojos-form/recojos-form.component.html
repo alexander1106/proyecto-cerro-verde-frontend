@@ -1,0 +1,68 @@
+<form [formGroup]="recojoForm" (ngSubmit)="onSubmit()" novalidate class="form-container shadow rounded bg-white">
+  <h3>{{ isEditing ? 'Editar Recojo' : 'Nuevo Recojo' }}</h3>
+
+  <div class="mb-3">
+    <label for="destino">Destino</label>
+    <input #autoInput formControlName="destino" placeholder="Buscar dirección" class="form-control"
+        [ngClass]="{'is-invalid': submitted && f['destino'].errors}">
+    <div *ngIf="submitted && f['destino'].errors" class="invalid-feedback">
+      <div *ngIf="f['destino'].errors['required']">Destino es requerido</div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="fecha_hora">Fecha y Hora</label>
+    <input type="datetime-local" id="fecha_hora" formControlName="fecha_hora" class="form-control"
+           [ngClass]="{'is-invalid': submitted && f['fecha_hora'].invalid}">
+    <div *ngIf="submitted && f['fecha_hora'].errors" class="invalid-feedback">
+      <div *ngIf="f['fecha_hora'].errors['required']">Fecha es requerida</div>
+      <div *ngIf="f['fecha_hora'].errors['fechaPasada']">La fecha no puede ser anterior a la actual</div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="reserva" class="form-label">Cliente de reserva</label>
+    <select id="reserva" formControlName="reserva" class="form-select"
+            [ngClass]="{'is-invalid': submitted && f['reserva'].invalid}">
+      <option [ngValue]="null">Seleccione una reserva</option>
+      <option *ngFor="let reserva of reservas" [ngValue]="reserva">
+        Reserva N°{{ reserva.id_reserva }} - Cliente: {{ reserva.cliente.nombre }}
+      </option>
+    </select>
+    <div *ngIf="submitted && f['reserva'].invalid" class="invalid-feedback">
+      Cliente es requerido.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="conductor" class="form-label">Conductor</label>
+    <select id="conductor" formControlName="conductor" class="form-select"
+            [ngClass]="{'is-invalid': submitted && f['conductor'].invalid}">
+      <option [ngValue]="null">Seleccione un conductor</option>
+      <option *ngFor="let conductor of conductores" [ngValue]="conductor">
+        {{ conductor.nombre }} - Vehículo: {{ conductor.modelo_vehiculo }}
+      </option>
+    </select>
+    <div *ngIf="submitted && f['conductor'].invalid" class="invalid-feedback">
+      Conductor es requerido.
+    </div>
+  </div>
+
+  <div class="mb-3" *ngIf="isEditing">
+    <label for="estado_recojo" class="form-label">Estado</label>
+    <select id="estado_recojo" formControlName="estado_recojo" class="form-select"
+            [ngClass]="{'is-invalid': submitted && f['estado_recojo'].invalid}">
+      <option [ngValue]="null">Seleccione un estado</option>
+      <option *ngFor="let estado_recojo of estado_recojos" [ngValue]="estado_recojo">
+        {{ estado_recojo }}
+      </option>
+    </select>
+  </div>
+
+  <div class="form-buttons">
+    <button type="submit" class="btn btn-success">
+      {{ isEditing ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="volver()">Cancelar</button>
+  </div>
+</form>

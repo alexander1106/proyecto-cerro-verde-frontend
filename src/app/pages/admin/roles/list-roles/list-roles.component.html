@@ -3,7 +3,7 @@
 
   <div class="card">
     <div class="info-categorias-linea">
-      <h3>Roles registrados</h3>
+      <h4>Roles registrados</h4>
       <!-- Buscador personalizado sin Angular Material -->
       <div class="mover">
         <div class="buscador">
@@ -25,7 +25,7 @@
     <table class="tabla-categorias">
       <thead>
         <tr>
-          <th>Índice</th> <!-- Se agregó columna para el índice -->
+          <th>#</th> <!-- Se agregó columna para el índice -->
           <th>Nombre</th>
           <th>Descripción</th>
           <th>Estado</th>
@@ -35,16 +35,17 @@
       <tbody>
         <tr *ngFor="let rol of rolesFiltrados; let i = index">
           <td>{{ i + 1 }}</td> <!-- Mostrar el índice de cada rol -->
-
           <td>{{ rol.nombreRol }}</td>
           <td>{{ rol.descripcion }}</td>
           <td>
+            <span [ngClass]="rol.estado ? 'activo' : 'inactivo'">
             {{ rol.estado ? 'Activo' : 'Desactivo' }}
+          </span>
           </td>
           <td class="acciones">
             <button class="btn-accion editar">
               <a [routerLink]="['/admin/edit-rol', rol.id]">
-                <mat-icon class="edit" color="primary">edit</mat-icon>
+                <i class="edit fa-regular fa-pen-to-square"></i>
               </a>
             </button>
 

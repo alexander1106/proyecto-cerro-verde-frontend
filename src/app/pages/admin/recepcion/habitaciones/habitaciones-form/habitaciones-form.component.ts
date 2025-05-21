@@ -152,11 +152,29 @@ export class HabitacionesFormComponent implements OnInit {
     this.habitacionesService.getHabitacion(this.id).subscribe({
       next: (habitacion) => {
         this.habitacion = habitacion;
-        this.habitacionForm.patchValue({
-          piso: habitacion.piso,
-          numero: habitacion.numero,
-          tipo: habitacion.tipo_habitacion
-        });
+        const waitForData = () => {
+          if(this.tiposHabitacion.length ){
+            this.habitacionForm.patchValue({
+              piso: habitacion.piso,
+              numero: habitacion.numero,
+              tipo_habitacion: this.tiposHabitacion.find(h => h.id_tipo_habitacion === habitacion.tipo_habitacion.id_tipo_habitacion),
+
+            });
+            this.loading=false;
+          } else{
+            setTimeout(waitForData,100);
+          }
+        };
+
+        waitForData();
+
+      },
+      error: (err) => {
+        this.error = 'Error al cargar el recojo';
+        this.loading = false;
+        console.error('Error:', err);
+      }
+      });
 
         this.habitacionesService.getHabitacionesImagenes().subscribe({
           next: (data) => {
@@ -170,13 +188,8 @@ export class HabitacionesFormComponent implements OnInit {
             console.error('Error:', err);
           }
         });
-      },
-      error: (err) => {
-        this.error = 'Error al cargar la habitación';
-        this.loading = false;
-        console.error('Error:', err);
-      }
-    });
+      
+
   }
 
   toggleImagenSelection(imagen: Imagen): void {
@@ -305,10 +318,5 @@ export class HabitacionesFormComponent implements OnInit {
       this.error = 'Debes seleccionar un tipo de habitación para editar.';
     }
   }
-
-
-
-
-
 
 }

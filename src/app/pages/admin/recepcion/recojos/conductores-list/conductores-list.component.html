@@ -1,0 +1,87 @@
+<div class="container">
+  <app-header></app-header>
+
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Conductores</h4>
+
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" placeholder="Buscar conductor..." [(ngModel)]="filtroGeneral" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/conductores/nuevo">+ Nuevo Conductor</a>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">Cargando conductores...</div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && conductores.length === 0" class="alert alert-info">
+      No hay conductores registrados. Cree uno nuevo.
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Vehículo</th>
+            <th>Placa</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let conductor of conductoresPaginados; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ conductor.dni }}</td>
+            <td>{{ conductor.nombre }}</td>
+            <td>{{ conductor.modelo_vehiculo }}</td>
+            <td>{{ conductor.placa }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar">
+                <a [routerLink]="['/admin/recepcion/conductores/editar', conductor.id_conductor]">
+                  <i class="edit fa-regular fa-pen-to-square"></i>
+                </a>
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminarConductor(conductor.id_conductor!)">
+                <i class="delete fa-regular fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="conductorActivosFiltrados.length === 0">
+            <td colspan="6" class="text-center text-muted">No hay conductores que coincidan con el filtro.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(-1)">
+        ← Anterior
+      </button>
+
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(1)">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+</div>

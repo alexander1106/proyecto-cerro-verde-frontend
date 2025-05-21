@@ -1,69 +1,93 @@
 <div class="container">
   <app-header></app-header>
-<div class="reservas-container">
-  <div class="reservas-header">
-    <h2>Lista de Reservas</h2>
-    <div class="action-buttons">
-      <button routerLink="/admin/recepcion/reservas/habitaciones/nuevo" class="btn btn-primary">
-        Nueva Reserva de Habitación
+
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Reservas</h4>
+
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange()"
+              placeholder="Buscar en todas las columnas..."
+            />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn-agregar">
+            <a routerLink="/admin/recepcion/reservas/habitaciones/nuevo">+ Reserva de Habitación</a>
+          </button>
+          <button class="btn-agregar secondary">
+            <a routerLink="/admin/recepcion/reservas/salones/nuevo">+ Reserva de Salón</a>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">Cargando reservas...</div>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="filteredReservas.length === 0 && !loading" class="alert alert-info">
+      No hay reservas registradas.
+    </div>
+
+    <div class="table-responsive" *ngIf="filteredReservas.length > 0">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Tipo</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reserva of filteredReservas; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ reserva.cliente.nombre }}</td>
+            <td>{{ reserva.tipo }}</td>
+            <td>{{ formatDate(reserva.fecha_inicio) }}</td>
+            <td>{{ formatDate(reserva.fecha_fin) }}</td>
+            <td>{{ reserva.estado_reserva }}</td>
+            <td class="acciones">
+              <button class="btn-accion ver" (click)="viewReserva(reserva)">
+                <i class="ver fa-regular fa-eye"></i>
+              </button>
+              <button class="btn-accion editar" (click)="editReserva(reserva)">
+                <i class="edit fa-regular fa-pen-to-square"></i>
+              </button>
+              <button class="btn-accion eliminar" (click)="deleteReserva(reserva.id_reserva!)">
+                <i class="delete fa-regular fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(currentPage - 1)">
+        ← Anterior
       </button>
-      <button routerLink="/admin/recepcion/reservas/salones/nuevo" class="btn btn-secondary">
-        Nueva Reserva de Salón
+
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(currentPage + 1)">
+        Siguiente →
       </button>
     </div>
   </div>
-
-  <div class="search-bar">
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      (ngModelChange)="onSearchChange()"
-      placeholder="Buscar en todas las columnas..."
-      class="form-control" />
-  </div>
-
-  <div *ngIf="loading" class="loading">Cargando reservas...</div>
-  <div *ngIf="error" class="error-message">{{ error }}</div>
-
-  <div *ngIf="filteredReservas.length === 0 && !loading" class="no-data">
-    No hay reservas registradas.
-  </div>
-
-  <div class="table-responsive" *ngIf="filteredReservas.length > 0">
-    <table class="reservas-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Cliente</th>
-          <th>Tipo</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let reserva of filteredReservas">
-          <td>{{ reserva.id_reserva }}</td>
-          <td>{{ reserva.cliente.nombre }}</td>
-          <td>{{ reserva.tipo }}</td>
-          <td>{{ formatDate(reserva.fecha_inicio) }}</td>
-          <td>{{ formatDate(reserva.fecha_fin) }}</td>
-          <td>{{ reserva.estado_reserva }}</td>
-          <td class="actions">
-            <button (click)="viewReserva(reserva)" class="btn btn-info">Ver</button>
-            <button (click)="editReserva(reserva)" class="btn btn-warning">Editar</button>
-            <button (click)="deleteReserva(reserva.id_reserva!)" class="btn btn-danger">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="pagination">
-    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
-    <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
-  </div>
-</div>
 </div>
