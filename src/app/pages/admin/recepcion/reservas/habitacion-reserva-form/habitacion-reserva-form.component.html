@@ -105,9 +105,9 @@
         <tbody>
           <tr *ngFor="let habitacion of habitacionesFiltradas()">
             <td>{{ habitacion.numero }}</td>
-            <td>{{ habitacion.tipo_habitacion?.nombre }}</td>
+            <td>{{ habitacion.tipo_habitacion.nombre }}</td>
             <td>{{ habitacion.piso }}</td>
-            <td>${{ habitacion.tipo_habitacion?.precio_publico }}</td>
+            <td>${{ habitacion.tipo_habitacion.precio_publico }}</td>
             <td>{{ habitacion.estado_habitacion }}</td>
             <td>
               <input

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Conductores {
@@ -39,7 +39,8 @@ export class ConductoresService {
     return this.http.delete<string>(`${this.baseUrl}/conductores/eliminar/${id}`);
   }
 
-  buscarDni(numeroDni: string, headers: HttpHeaders) {
-    return this.http.get<any>(`${this.baseUrl}/dni/${numeroDni}`, {headers});
+  buscarPlaca(placa: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/conductores/buscarplaca/${placa}`);
   }
+  
 }

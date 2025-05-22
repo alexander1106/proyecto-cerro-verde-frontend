@@ -21,7 +21,7 @@ export class HabitacionesFormComponent implements OnInit {
   submitted = false;
   loading = false;
   error = '';
-
+  pisos: number[] = [1,2,3]
 
   tiposHabitacion: TipoHabitacion[] = [];
   sucursales: Sucursal[] = [];
@@ -42,14 +42,19 @@ export class HabitacionesFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadData(); // Esto incluye initForm()
+  
     this.id = +this.route.snapshot.params['id'];
     this.isEditing = !!this.id;
-
-    if (this.isEditing) {
-      this.loadHabitacion();
-    }
+  
+    // Espera a que el formulario esté listo antes de cargar los datos de edición
+    setTimeout(() => {
+      if (this.isEditing) {
+        this.loadHabitacion();
+      }
+    }, 0);
   }
+  
 
   get f() { return this.habitacionForm.controls; }
 
@@ -152,11 +157,35 @@ export class HabitacionesFormComponent implements OnInit {
     this.habitacionesService.getHabitacion(this.id).subscribe({
       next: (habitacion) => {
         this.habitacion = habitacion;
-        this.habitacionForm.patchValue({
-          piso: habitacion.piso,
-          numero: habitacion.numero,
-          tipo: habitacion.tipo_habitacion
-        });
+        const waitForData = () => {
+          if(this.tiposHabitacion.length ){
+            console.log('Tipos:', {
+              pisoDesdeAPI: habitacion.piso,
+              tipoDePiso: typeof habitacion.piso,
+              pisosEnSelect: this.pisos,
+            });
+            
+            this.habitacionForm.patchValue({
+              piso: Number(habitacion.piso),
+              numero: habitacion.numero,
+              tipo_habitacion: this.tiposHabitacion.find(h => h.id_tipo_habitacion === habitacion.tipo_habitacion.id_tipo_habitacion),
+            });
+            
+            this.loading=false;
+          } else{
+            setTimeout(waitForData,100);
+          }
+        };
+
+        waitForData();
+
+      },
+      error: (err) => {
+        this.error = 'Error al cargar el recojo';
+        this.loading = false;
+        console.error('Error:', err);
+      }
+      });
 
         this.habitacionesService.getHabitacionesImagenes().subscribe({
           next: (data) => {
@@ -170,13 +199,8 @@ export class HabitacionesFormComponent implements OnInit {
             console.error('Error:', err);
           }
         });
-      },
-      error: (err) => {
-        this.error = 'Error al cargar la habitación';
-        this.loading = false;
-        console.error('Error:', err);
-      }
-    });
+      
+
   }
 
   toggleImagenSelection(imagen: Imagen): void {
@@ -190,43 +214,69 @@ export class HabitacionesFormComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-
+  
     if (this.habitacionForm.invalid) {
       console.warn('❌ Formulario inválido:', this.habitacionForm.value);
       return;
     }
-
+  
     const habitacion: Habitacion = this.habitacionForm.value;
-    console.log('✅ Enviando habitación:', habitacion);
-
-    this.loading = true;
-
-    const obs = this.isEditing
-      ? this.habitacionesService.updateHabitacion({ ...habitacion, id_habitacion: this.id })
-      : this.habitacionesService.createHabitacion(habitacion);
-
-    obs.subscribe({
-      next: (resp) => {
-        console.log('✅ Respuesta del backend:', resp);
-        this.loading = false;
-        this.router.navigate(['/admin/habitaciones']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Error al guardar la habitación.';
-        console.error('❌ Error al crear:', err);
-      }
-    });
-
-    const msg = this.isEditing ? 'Habitación actualizada correctamente' : 'Habitación creada correctamente';
-
-  Swal.fire({
-    icon: 'success',
-    title: msg,
-    showConfirmButton: false,
-    timer: 2000
-  });
+    console.log('✅ Preparando habitación:', habitacion);
+  
+    const guardar = () => {
+      this.loading = true;
+  
+      const obs = this.isEditing
+        ? this.habitacionesService.updateHabitacion({ ...habitacion, id_habitacion: this.id })
+        : this.habitacionesService.createHabitacion(habitacion);
+  
+      obs.subscribe({
+        next: (resp) => {
+          console.log('✅ Respuesta del backend:', resp);
+          this.loading = false;
+  
+          const msg = this.isEditing
+            ? 'Habitación actualizada correctamente'
+            : 'Habitación creada correctamente';
+  
+          Swal.fire({
+            icon: 'success',
+            title: msg,
+            showConfirmButton: false,
+            timer: 2000
+          }).then(() => {
+            this.router.navigate(['/admin/habitaciones']);
+          });
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error = 'Error al guardar la habitación.';
+          console.error('❌ Error:', err);
+        }
+      });
+    };
+  
+    // Confirmar si es edición
+    if (this.isEditing) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Se actualizarán los datos de la habitación.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          guardar();
+        }
+      });
+    } else {
+      guardar(); // Si no es edición, guardar directamente
+    }
   }
+  
 
 
 
@@ -280,7 +330,7 @@ export class HabitacionesFormComponent implements OnInit {
 
       const numero = control.value;
       const duplicado = this.habitaciones.some(h =>
-        h.numero === numero && h.id_habitacion !== this.habitacion?.id_habitacion
+        h.numero === numero && h.id_habitacion !== this.habitacion?.id_habitacion && h.estado===1
       );
 
       return duplicado ? { numeroDuplicado: true } : null;
@@ -305,10 +355,5 @@ export class HabitacionesFormComponent implements OnInit {
       this.error = 'Debes seleccionar un tipo de habitación para editar.';
     }
   }
-
-
-
-
-
 
 }

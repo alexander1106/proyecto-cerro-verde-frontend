@@ -115,13 +115,12 @@ export class ListProductoComponent {
     } else {
       this.producto.precioVenta = '';
     }
-    console.log(this.producto)
+
     this.productosService.registrarProductos(this.producto).subscribe(
       (data) => {
         Swal.fire("Excelente", "El Producto fue registrado con éxito", "success");
         this.listarProductos();
         this.cerrarModal();
-        console.log(data)
       }, (error) => {
         console.log(error);
         this.snack.open('Ha ocurrido un error en el sistema !!', 'Aceptar', {

@@ -1,32 +1,291 @@
 .container {
+  padding: 24px;
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.page-header {
+.card {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background-color: white;
+  padding: 20px 30px;
+}
+
+.card-content {
+  background-color: #fafafa;
+  padding: 24px;
+}
+
+.info-trabajadores-linea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  color: rgb(0, 0, 0);
 }
 
-.alert {
-  padding: 12px 16px;
+.mover{
+  width: 34vw !important;
+  float: right;
+  display: flex;
+  }
+
+.info-trabajadores-linea p {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.acciones-trabajadores {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.div-filtros {
+  display: flex;
+  gap: 20px;
   margin-bottom: 16px;
-  border-radius: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-left: 8px;
 }
 
-.alert-danger {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+.filtro {
+  padding: 8px 16px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
 }
+
+.filtro:hover {
+  background-color: #d5d5d5;
+}
+
+
+.buscador {
+  max-width: 300px;
+  width: 100%;
+}
+
+.label-buscador {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: white;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.input-wrapper input {
+  flex: 1;
+  padding: 10px 36px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: box-shadow 0.3s ease;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(63, 81, 181, 0.6);
+}
+
+.input-wrapper button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #999;
+}
+
+
+.btn-agregar {
+  padding: 10px 24px;
+  display: flex;
+  background-color: #07bcea;
+  border-radius: 6px;
+  color: white;
+  margin-left: 20px;
+  float: right;
+  font-weight: 600;
+  width: 13vw;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-agregar a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.btn-agregar:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.tabla-trabajadores {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tabla-trabajadores th,
+.tabla-trabajadores td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+  color: #444;
+}
+
+.tabla-trabajadores th {
+  background-color: #0a457f;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tabla-trabajadores tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+
+.foto-perfil {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+
+@media (max-width: 768px) {
+  .info-trabajadores-linea,
+  .acciones-trabajadores {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .buscador,
+  .btn-agregar {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .tabla-trabajadores th,
+  .tabla-trabajadores td {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .foto-perfil {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+
+/* Botón de búsqueda (ícono de lupa) */
+.btn-icono {
+  background-color: #4caf50; /* verde */
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-icono:hover {
+  background-color: #45a049;
+}
+
+/* Botón de agregar trabajador */
+.btn-agregar {
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.btn-agregar a {
+  color: white;
+  text-decoration: none;
+}
+
+.btn-agregar:hover {
+  background-color: #1976d2;
+}
+
+/* Botones de acción */
+.btn-accion {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.btn-accion.editar:hover {
+  background-color: #e3f2fd; /* azul claro */
+}
+
+.btn-accion.eliminar:hover {
+  background-color: #ffebee; /* rojo claro */
+}
+
+/* Filtros */
+.filtro {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-right: 10px;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.filtro:hover {
+  background-color: #bdbdbd;
+}
+
+.filtro.activo {
+  background-color: #4caf50; /* verde */
+  color: white;
+}
+.delete{
+  color: rgb(197, 8, 8);
+  font-size: 21px;
+}
+
+
 
 .loading {
   text-align: center;
@@ -35,14 +294,11 @@
   color: #666;
 }
 
-.table-responsive {
-  overflow-x: auto;
-}
 
 .badge {
   padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 13px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 500;
   text-transform: capitalize;
 }
@@ -72,16 +328,30 @@
   color: white;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
 
 .pagination-controls {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
+}
+
+.doble {
+  background-color: #07bcea;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.simple{
+    background-color: #86b0ba;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: capitalize;
 }

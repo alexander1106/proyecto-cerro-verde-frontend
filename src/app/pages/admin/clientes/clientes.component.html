@@ -70,16 +70,15 @@
             <form (ngSubmit)="formSubmit()" #formulario="ngForm">
 
                 <mat-form-field class="w-25 me-2">
-                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="dniORuc(tipo)" required [disabled]="esEditar">
+                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="dniORuc(tipo)" required>
                         <option value="DNI">DNI</option>
                         <option value="RUC">RUC</option>
                     </select>
                 </mat-form-field>
-
                 <mat-form-field class="w-50" appearance="outline">
                     <mat-label>{{ tipo }}</mat-label>
                     <input id="dniRuc" [(ngModel)]="cliente.dniRuc" name="dniRuc" #dniRuc="ngModel" required matInput
-                        minlength={{longitud}} maxlength={{longitud}} [pattern]="patronNumerico" type="text" [disabled]="esEditar"/>
+                        minlength={{longitud}} maxlength={{longitud}} [pattern]="patronNumerico" type="text" />
                     <mat-error *ngIf="dniRuc?.errors?.['pattern'] && dniRuc.touched">
                         Solo se permiten números
                     </mat-error>
@@ -87,13 +86,13 @@
                         Digite {{ longitud }} dígitos.
                     </mat-error>
                 </mat-form-field>
-                <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscar(tipo, cliente.dniRuc)" [disabled]="esEditar">
+                <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscar(tipo, cliente.dniRuc)">
                     Buscar
                 </button>
 
                 <mat-form-field class="w-100" appearance="outline">
                     <mat-label>Nombre</mat-label>
-                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" [disabled]="esEditar" required matInput placeholder="Digite Nombre" />
+                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" required matInput placeholder="Digite Nombre" />
                 </mat-form-field>
 
                 <mat-form-field class="w-100" appearance="outline">

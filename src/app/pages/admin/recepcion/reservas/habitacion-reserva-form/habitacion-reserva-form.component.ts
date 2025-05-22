@@ -316,7 +316,7 @@ export class HabitacionReservaFormComponent implements OnInit {
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
     return item.nombre.toLowerCase().includes(term) ||
-      (item.dniRuc && item.dniRuc.toLowerCase().includes(term));
+           (item.dniRuc && item.dniRuc.toLowerCase().includes(term));
   }
 }
 

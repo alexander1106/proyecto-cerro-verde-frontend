@@ -78,7 +78,6 @@ export class ListCompraComponent {
   elementosPorPagina = 5;
   paginaActualCompra = 1;
   elementosPorPaginaCompra = 5;
-  esEditar: boolean = false;
 
   constructor(
     private comprasService: ComprasService,
@@ -118,26 +117,19 @@ export class ListCompraComponent {
     this.modalRegistro = true;
   }
   cerrarMordalRegistro() {
-    this.compra = {
-      id_compra: '',
-      numeroDoc: '',
-      fecha_compra: '',
-      total: '0',
-      flete: '',
-      descuento: '',
-      igv: '',
-      estado: 1,
-      proveedor: {
-        ruc_proveedor: '',
-        razon_social: '',
-        direccion: '',
-        estado: 1
-      },
-      detallecompra: []
-    };
+    this.compra.id_compra = '';
+    this.compra.numeroDoc = '';
+    this.compra.fecha_compra = '';
+    this.compra.proveedor.razon_social = '';
+    this.compra.proveedor.ruc_proveedor = '';
+    this.compra.descuento = '';
+    this.compra.flete = '';
+    this.compra.igv = '';
+    this.compra.total = '0';
+    this.dataSource.data = [];
+    this.compra.detallecompra = [];
     this.modalRegistro = false;
     this.cargarProveedores();
-    this.esEditar = false;
   }
 
   //LISTAR COMPRAS
@@ -169,41 +161,23 @@ export class ListCompraComponent {
     const fecha = new Date(this.compra.fecha_compra);
     const fechaFormateada = fecha.toISOString().split('T')[0]; // "2025-05-15"
     this.compra.fecha_compra = fechaFormateada;
-    if (this.esEditar) {
-      this.comprasService.modificarCompra(this.compra).subscribe(
-        (data) => {
-          Swal.fire("Excelente", "La compra fue modificado con éxito", "success");
-          this.listarCompras();
-          this.cerrarMordalRegistro();
-          console.log(this.compra)
-        }, (error) => {
-          console.log(error);
-          this.snack.open('Rellene el formulario', 'Aceptar', {
-            duration: 3000,
-          });
-        }
-      )
-    } else {
-      this.comprasService.registrarCompra(this.compra).subscribe(
-        (data) => {
-          Swal.fire("Excelente", "La compra fue registrado con éxito", "success");
-          this.listarCompras();
-          this.cerrarMordalRegistro();
-          console.log(this.compra)
-          console.log(data)
-        }, (error) => {
-          console.log(error);
-          this.snack.open('Rellene el formulario', 'Aceptar', {
-            duration: 3000,
-          });
-        }
-      )
-    }
+    this.comprasService.registrarCompra(this.compra).subscribe(
+      (data) => {
+        Swal.fire("Excelente", "La compra fue registrado con éxito", "success");
+        this.listarCompras();
+        this.cerrarMordalRegistro();
+        console.log(this.compra)
+      }, (error) => {
+        console.log(error);
+        this.snack.open('Rellene el formulario', 'Aceptar', {
+          duration: 3000,
+        });
+      }
+    )
   }
 
   //EDITAR COMPRA
   editarCompra(id: number) {
-    this.esEditar = true;
     this.comprasService.buscarCompraId(id).subscribe({
       next: (data: any) => {
         this.compra = data;
@@ -217,7 +191,7 @@ export class ListCompraComponent {
     });
   }
 
-  eliminarDetalle(id: number) {
+  eliminarDetalle(id: number){
     this.detalleComprasService.eliminarCategoria(id).subscribe({
       next: (data: any) => {
         console.log("eliminado")

@@ -355,23 +355,11 @@
     padding: 30px 25px;
     border-radius: 12px;
     width: 90%;
-    overflow-y: auto;
     max-width: 50rem;
-    max-height: 85%;
+    min-height: 85%;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     animation: modalFadeIn 0.3s ease-out;
     position: relative;
-}
-
-.form-actions {
-    background: white;
-    /* espacio arriba/abajo */
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-    z-index: 10;
-    /* separarlo del contenido */
 }
 
 .modalRegistro .close {

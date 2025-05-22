@@ -17,6 +17,10 @@
     <div *ngIf="submitted && f['fecha_hora'].errors" class="invalid-feedback">
       <div *ngIf="f['fecha_hora'].errors['required']">Fecha es requerida</div>
       <div *ngIf="f['fecha_hora'].errors['fechaPasada']">La fecha no puede ser anterior a la actual</div>
+      <div *ngIf="f['fecha_hora'].errors['fechaDuplicada']">
+        Ya existe un recojo asignado al mismo conductor en esa fecha y hora.
+      </div>
+           
     </div>
   </div>
 
@@ -49,14 +53,11 @@
   </div>
 
   <div class="mb-3" *ngIf="isEditing">
-    <label for="estado_recojo" class="form-label">Estado</label>
-    <select id="estado_recojo" formControlName="estado_recojo" class="form-select"
-            [ngClass]="{'is-invalid': submitted && f['estado_recojo'].invalid}">
-      <option [ngValue]="null">Seleccione un estado</option>
-      <option *ngFor="let estado_recojo of estado_recojos" [ngValue]="estado_recojo">
-        {{ estado_recojo }}
-      </option>
+    <label for="estado_recojo" class="form-label">Estado del Recojo</label>
+    <select formControlName="estado_recojo" class="form-select">
+      <option *ngFor="let estado of estado_recojos" [ngValue]="estado">{{ estado }}</option>
     </select>
+
   </div>
 
   <div class="form-buttons">

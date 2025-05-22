@@ -698,28 +698,25 @@ export class VentasComponent {
   }
   eliminarReserva(index: number) {
     const reservaEliminada: any = this.venta.ventaXReserva[index]?.reserva;
-    this.venta.ventaXReserva.splice(index, 1);
-    if (this.venta.ventaXReserva.length == 0) {
-      this.venta.cliente = {
-        idCliente: '',
-        dniRuc: '',
-        nombre: '',
-        telefono: '',
-        correo: '',
-        pais: '',
-        estado: 1 // Mantén el estado si se requiere por lógica
-      };
-    }
-    if (reservaEliminada.tipo == 'Salón') {
-      // Eliminar la re
-      this.venta.ventaSalon = [];
+
+    if (reservaEliminada) {
+      // Eliminar la reserva
+      this.venta.ventaXReserva.splice(index, 1);
+
+      // Eliminar habitaciones vinculadas a esa reserva
+      this.venta.ventaHabitacion = this.venta.ventaHabitacion.filter(h =>
+        !reservaEliminada.habitacionesXReserva.includes(h.habitacion)
+      );
+
+      // Eliminar salones vinculados a esa reserva
+      this.venta.ventaSalon = this.venta.ventaSalon.filter(s =>
+        !reservaEliminada.salonesXReserva.includes(s.salon)
+      );
+
       // Actualizar tablas y totales
       this.dataReserva.data = this.venta.ventaXReserva;
-      this.dataSalon.data = this.venta.ventaSalon;
-      this.actualizarTotales();
-    } else {
-      this.venta.ventaHabitacion = [];
       this.dataHabitacion.data = this.venta.ventaHabitacion;
+      this.dataSalon.data = this.venta.ventaSalon;
       this.actualizarTotales();
     }
   }

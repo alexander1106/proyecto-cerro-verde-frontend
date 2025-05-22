@@ -28,12 +28,9 @@ export interface Habitacion {
   estado_habitacion: string;
   estado: number;
   sucursal: Sucursal;
-  tipo_habitacion?: {
-    nombre: string;
-    precio_publico: number;
-    precio_corporativo: number;
+  tipo_habitacion: TipoHabitacion
   };
-}
+
 
 export interface HabitacionImagen {
   id_hab_img?: number;
