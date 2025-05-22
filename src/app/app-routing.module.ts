@@ -47,6 +47,7 @@ import { RecojosFormComponent } from './pages/admin/recepcion/recojos/recojos-fo
 import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-list/recojos-list.component';
 import { ClientesComponent } from './pages/admin/clientes/clientes.component';
 import { VentasComponent } from './pages/admin/ventas/ventas.component';
+import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 
 
 const routes: Routes = [{
@@ -254,6 +255,9 @@ const routes: Routes = [{
     },{
       path: 'venta',
       component: VentasComponent
+    },{
+      path: 'metodopago',
+      component: MetodoPagoComponent
     }
 
   ]
