@@ -3,6 +3,7 @@ import { ModulosService } from '../../../service/modulos.service';
 import { LoginService } from '../../../service/login.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../../service/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-perfil-user',
@@ -12,10 +13,15 @@ import { UserService } from '../../../service/user.service';
 })
 export class PerfilUserComponent {
 
-  modulos: any[] = [];
-
   isLoggedIn = false;
   user:any = null;
+  verActual: boolean = false;
+  verNueva: boolean = false;
+  verRepetir: boolean = false;
+
+  passwordActual: string = '';
+  nuevaPassword: string = '';
+  repetirPassword: string = '';
 
   constructor(
     private loginService: LoginService,
@@ -30,33 +36,27 @@ export class PerfilUserComponent {
     this.loginService.loginStatusSubjec.asObservable().subscribe(() => {
       this.isLoggedIn = this.loginService.isLoggedIn();
       this.user = this.loginService.getUser();
-      this.cargarModulos(); // Recargar cuando cambia el estado de login
     });
 
-    if (this.user) {
-      this.cargarModulos(); // Solo carga si hay usuario
-    }
   }
 
-  cargarModulos(): void {
-    const permisosDelRol = this.user?.rol?.rolesPermisos?.map(
-      (rp: any) => rp.permisos?.nombrePermiso
-    ) || [];
 
-  }
 
   cerrar(): void {
     this.loginService.logout();
     this.router.navigate(['/login']);
   }
-  passwordActual: string = '';
-  nuevaPassword: string = '';
-  mostrarFormularioCambio: boolean = false;
+    mostrarFormularioCambio: boolean = false;
   mensajeCambio: string = '';
 
   cambiarPassword(): void {
-    if (!this.passwordActual || !this.nuevaPassword) {
-      this.mensajeCambio = 'Debe completar ambos campos.';
+    if (!this.passwordActual || !this.nuevaPassword || !this.repetirPassword) {
+      this.mensajeCambio = 'Debe completar todos los campos.';
+      return;
+    }
+
+    if (this.nuevaPassword !== this.repetirPassword) {
+      this.mensajeCambio = 'Las contraseñas nuevas no coinciden.';
       return;
     }
 
@@ -67,17 +67,22 @@ export class PerfilUserComponent {
       return;
     }
 
-    // Aquí te aseguras de que el cuerpo de la solicitud esté bien formado
     this.userService.cambiarPassword(userId, this.nuevaPassword)
       .subscribe({
         next: (resp: any) => {
           this.mensajeCambio = 'Contraseña actualizada exitosamente.';
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: this.mensajeCambio
+          });
           this.passwordActual = '';
           this.nuevaPassword = '';
+          this.repetirPassword = '';
           this.mostrarFormularioCambio = false;
         },
         error: (err) => {
-          console.error('Error al cambiar la contraseña', err);  // Agrega un log para ver detalles
+          console.error('Error al cambiar la contraseña', err);
           if (err.status === 400) {
             this.mensajeCambio = 'La contraseña actual es incorrecta.';
           } else if (err.status === 500) {
@@ -85,12 +90,13 @@ export class PerfilUserComponent {
           } else {
             this.mensajeCambio = 'Error desconocido al cambiar la contraseña.';
           }
-        }
 
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: this.mensajeCambio
+          });
+        }
       });
   }
-
-
-
 }
-

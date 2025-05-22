@@ -1,0 +1,259 @@
+<div class="container">
+    <app-header></app-header>
+
+    <div class="card">
+        <div class="info-compras-linea">
+            <h5>Compras registrados</h5>
+            <!-- Buscador personalizado sin Angular Material -->
+            <div class="mover">
+                <div class="buscador">
+                    <div class="input-wrapper">
+                        <input type="text" id="searchInput" placeholder="Buscador compra" [(ngModel)]="filtroBusqueda"
+                            (ngModelChange)="buscarCompras()" />
+                        <button type="button" class="btn-icono">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button (click)="abrirModalRegistro()" class="btn-agregar">
+                    + Compra
+                </button>
+            </div>
+        </div>
+
+        <table class="tabla-compras mb-5">
+            <thead>
+                <tr>
+                    <th>Correlativo</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let compra of comprasFiltrados">
+                    <td>{{ compra.numeroDoc }}</td>
+                    <td>{{ compra.fecha_compra }}</td>
+                    <td>{{ compra.proveedor.razon_social }}</td>
+                    <td>S/. {{ compra.total }}</td>
+                    <td class="acciones">
+                        <button class="btn-accion ver" (click)="verModal(compra.id_compra)">
+                            <mat-icon color="accent">visibility</mat-icon>
+                        </button>
+                        <button class="btn-accion editar" (click)="editarCompra(compra.id_compra)">
+                            <mat-icon class="edit" color="primary">edit</mat-icon>
+                        </button>
+                        <button class="btn-accion eliminar" (click)="eliminarCompra(compra.id_compra)">
+                            <mat-icon class="delete" color="warn">delete</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="totalPagina > 1"
+            class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-5">
+            <button class="btn btn-primary me-3" (click)="cambiarPaginaCompra(paginaActualCompra - 1)"
+                [disabled]="paginaActualCompra === 1">Anterior</button>
+            <span>Página {{ paginaActualCompra }} de {{ totalPagina }}</span>
+            <button class="btn btn-primary ms-3" (click)="cambiarPaginaCompra(paginaActualCompra + 1)"
+                [disabled]="paginaActualCompra === totalPagina">Siguiente</button>
+        </div>
+    </div>
+    <div *ngIf="mostrarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" (click)="cerrarModal()">&times;</span>
+            <h2>Detalle de la compra</h2>
+            <span class="auxiliar">
+                <span>
+                    <p><strong>Correlativo:</strong> {{ compraSeleccionada?.numeroDoc }}</p>
+                    <p><strong>Fecha:</strong> {{ compraSeleccionada?.fecha_compra }}</p>
+                    <p><strong>Proveedor:</strong> {{ compraSeleccionada?.proveedor?.razon_social }}</p>
+                </span>
+                <span>
+                    <p><strong>Flete:</strong> S/. {{ compraSeleccionada?.flete }}</p>
+                    <p><strong>Descuento:</strong> S/. {{ compraSeleccionada?.descuento }}</p>
+                    <p><strong>IGV:</strong> {{ compraSeleccionada?.igv }}%</p>
+                    <p><strong>Total:</strong> S/. {{ compraSeleccionada?.total }}</p>
+                </span>
+            </span>
+            <p><strong>Lista de productos:</strong></p>
+            <section>
+                <table class="tabla-compras">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Producto</th>
+                            <th>U.M</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Sub Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let producto of productosPaginados()">
+                            <td>{{ producto.producto.categoriaproducto.nombre }}</td>
+                            <td>{{ producto.producto.nombre }}</td>
+                            <td>{{ producto.producto.unidad.abreviatura }}</td>
+                            <td>{{ producto.cantidad }}</td>
+                            <td>S/. {{ producto.precio }}</td>
+                            <td>S/. {{ producto.precio * producto.cantidad }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div *ngIf="totalPaginas > 1"
+                    class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+                    <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+                        [disabled]="paginaActual === 1">Anterior</button>
+                    <span>Página {{ paginaActual }} de {{ totalPagina }}</span>
+                    <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+                        [disabled]="paginaActual === totalPaginas">Siguiente</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div *ngIf="modalRegistro" class="modalRegistro">
+        <div class="modal-content-registro">
+            <span class="close" (click)="cerrarMordalRegistro()">&times;</span>
+            <h2 class="mb-3">Compra</h2>
+
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+                <mat-form-field class="w-50" appearance="outline">
+                    <mat-label>Número de Documento</mat-label>
+                    <input type="text" name="numeroDoc" id="numeroDoc" [(ngModel)]="compra.numeroDoc"
+                        #numedoDoc="ngModel" required matInput placeholder="Numero de Documento" minlength="1">
+                </mat-form-field>
+
+                <mat-form-field class="ms-5 w-25" appearance="outline">
+                    <mat-label>Fecha</mat-label>
+                    <input name="fecha_compra" id="fecha_compra" [(ngModel)]="compra.fecha_compra"
+                        #fecha_compra="ngModel" required matInput [matDatepicker]="picker">
+                    <mat-hint>DD/MM/AAAA</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="w-100 form-field-small" appearance="outline">
+                    <mat-label>Selecciona Proveedor</mat-label>
+                    <input type="text" id="searchInput" [name]="compra.proveedor.ruc_proveedor"
+                        placeholder="Seleccione proveedor" matInput (input)="filtrarProveedores()"
+                        [(ngModel)]="compra.proveedor" [required]="true" [matAutocomplete]="auto"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #auto="matAutocomplete"
+                        (optionSelected)="seleccionarProveedor($event.option.value)" [displayWith]="mostrarProveedor">
+                        <mat-option *ngFor=" let proveedor of proveedorFiltrado" [value]="proveedor">
+                            {{proveedor.ruc_proveedor}} | {{proveedor.razon_social}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Selecciona Producto</mat-label>
+                    <input type="text" id="searchInput" placeholder="Seleccione producto" matInput
+                        (input)="filtrarProductos()" [(ngModel)]="productoBusqueda" [matAutocomplete]="autoProducto"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #autoProducto="matAutocomplete"
+                        (optionSelected)="agregarProducto($event.option.value)" [displayWith]="mostrarNombreProducto">
+                        <mat-option *ngFor=" let producto of productosFiltrados" [value]="producto">
+                            {{producto.nombre}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <!-- Tabla de productos agregados -->
+                <div class="tabla-scrollable">
+                    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100"
+                        *ngIf="compra.detallecompra.length > 0">
+
+                        <ng-container matColumnDef="nombre">
+                            <th mat-header-cell *matHeaderCellDef> Producto </th>
+                            <td mat-cell *matCellDef="let item"> {{ item.producto?.nombre }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="unidad">
+                            <th mat-header-cell *matHeaderCellDef> Unidad </th>
+                            <td mat-cell *matCellDef="let item"> {{ item.producto?.unidad?.abreviatura }} </td>
+                        </ng-container>
+
+                        <ng-container class="cantidad" matColumnDef="cantidad">
+                            <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+                            <td mat-cell *matCellDef="let item">
+                                <input type="number" [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"
+                                    (ngModelChange)="actualizarSubtotal(item)" min="1" class="w-50">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="precio">
+                            <th mat-header-cell *matHeaderCellDef> Precio </th>
+                            <td mat-cell *matCellDef="let item">
+                                S/. <input type="number" [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
+                                    (ngModelChange)="actualizarSubtotal(item)" min="0.01" step="0.01" class="w-50">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="subtotal">
+                            <th mat-header-cell *matHeaderCellDef> Subtotal </th>
+                            <td mat-cell *matCellDef="let item"> S/ {{ item.subtotal | number:'1.2-2' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                            <td mat-cell *matCellDef="let item; let i = index">
+                                <button mat-icon-button color="warn" (click)="eliminarProducto(i)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasTabla;"></tr>
+                    </table>
+                </div>
+
+                <!-- Total general -->
+                <div class="text-right mt-3" *ngIf="compra.detallecompra.length > 0">
+                    <span class="ultimos">
+                        <mat-form-field class="fletes">
+                            <mat-label>Flete</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="compra.flete"
+                                (ngModelChange)="actualizarTotales()" placeholder="0" value="0">
+                            <span matTextPrefix>S/.&nbsp;</span>
+                        </mat-form-field>
+
+                        <mat-form-field class="descuento">
+                            <mat-label>Descuento</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="compra.descuento"
+                                (ngModelChange)="actualizarTotales()" placeholder="0" value="0">
+                            <span matTextPrefix>S/.&nbsp;</span>
+                        </mat-form-field>
+
+                        <mat-form-field class="igv">
+                            <mat-label>IGV</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="compra.igv"
+                                (ngModelChange)="actualizarTotales()" placeholder="0" value="0">
+                            <span matTextSuffix>%&nbsp;</span>
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <mat-label>Total</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="compra.total" required
+                                readonly min="0.01">
+                        </mat-form-field>
+                    </span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
+                        class="btn-primary">
+                        Guardar
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>

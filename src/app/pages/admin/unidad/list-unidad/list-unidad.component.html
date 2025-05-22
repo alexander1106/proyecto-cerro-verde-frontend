@@ -1,0 +1,94 @@
+<div class="container">
+    <app-header></app-header>
+
+    <div class="card">
+        <div class="info-unidad-linea">
+            <h5>Unidad de Medida registrados</h5>
+            <!-- Buscador personalizado sin Angular Material -->
+            <div class="mover">
+                <div class="buscador">
+                    <div class="input-wrapper">
+                        <input type="text" id="searchInput" placeholder="Buscador unidad de medida"
+                            [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarUnidad()" />
+                        <button type="button" class="btn-icono">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button (click)="verModal()" class="btn-agregar">
+                    + Medida
+                </button>
+            </div>
+        </div>
+
+        <table class="tabla-unidad mb-5">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Abreviatura</th>
+                    <th>Unidades</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let unidad of (unidadesFiltrados.length ? unidadesFiltrados : unidades)">
+                    <td>{{ unidad.nombre }}</td>
+                    <td>{{ unidad.abreviatura }}</td>
+                    <td>{{ unidad.equivalencia }}</td>
+                    <td class="acciones">
+                        <button class="btn-accion editar" (click)="editarUnidad(unidad.idUnidad)">
+                            <mat-icon class="edit" color="primary">edit</mat-icon>
+                        </button>
+                        <button class="btn-accion eliminar" (click)="eliminarUnidad(unidad.idUnidad)">
+                            <mat-icon class="delete" color="warn">delete</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="totalPaginas > 1"
+            class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+            <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+                [disabled]="paginaActual === 1">Anterior</button>
+            <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+                [disabled]="paginaActual === totalPaginas">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div *ngIf="mostrarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" (click)="cerrarModal()">&times;</span>
+            <h2>Unidad de Medida</h2>
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input id="nombre" [(ngModel)]="unidad.nombre" name="nombre" #nombre="ngModel" required matInput
+                        placeholder="Digite Nombre" type="text" minlength="1" />
+                </mat-form-field>
+
+                <mat-form-field class="w-75" appearance="outline">
+                    <mat-label>Abreviatura</mat-label>
+                    <input id="abreviatura" [(ngModel)]="unidad.abreviatura" name="abreviatura" #abreviatura="ngModel"
+                        required matInput placeholder="Digite Abreviatura" type="text" minlength="1" />
+                </mat-form-field>
+
+                <mat-form-field class="w-50" appearance="outline">
+                    <mat-label>Equivalencia Unidades</mat-label>
+                    <input id="equivalencia" [(ngModel)]="unidad.equivalencia" name="equivalencia"
+                        #equivalencia="ngModel" required matInput type="number" />
+                </mat-form-field>
+
+                <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
+                        class="btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

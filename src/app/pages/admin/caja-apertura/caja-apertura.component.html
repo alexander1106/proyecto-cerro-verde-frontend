@@ -15,7 +15,7 @@
               <div class="mb-4">
                 <label for="monto" class="form-label">Monto de apertura</label>
                 <div class="input-group">
-                  <span class="input-group-text">S/</span>
+                  <span class="input-group-text">S/.</span>
                   <input
                     type="number"
                     id="monto"
@@ -43,13 +43,53 @@
         </div>
 
         <!-- Historial Card -->
+        <div class="historial-card shadow-sm mb-4" *ngIf="cajaAperturada">
+          <div class="card-body">
+            <h4 class="mb-4 d-flex align-items-center">
+              <i class="bi bi-unlock me-2 text-success"></i>
+              <span class="text-success">Caja actual</span>
+            </h4>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th>Fecha Apertura</th>
+                    <th class="text-center">Monto Apertura</th>
+                    <th class="text-center">Saldo</th>
+                    <th class="text-end">Usuario</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">{{ cajaAperturada.id }}</td>
+                    <td>{{ cajaAperturada.fechaApertura | date:'short' }}</td>
+                    <td class="text-center money-amount">S/.{{ cajaAperturada.montoApertura.toFixed(2) }}</td>
+                    <td class="text-center money-amount">S/.{{ cajaAperturada.saldo.toFixed(2) }}</td>
+                    <td class="text-end">{{ cajaAperturada.usuario?.nombre || '—' }}</td>
+                    <td class="text-end">
+                      <a class="btn btn-info btn-sm" [routerLink]="['/admin/detalle-caja']">
+                        <i class="bi"></i> Ingresar
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <div class="historial-card shadow-sm">
           <div class="card-body">
             <h4 class="mb-4 d-flex align-items-center">
               <i class="bi bi-clock-history me-2"></i>
               Historial de Cajas
             </h4>
-
+            <a class="btn btn-outline-primary" [routerLink]="['/admin/transacciones/historial']">
+              <i class="bi bi-clock-history me-2"></i>
+              Ver Historial de Transacciones
+            </a>
             <div *ngIf="historial.length > 0; else sinHistorial">
               <div class="table-responsive">
                 <table class="table table-hover">
@@ -60,6 +100,8 @@
                       <th>Fecha Cierre</th>
                       <th class="text-end">Monto Apertura</th>
                       <th class="text-end">Monto Cierre</th>
+                      <th>Usuario</th>
+                      <th class="text-center">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -67,8 +109,22 @@
                       <td class="text-center">{{ i + 1 }}</td>
                       <td>{{ caja.fechaApertura | date:'short' }}</td>
                       <td>{{ caja.fechaCierre | date:'short' }}</td>
-                      <td class="text-end money-amount">S/{{ caja.montoApertura.toFixed(2) }}</td>
-                      <td class="text-end money-amount">S/{{ caja.montoCierre.toFixed(2) }}</td>
+                      <td class="text-end money-amount">S/.{{ caja.montoApertura.toFixed(2) }}</td>
+                      <td class="text-end money-amount">S/.{{ caja.montoCierre.toFixed(2) }}</td>
+                      <td class="text-end">{{ caja.usuario?.nombre || '—' }}</td>
+                      <td class="text-end" style="min-width: 130px;">
+                        <div class="btn-group" role="group" aria-label="Acciones">
+                          <a class="btn btn-outline-info btn-sm" [routerLink]="['/admin/detalle-caja', caja.id]" title="Ver Detalle">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/caja/arqueo', caja.id]" title="Ver Arqueo">
+                            <i class="bi bi-calculator"></i>
+                          </a>
+                          <a class="btn btn-outline-primary btn-sm" [routerLink]="['/admin/transacciones', caja.id]" title="Ver Transacciones">
+                            <i class="bi bi-list-ul"></i>
+                          </a>
+                        </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

@@ -1,0 +1,420 @@
+.container {
+    padding: 24px;
+    max-width: 1200px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: white;
+    padding: 20px 30px;
+}
+
+.info-compras-linea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    color: rgb(0, 0, 0);
+}
+
+.mover {
+    width: 35vw !important;
+    float: right;
+    display: flex;
+}
+
+.info-compras-linea p {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.div-filtros {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-left: 8px;
+}
+
+.filtro {
+    padding: 8px 16px;
+    background-color: #eee;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+.filtro:hover {
+    background-color: #d5d5d5;
+}
+
+.buscador {
+    max-width: 300px;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.input-wrapper input {
+    flex: 1;
+    padding: 10px 36px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: box-shadow 0.3s ease;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(63, 81, 181, 0.6);
+}
+
+.input-wrapper button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #999;
+}
+
+.btn-agregar {
+    padding: 10px 24px;
+    background-color: #4caf50;
+    border-radius: 6px;
+    color: white;
+    margin-left: 20px;
+    float: right;
+    font-weight: 600;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-agregar a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.btn-agregar:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.tabla-compras {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-compras th,
+.tabla-compras td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    color: #444;
+}
+
+.tabla-compras th {
+    background-color: #3f51b5;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tabla-compras tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+    .buscador,
+    .btn-agregar {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .tabla-compras th,
+    .tabla-compras td {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+
+/* Botón de búsqueda (ícono de lupa) */
+.btn-icono {
+    background-color: #4caf50;
+    /* verde */
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-icono:hover {
+    background-color: #45a049;
+}
+
+/* Botón de agregar trabajador */
+.btn-agregar {
+    background-color: #2196f3;
+    /* azul */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn-agregar a {
+    color: white;
+    text-decoration: none;
+}
+
+.btn-agregar:hover {
+    background-color: #1976d2;
+}
+
+/* Botones de acción */
+.btn-accion {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.btn-accion.editar:hover {
+    background-color: #e3f2fd;
+    /* azul claro */
+}
+
+.btn-accion.eliminar:hover {
+    background-color: #ffebee;
+    /* rojo claro */
+}
+
+/* Filtros */
+.filtro {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filtro:hover {
+    background-color: #bdbdbd;
+}
+
+.filtro.activo {
+    background-color: #4caf50;
+    /* verde */
+    color: white;
+}
+
+.delete {
+    color: rgb(197, 8, 8);
+}
+
+.edit {
+    color: #1976d2;
+}
+
+/*Estilos del modal*/
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro translúcido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 50rem;
+    min-height: 85%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease-out;
+    position: relative;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.modal-content p {
+    margin: 12px 0;
+    font-size: 16px;
+    color: #444;
+}
+
+.modal .close {
+    position: absolute;
+    right: 16px;
+    top: 14px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal .close:hover {
+    color: #f44336;
+}
+
+.auxiliar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    & p {
+        margin: 0;
+    }
+
+    & span {
+        display: flex;
+        gap: 2rem;
+    }
+}
+
+
+
+
+.modalRegistro {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro translúcido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content-registro {
+    background-color: #ffffff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    width: 90%;
+    overflow-y: auto;
+    max-width: 50rem;
+    max-height: 85%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease-out;
+    position: relative;
+}
+
+.form-actions {
+    background: white;
+    /* espacio arriba/abajo */
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    z-index: 10;
+    /* separarlo del contenido */
+}
+
+.modalRegistro .close {
+    position: absolute;
+    right: 16px;
+    top: 14px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.tabla-scrollable {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.form-field-small .mat-form-field-wrapper {
+    padding-bottom: 0px;
+    /* reduce el espacio interno */
+}
+
+.form-field-small .mat-form-field-infix {
+    padding: 2px 0;
+    /* ajusta el relleno vertical */
+    min-height: 30px;
+    /* opcional: define una altura mínima */
+}
+
+.fletes {
+    width: 100px;
+}
+
+.descuento {
+    width: 150px;
+}
+
+.igv {
+    width: 100px;
+}
+
+.ultimos {
+    display: flex;
+    justify-content: space-between;
+}

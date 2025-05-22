@@ -1,0 +1,86 @@
+<div class="container">
+    <app-header></app-header>
+
+    <div class="card">
+        <div class="info-categorias-linea">
+            <h5>Métodos de Pago Registrados</h5>
+            <!-- Buscador personalizado sin Angular Material -->
+            <div class="mover">
+                <div class="buscador">
+                    <div class="input-wrapper">
+                        <input type="text" id="searchInput" placeholder="Buscador método de pago"
+                            [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarMetodoPago()" />
+                        <button type="button" class="btn-icono">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button (click)="verModal()" class="btn-agregar">
+                    + Método de Pago
+                </button>
+            </div>
+        </div>
+
+        <table class="tabla-categorias mb-5">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let metodo of (metodosFiltrados.length ? metodosFiltrados : metodos)">
+                    <td>{{ metodo.nombre }}</td>
+                    <td>{{metodo.estado === 1 ? "Habilitado": "Deshabilitado"}}</td>
+                    <td class="acciones">
+                        <button class="btn-accion editar" (click)="editarMetodoPago(metodo.idMetodoPago)">
+                            <mat-icon class="edit" color="primary">edit</mat-icon>
+                        </button>
+                        <button class="btn-accion eliminar" (click)="eliminarMetodoPago(metodo.idMetodoPago)">
+                            <mat-icon class="delete" color="warn">delete</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="totalPaginas > 1"
+            class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+            <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+                [disabled]="paginaActual === 1">Anterior</button>
+            <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+                [disabled]="paginaActual === totalPaginas">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div *ngIf="mostrarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" (click)="cerrarModal()">&times;</span>
+            <h2>Método de Pago</h2>
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input [(ngModel)]="metodo.nombre" name="nombre" minlength="1" required matInput
+                        placeholder="Digite Nombre" />
+                </mat-form-field>
+
+                <mat-label class="me-3">Estado</mat-label>
+                <mat-slide-toggle name="estado" [(ngModel)]="metodo.estado" [ngModel]="metodo.estado === 1"
+                    (change)="metodo.estado = $event.checked ? 1 : 0">
+                </mat-slide-toggle>
+
+                <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
+                        class="btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

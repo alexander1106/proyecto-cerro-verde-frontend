@@ -1,0 +1,76 @@
+<div class="container">
+    <app-header></app-header>
+      <div class="page-header">
+    <h1>Gestión de Salones</h1>
+    <button class="btn btn-primary" routerLink="/admin/recepcion/salones/nuevo">Nuevo Salón</button>
+  </div>
+
+  <!-- Filtro de búsqueda -->
+  <div class="mb-3">
+    <input type="text" class="form-control" placeholder="Buscar salón..." [(ngModel)]="filtroGeneral" />
+  </div>
+
+  <!-- Indicadores de carga o error -->
+  <div *ngIf="loading" class="loading">Cargando salones...</div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Tabla de salones -->
+  <div class="table-responsive">
+    <table class="table table-striped" *ngIf="!loading && !error">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Precio Hora</th>
+          <th>Precio Diario</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let salon of salonesPaginadas">
+          <td>{{ salon.nombre }}</td>
+          <td>
+            <span class="badge" [ngClass]="'badge-' + salon.estado_salon.toLowerCase()">
+              {{ salon.estado_salon }}
+            </span>
+          </td>
+          <td>${{ salon.precio_hora }}</td>
+          <td>${{ salon.precio_diario }}</td>
+          <td class="action-buttons">
+            <button class="btn btn-sm btn-primary me-1"
+                    [routerLink]="['/admin/recepcion/salones/editar', salon.id_salon]">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-danger"
+                    (click)="eliminarSalon(salon.id_salon!)">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="salonesActivasFiltradas.length === 0">
+          <td colspan="5" class="text-center">No hay salones que coincidan con el filtro.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="pagination-controls mt-3">
+    <button class="btn btn-outline-secondary me-2"
+            [disabled]="currentPage === 1"
+            (click)="changePage(-1)">
+      ←
+    </button>
+
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+
+    <button class="btn btn-outline-secondary ms-2"
+            [disabled]="currentPage === totalPages"
+            (click)="changePage(1)">
+      →
+    </button>
+  </div>
+</div>

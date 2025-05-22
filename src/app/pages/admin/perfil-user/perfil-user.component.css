@@ -1,3 +1,4 @@
+
 .profile-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 40px 30px;
@@ -5,13 +6,30 @@
   border-radius: 20px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
 }
+.password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input input {
+  flex: 1;
+  padding-right: 30px;
+}
+
+.password-input button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: -30px;
+}
 
 h2 {
   color: #2c3e50;
   font-size: 32px;
   margin-bottom: 30px;
   font-weight: 700;
-  border-left: 6px solid #4CAF50;
+  border-left: 6px solid #146977;
   padding-left: 15px;
 }
 
@@ -38,7 +56,7 @@ h2 {
   width: 200px;
   object-fit: cover;
   margin-bottom: 20px;
-  border: 5px solid #4CAF50;
+  border: 5px solid #146977;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
@@ -50,7 +68,7 @@ h2 {
 }
 
 .btn-cambiar {
-  background-color: #4CAF50;
+  background-color: #146977;
   color: #fff;
   font-weight: 600;
   border: none;
@@ -107,23 +125,25 @@ span {
   border-radius: 12px;
   border: 1px solid #ddd;
 }
-
-input[type="password"] {
+.password-input input {
   padding: 12px 14px;
   font-size: 16px;
+  padding-right: 20px !important;
   border-radius: 10px;
   border: 1px solid #ccc;
   transition: border 0.3s;
+  width: 98%;
+  box-sizing: border-box;
 }
 
-input[type="password"]:focus {
-  border-color: #4CAF50;
+.password-input input:focus {
+  border-color: #146977;
   outline: none;
 }
 
 .btn-primary {
   padding: 12px 24px;
-  background-color: #4CAF50;
+  background-color: #146977;
   border: none;
   border-radius: 10px;
   color: white;
@@ -135,7 +155,7 @@ input[type="password"]:focus {
 }
 
 .btn-primary:hover {
-  background-color: #388e3c;
+  background-color: #146977;
 }
 
 .mensaje {
@@ -157,7 +177,7 @@ input[type="password"]:focus {
 }
 
 .profile-section-form input:focus {
-  border-color: #4CAF50;
+  border-color:#146977;
   outline: none;
 }
 

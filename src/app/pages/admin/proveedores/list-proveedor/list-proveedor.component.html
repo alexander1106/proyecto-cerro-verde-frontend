@@ -6,6 +6,7 @@
       <h5>Proveedores registrados</h5>
       <!-- Buscador personalizado sin Angular Material -->
       <div class="mover">
+
         <div class="buscador">
           <div class="input-wrapper">
             <input type="text" id="searchInput" placeholder="Buscador proveedor" [(ngModel)]="filtroBusqueda"
@@ -16,13 +17,15 @@
           </div>
         </div>
 
-        <button class="btn-agregar">
-          <a routerLink="/admin/add-proveedor">+ Proveedor</a>
+        <button (click)="verModal()" class="btn-agregar">
+          + Proveedor
         </button>
+
       </div>
+      
     </div>
 
-    <table class="tabla-proveedores">
+    <table class="tabla-proveedores mb-5">
       <thead>
         <tr>
           <th>RUC</th>
@@ -32,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let proveedor of (filtroBusqueda ? proveedoresFiltrados : proveedores)">
+        <tr *ngFor="let proveedor of (proveedoresFiltrados.length ? proveedoresFiltrados : proveedores)">
           <td>{{ proveedor.ruc_proveedor }}</td>
           <td>{{ proveedor.razon_social }}</td>
           <td>{{ proveedor.direccion }}</td>
@@ -47,5 +50,53 @@
         </tr>
       </tbody>
     </table>
+
+    <div *ngIf="totalPaginas > 1"
+      class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+      <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+  <div *ngIf="mostrarModal" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal()">&times;</span>
+      <h2>Proveedor</h2>
+      <form (ngSubmit)="formSubmit()" #formulario="ngForm">
+
+        <mat-form-field class="w-50" appearance="outline">
+          <mat-label>RUC</mat-label>
+          <input id="ruc" [(ngModel)]="proveedor.ruc_proveedor" name="ruc" #ruc="ngModel" required matInput placeholder="Digite RUC"
+            type="text" minlength="11" maxlength="11" (keydown)="soloNumeros($event)"/>
+        </mat-form-field>
+
+        <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscarRuc(proveedor.ruc_proveedor)">
+          Buscar
+        </button>
+        
+        <span>
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Razón Social</mat-label>
+            <input [(ngModel)]="proveedor.razon_social" name="RazonSocial" required matInput
+              placeholder="Digite Razón Social" />
+          </mat-form-field>
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Dirección</mat-label>
+            <input [(ngModel)]="proveedor.direccion" name="Direccion" required matInput
+              placeholder="Digite Dirección" />
+          </mat-form-field>
+        </span>
+        <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
+          <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary" class="btn-primary">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
