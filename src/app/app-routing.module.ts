@@ -231,7 +231,7 @@ const routes: Routes = [{
       component:ConductoresFormComponent
     },
     {
-      path: 'recepcion/conductores',
+      path: 'conductores',
       component:ConductoresListComponent
     },
     {
@@ -243,7 +243,7 @@ const routes: Routes = [{
       component:RecojosFormComponent
     },
     {
-      path: 'recepcion/recojos',
+      path: 'programar-recojo',
       component:RecojosListComponent
     },
     {
@@ -253,10 +253,10 @@ const routes: Routes = [{
       path: 'clientes',
       component: ClientesComponent
     },{
-      path: 'venta',
+      path: 'registrar-venta',
       component: VentasComponent
     },{
-      path: 'metodopago',
+      path: 'metodo-de-pago',
       component: MetodoPagoComponent
     }
 

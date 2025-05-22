@@ -6,7 +6,7 @@ import { ReservasService, Reserva } from '../../../../../service/reserva.service
 import { ConductoresService, Conductores } from '../../../../../service/conductores.service';
 import Swal from 'sweetalert2';
 
-declare var google: any; 
+declare var google: any;
 
 @Component({
   selector: 'app-recojos-form',
@@ -44,23 +44,23 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     this.loadData();
     this.id = +this.route.snapshot.params['id'];
     this.isEditing = !!this.id;
-  
+
     // 💡 Esta suscripción debe ir después de que se inicialice el formulario (lo hace loadData → initForm)
     setTimeout(() => {
       this.recojoForm.get('conductor')?.valueChanges.subscribe(() => {
         this.recojoForm.get('fecha_hora')?.updateValueAndValidity();
       });
     }, 0); // Usamos setTimeout para asegurarnos de que `this.recojoForm` ya está definido
-  
+
     if (this.isEditing) {
       this.loadRecojos();
     }
-  
+
     this.loadGoogleMapsScript().then(() => {
       this.initAutocomplete();
     }).catch(err => console.error('Error loading Google Maps', err));
   }
-  
+
 
   ngAfterViewInit(): void {
     this.initAutocomplete();
@@ -75,7 +75,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
       reserva: [null, Validators.required],
       estado_recojo: ['Pendiente']
     });
-    
+
   }
 
   initAutocomplete(): void {
@@ -86,7 +86,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
         new google.maps.LatLng(-5.8, -74.8)   // Norte-Este San Martín aprox
       ),
       strictbound: true,
-      types: ['address'] 
+      types: ['address']
     });
 
     this.autocomplete.addListener('place_changed', () => {
@@ -113,7 +113,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
       // Actualiza el formulario con la dirección completa
       this.recojoForm.patchValue({
         destino: fullAddress || place.formatted_address
-        
+
       });
     });
   }
@@ -147,7 +147,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     this.recojosService.getRecojos().subscribe({
       next: (data) => {
         this.recojos = data;
-    
+
         if (this.recojoForm) {
           this.recojoForm.get('fecha_hora')?.setValidators([
             Validators.required,
@@ -158,8 +158,8 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    
-    
+
+
     this.initForm();
 
     this.conductorService.getConductores().subscribe({
@@ -194,7 +194,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     this.recojosService.getRecojo(this.id).subscribe({
       next: (recojo) => {
         this.recojo = recojo;
-  
+
         // 2. Espera a que reservas y conductores se carguen
         const waitForData = () => {
           if (this.reservas.length && this.conductores.length) {
@@ -203,7 +203,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
               fecha_hora: recojo.fecha_hora,
               reserva: this.reservas.find(r => r.id_reserva === recojo.reserva.id_reserva),
               conductor: this.conductores.find(c => c.id_conductor === recojo.conductor.id_conductor),
-              estado_recojo: recojo.estado_recojo 
+              estado_recojo: recojo.estado_recojo
             });
             this.loading = false;
           } else {
@@ -211,7 +211,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
           }
         };
         console.log('Valor actualizado:', this.recojoForm.get('estado_recojo')?.value);
-  
+
         waitForData(); // inicia la espera
       },
       error: (err) => {
@@ -224,35 +224,35 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.submitted = true;
-  
+
     if (this.recojoForm.invalid) {
       console.warn('❌ Formulario inválido:', this.recojoForm.value);
       return;
     }
-  
+
     const recojo: Recojos = this.recojoForm.value;
     console.log('✅ Enviando recojo:', recojo);
-  
+
     const guardar = () => {
       this.loading = true;
-  
+
       const obs = this.isEditing
         ? this.recojosService.updateRecojo({ ...recojo, id_recojo: this.id })
         : this.recojosService.createRecojo(recojo);
-  
+
       obs.subscribe({
         next: (resp) => {
           console.log('✅ Respuesta del backend:', resp);
           this.loading = false;
-  
+
           Swal.fire({
             icon: 'success',
             title: this.isEditing ? 'Recojo actualizado correctamente' : 'Recojo creado correctamente',
             showConfirmButton: false,
             timer: 2000
           });
-  
-          this.router.navigate(['/admin/recepcion/recojos']);
+
+          this.router.navigate(['/admin/programar-recojo']);
         },
         error: (err) => {
           this.loading = false;
@@ -261,7 +261,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
         }
       });
     };
-  
+
     if (this.isEditing) {
       Swal.fire({
         title: '¿Estás seguro?',
@@ -281,32 +281,32 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
       guardar();
     }
   }
-  
+
 
   volver(): void {
-    this.router.navigate(['/admin/recepcion/recojos']);
+    this.router.navigate(['/admin/programar-recojo']);
   }
 
   fechaDuplicadaValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value || !this.recojos || !this.recojoForm) return null;
-  
+
       const inputFecha = new Date(control.value).toISOString();
       const conductor = this.recojoForm.get('conductor')?.value;
       if (!conductor) return null;
-  
+
       const existe = this.recojos.some((r) => {
         if (this.isEditing && r.id_recojo === this.recojo?.id_recojo) return false;
         const mismaFecha = new Date(r.fecha_hora).toISOString() === inputFecha;
         const mismoConductor = r.conductor?.id_conductor === conductor.id_conductor;
         return mismaFecha && mismoConductor;
       });
-  
+
       return existe ? { fechaDuplicada: true } : null;
     };
   }
-  
-  
+
+
 }
 
 function fechaNoPasada(): ValidatorFn {
