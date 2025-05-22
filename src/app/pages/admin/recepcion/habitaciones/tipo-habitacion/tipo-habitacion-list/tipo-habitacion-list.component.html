@@ -1,5 +1,6 @@
 <div class="container">
   <app-header></app-header>
+<<<<<<< HEAD
 <div class="page-header">
     <h1>Tipos de Habitación</h1>
     <button class="btn btn-primary" routerLink="/admin/recepcion/tipos/nuevo">Nuevo Tipo</button>
@@ -63,6 +64,89 @@
               [disabled]="currentPage === totalPages"
               (click)="changePage(1)">
         →
+=======
+
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Tipos de Habitación</h4>
+
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/tipos/nuevo">+ Nuevo Tipo</a>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">Cargando tipos de habitación...</div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && tipos.length === 0" class="alert alert-info">
+      No hay tipos de habitación registrados. Cree uno nuevo.
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Precio Público</th>
+            <th>Precio Corporativo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tipo of tipohabitacionesPaginadas; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ tipo.nombre }}</td>
+            <td class="precio">S/. {{ tipo.precio_publico }}</td>
+            <td class="precio">S/. {{ tipo.precio_corporativo }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar">
+                <a [routerLink]="['/admin/recepcion/tipos/editar', tipo.id_tipo_habitacion]">
+                  <i class="edit fa-regular fa-pen-to-square"></i>
+                </a>
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminarTipo(tipo.id_tipo_habitacion!)">
+                <i class="delete fa-regular fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="tipohabitacionesActivasFiltradas.length === 0">
+            <td colspan="5" class="text-center text-muted">
+              No hay habitaciones que coincidan con el filtro.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(-1)">
+        ← Anterior
+      </button>
+
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(1)">
+        Siguiente →
+>>>>>>> 1d22b06f312af71ac9a557a5b540dcae90da3f9a
       </button>
     </div>
   </div>

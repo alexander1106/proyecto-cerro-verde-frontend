@@ -34,6 +34,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card'; // ✅ Importar MatCardModule
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatError } from '@angular/material/form-field';
+import { MatLabel } from '@angular/material/form-field';
 
 import { AddRolComponent } from './pages/admin/roles/add-rol/add-rol.component';
 import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
@@ -125,7 +127,7 @@ import { VentasComponent } from './pages/admin/ventas/ventas.component';
     MatToolbarModule,MatDatepickerModule,MatSelectModule,MatSlideToggleModule,
     AppRoutingModule,HttpClientModule,MatDialogModule,NgSelectModule,
     MatListModule,MatExpansionModule,MatNativeDateModule,FormsModule,MatInputModule,MatButtonModule,MatCardModule,
-    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe
+    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe, MatError, MatLabel
   ],
   providers: [
     authInterceptorProviders,

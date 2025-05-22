@@ -243,3 +243,21 @@
 .edit{
   color: #1976d2;
 }
+
+.activo {
+  background-color: #249e59; /* verde */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.inactivo {
+  background-color: #a20101; /* rojo */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}

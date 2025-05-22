@@ -30,6 +30,7 @@ export class TipoHabitacionFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+<<<<<<< HEAD
     this.initForm();
 
     this.id = +this.route.snapshot.params['id'];
@@ -39,6 +40,19 @@ export class TipoHabitacionFormComponent implements OnInit {
       this.loadTipo();
     }
   }
+=======
+    this.tipoHabitacionService.getTiposHabitacion().subscribe((tipos) => {
+      this.tipos = tipos;
+      this.initForm(); // ← Aquí, solo se debe llamar cuando ya se tienen los tipos
+      this.id = +this.route.snapshot.params['id'];
+      this.isEditing = !!this.id;
+      if (this.isEditing) {
+        this.loadTipo();
+      }
+    });
+  }
+  
+>>>>>>> 1d22b06f312af71ac9a557a5b540dcae90da3f9a
 
   get f() { return this.tipoForm.controls; }
 

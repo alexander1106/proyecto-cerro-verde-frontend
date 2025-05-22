@@ -71,7 +71,11 @@ export class TipoHabitacionListComponent implements OnInit {
           },
           error: (err) => {
             console.error('Error al eliminar:', err);
+<<<<<<< HEAD
             Swal.fire('Error', 'No se pudo eliminar la habitación', 'error');
+=======
+            Swal.fire('Error', 'No se pudo eliminar el tipo, está relacionada a una Habitación', 'error');
+>>>>>>> 1d22b06f312af71ac9a557a5b540dcae90da3f9a
           }
         });
       }

@@ -219,6 +219,7 @@ const routes: Routes = [{
       path: 'venta',
       component: VentasComponent
     }
+
   ]
 },
 ];

@@ -30,7 +30,7 @@
 }
 
 .mover{
-  width: 31vw !important;
+  width: 34vw !important;
   float: right;
   display: flex;
   }
@@ -119,13 +119,14 @@
 
 .btn-agregar {
   padding: 10px 24px;
+  display: flex;
   background-color: #07bcea;
   border-radius: 6px;
   color: white;
   margin-left: 20px;
   float: right;
   font-weight: 600;
-  width: 10vw;
+  width: 13vw;
   transition: transform 0.2s ease, background-color 0.2s ease;
   border: none;
   cursor: pointer;
@@ -171,6 +172,7 @@
   background-color: #f1f1f1;
   cursor: pointer;
 }
+
 
 .foto-perfil {
   width: 40px;
@@ -280,46 +282,76 @@
 }
 .delete{
   color: rgb(197, 8, 8);
-}
-.edit{
-  color: #c94006;
   font-size: 21px;
 }
 
-.activo {
-  background-color: #249e59; /* verde */
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: bold;
-  display: inline-block;
-}
 
-.inactivo {
-  background-color: #a20101; /* rojo */
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: bold;
-  display: inline-block;
-}
 
-.admin {
-  background-color: #51b0b4; /* verde */
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: bold;
-  display: inline-block;
-}
-
-.usuario {
-  background-color: #78a69e; /* verde */
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: bold;
-  display: inline-block;
+.loading {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 18px;
+  color: #666;
 }
 
 
+.badge {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.badge-disponible {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-ocupada {
+  background-color: #b22016;
+  color: white;
+}
+
+.badge-reservada {
+  background-color: #e53935;
+  color: white;
+}
+
+.badge-mantenimiento {
+  background-color: #ff9800;
+  color: white;
+}
+
+.badge-limpieza {
+  background-color: #2196f3;
+  color: white;
+}
+
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.doble {
+  background-color: #07bcea;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.simple{
+    background-color: #86b0ba;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
