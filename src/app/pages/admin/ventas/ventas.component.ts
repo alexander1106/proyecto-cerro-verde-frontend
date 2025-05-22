@@ -337,8 +337,7 @@ export class VentasComponent {
         this.ventasFiltrados = [...this.ventas];
         this.actualizarPaginacion();
       }, (error) => {
-        console.log(error);
-        Swal.fire("error !!", "Al cargar el listado de las compras", 'error')
+        Swal.fire("error !!", "Al cargar el listado de las ventas", 'error')
       }
     )
   }
