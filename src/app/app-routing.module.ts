@@ -46,6 +46,7 @@ import { ConductoresListComponent } from './pages/admin/recepcion/recojos/conduc
 import { RecojosFormComponent } from './pages/admin/recepcion/recojos/recojos-form/recojos-form.component';
 import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-list/recojos-list.component';
 import { ClientesComponent } from './pages/admin/clientes/clientes.component';
+import { VentasComponent } from './pages/admin/ventas/ventas.component';
 
 
 const routes: Routes = [{
@@ -250,6 +251,9 @@ const routes: Routes = [{
     },{
       path: 'clientes',
       component: ClientesComponent
+    },{
+      path: 'venta',
+      component: VentasComponent
     }
 
   ]

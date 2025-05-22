@@ -87,6 +87,11 @@ export class CajaService {
   obtenerTransaccionesPorCajaId(cajaId: number) {
     return this.http.get(`${this.baseUrl}/transacciones/caja/${cajaId}`);
   }
+
+  verificarEstadoCajaRaw() {
+    return this.http.get(`${this.baseUrl}`);
+  }
+  
   
 
 }
