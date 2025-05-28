@@ -19,6 +19,7 @@ import { AddProveedorComponent } from './pages/admin/proveedores/add-proveedor/a
 import { ListCategoriasComponent } from './pages/admin/categorias/list-categorias/list-categorias.component';
 import { AddCategoriasComponent } from './pages/admin/categorias/add-categorias/add-categorias.component';
 import { CajaAperturaComponent } from './pages/admin/caja-apertura/caja-apertura.component';
+import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
 import { CajaDetalleComponent } from './pages/admin/caja-detalle/caja-detalle.component';
 import { TransaccionesComponent } from './pages/admin/transacciones/transacciones.component';
@@ -135,6 +136,9 @@ const routes: Routes = [{
     }, {
       path: 'add-producto',
       component: AddProductoComponent
+    }, {
+      path: 'cajas',
+      component: AdminCajasComponent
     }
   ]
 },

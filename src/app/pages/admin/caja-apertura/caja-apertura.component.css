@@ -1,104 +1,193 @@
-.apertura-container {
-    animation: fadeIn 0.4s ease-out;
-  }
-  
-  .apertura-card {
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .apertura-card:hover {
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-  }
-  
-  .apertura-header {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    padding: var(--spacing-lg);
-    border-radius: 12px 12px 0 0;
-  }
-  
-  .apertura-body {
-    padding: var(--spacing-lg);
-  }
-  
-  .form-control {
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 0.75rem;
-    transition: all 0.3s ease;
-  }
-  
-  .form-control:focus {
-    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-    border-color: var(--primary);
-  }
-  
-  .btn-aperturar {
-    background: linear-gradient(135deg, #28a745, #218838);
-    color: white;
-    font-weight: 600;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.25);
-  }
-  
-  .btn-aperturar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);
-  }
-  
-  .btn-aperturar:active {
-    transform: translateY(0);
-  }
-  
-  .historial-card {
-    margin-top: var(--spacing-lg);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  .table {
-    margin-bottom: 0;
-  }
-  
-  .table th {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-    font-weight: 600;
-  }
-  
-  .table td {
-    vertical-align: middle;
-  }
-  
-  .money-amount {
-    font-family: var(--font-family);
-    font-weight: 700;
-    color: var(--success);
-  }
-  
-  .empty-state {
-    padding: var(--spacing-lg);
-    text-align: center;
-    color: var(--secondary);
-  }
-  
-  @media (max-width: 768px) {
-    .apertura-header,
-    .apertura-body {
-      padding: var(--spacing-md);
-    }
-    
-    .table-responsive {
-      margin: 0 calc(-1 * var(--spacing-md));
-      width: calc(100% + (2 * var(--spacing-md)));
-    }
-  }
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden; /* Evita scroll horizontal global */
+}
+
+.card {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 20px;
+  overflow-x: auto; /* importante para permitir scroll sólo cuando es necesario */
+}
+
+.info-trabajadores-linea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  color: rgb(0, 0, 0);
+}
+
+.mover {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-agregar {
+  padding: 10px 24px;
+  background-color: #07bcea;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-agregar:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.btn {
+  font-weight: bold;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.badge-disponible {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-ocupado {
+  background-color: #b22016;
+  color: white;
+}
+
+.text-success {
+  color: #2e7d32 !important;
+}
+
+.text-danger {
+  color: #c62828 !important;
+}
+
+.nav-tabs .nav-link.active {
+  font-weight: bold;
+  border-bottom: 2px solid #0a457f;
+  color: #0a457f;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+input.form-control:focus,
+select.form-select:focus {
+  box-shadow: 0 0 5px rgba(63, 81, 181, 0.6);
+  outline: none;
+  border-color: #0a457f;
+}
+
+.card p {
+  margin: 0 0 8px 0;
+}
+
+/* Estilos adicionales para transacciones */
+.text-apertura {
+  color: #0277bd;
+}
+
+.text-cierre {
+  color: #6a1b9a;
+}
+
+.badge-apertura {
+  background-color: #0288d1;
+  color: white;
+}
+
+.badge-cierre {
+  background-color: #8e24aa;
+  color: white;
+}
+
+.tabla-trabajadores {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 8px;
+  table-layout: fixed;
+  overflow: hidden;
+}
+
+.tabla-trabajadores th,
+.tabla-trabajadores td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabla-trabajadores th {
+  background-color: #0a457f;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tabla-trabajadores tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.tabla-trabajadores td {
+  vertical-align: middle;
+}
+
+/* Columnas fijas */
+.col-id {
+  width: 60px;
+  text-align: center;
+}
+
+.col-fecha {
+  width: 180px;
+}
+
+.col-monto {
+  width: 160px;
+  text-align: right;
+}
+
+.col-tipo {
+  width: 140px;
+  text-align: center;
+}
+
+/* Contenedor responsive */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.input-filtro {
+  padding: 6px 8px !important;
+  font-size: 13px !important;
+  height: auto !important;
+}

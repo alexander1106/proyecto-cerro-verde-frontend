@@ -1,144 +1,363 @@
-<div class="container py-4 apertura-container">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-10 col-lg-8">
-        <!-- Apertura Card -->
-        <div class="apertura-card mb-4">
-          <div class="apertura-header">
-            <h2 class="mb-0 d-flex align-items-center">
-              <i class="bi bi-box-arrow-in-right me-2"></i>
-              Apertura de Caja
-            </h2>
-          </div>
+<div class="container">
+  <app-header></app-header>
 
-          <div class="apertura-body">
-            <form (ngSubmit)="aperturar()" class="fade-in">
-              <div class="mb-4">
-                <label for="monto" class="form-label">Monto de apertura</label>
-                <div class="input-group">
-                  <span class="input-group-text">S/.</span>
-                  <input
-                    type="number"
-                    id="monto"
-                    [(ngModel)]="monto"
-                    name="monto"
-                    class="form-control"
-                    required
-                    min="1"
-                    step="0.01"
-                    placeholder="Ingrese el monto inicial"
-                  />
-                </div>
-                <small class="form-text text-muted mt-2">
-                  <i class="bi bi-info-circle me-1"></i>
-                  Ingrese el monto con el que iniciará operaciones
-                </small>
-              </div>
+  <div class="card">
+    <div class="info-trabajadores-linea mb-3">
+      <h4>Detalles de Caja</h4>
+      <div class="mover">
+        <button *ngIf="cajaAperturada.estadoCaja === 'cerrada'" class="btn-agregar" (click)="mostrarModalApertura = true">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Aperturar Caja
+        </button>
+        <button *ngIf="cajaAperturada.estadoCaja === 'abierta'" class="btn btn-danger me-2" (click)="cerrarCaja()">
+          <i class="bi bi-lock-fill me-1"></i> Cerrar Caja
+        </button>
+        <button *ngIf="cajaAperturada.estadoCaja === 'abierta'" class="btn btn-success me-2" (click)="mostrarModalTransaccion = true">
+          <i class="bi bi-plus-circle me-1"></i> Registrar Transacción
+        </button>
+      </div>
+    </div>
 
-              <button type="submit" class="btn btn-aperturar w-100">
-                <i class="bi bi-unlock me-2"></i>
-                Aperturar Caja
-              </button>
-            </form>
-          </div>
+    <!-- Detalles de Caja -->
+    <div *ngIf="cajaAperturada" class="mb-4">
+      <p><strong>Estado: </strong>
+        <span class="badge"
+          [ngClass]="{
+            'badge-disponible': cajaAperturada.estadoCaja === 'abierta',
+            'badge-ocupado': cajaAperturada.estadoCaja === 'cerrada'
+          }">{{ cajaAperturada.estadoCaja | uppercase }}</span>
+      </p>
+
+      <!-- Si la caja está abierta -->
+      <ng-container *ngIf="cajaAperturada.estadoCaja === 'abierta'; else detallesCajaCerrada">
+        <p><strong>Fecha Apertura:</strong> {{ cajaAperturada.fechaApertura | date:'medium' }}</p>
+        <p><strong>Monto Apertura:</strong> S/. {{ cajaAperturada.montoApertura?.toFixed(2) || '—' }}</p>
+        <p><strong>Saldo Fisico Actual:</strong> S/. {{ cajaAperturada.saldoFisico?.toFixed(2) || '—' }}</p>
+        <p><strong>Saldo Total Actual:</strong> S/. {{ cajaAperturada.saldoTotal?.toFixed(2) || '—' }}</p>
+      </ng-container>
+
+      <!-- Si la caja está cerrada -->
+      <ng-template #detallesCajaCerrada>
+        <p><strong>Fecha de Cierre:</strong> {{ cajaAperturada.fechaCierre | date:'medium' }}</p>
+      </ng-template>
+    </div>
+
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" *ngIf="cajaAperturada">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="tabActivo === 'transacciones'" (click)="tabActivo = 'transacciones'">Transacciones</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="tabActivo === 'arqueo'" (click)="tabActivo = 'arqueo'">Arqueo</a>
+      </li>
+    </ul>
+
+    <!-- CONTENIDO TAB -->
+    <div *ngIf="cajaAperturada" [ngSwitch]="tabActivo">
+
+<!-- TRANSACCIONES -->
+<div *ngSwitchCase="'transacciones'">
+  <!-- Formulario para agregar transacción -->
+
+
+  <!-- Tabla de Transacciones -->
+  <div *ngIf="transacciones.length > 0; else sinTransacciones">
+    <div class="row mb-3">
+      <div class="col-md-auto">
+        <label class="form-label">Tipo de Transacción</label>
+        <select class="form-select input-filtro" [(ngModel)]="filtroTipo">
+          <option [ngValue]="null">-- Todos --</option>
+          <option [ngValue]="1">Ingreso</option>
+          <option [ngValue]="2">Egreso</option>
+          <option [ngValue]="3">Apertura</option>
+          <option [ngValue]="4">Cierre</option>
+        </select>
+      </div>
+      <div class="col-md-auto">
+        <label class="form-label">Desde</label>
+        <input type="date" class="form-control input-filtro" [(ngModel)]="filtroFechaDesde" />
+      </div>
+      <div class="col-md-auto">
+        <label class="form-label">Hasta</label>
+        <input type="date" class="form-control input-filtro" [(ngModel)]="filtroFechaHasta" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Orden</label>
+        <select class="form-select input-filtro" [(ngModel)]="ordenTransaccionesDesc">
+          <option [ngValue]="true">Más recientes primero</option>
+          <option [ngValue]="false">Más antiguas primero</option>
+        </select>
+      </div>
+      <div class="text-end mb-auto">
+        <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
+          <i class="bi bi-x-circle me-1"></i> Limpiar Filtros
+        </button>
+      </div>
+    </div>
+    
+    
+    <table class="tabla-trabajadores">
+      <thead>
+        <tr>
+          <th class="col-id">#</th>
+          <th class="col-fecha">Fecha y Hora</th>
+          <th class="col-monto">Monto</th>
+          <th class="col-tipo">Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of transaccionesPaginadas; let i = index">
+          <td class="col-id">{{ i + 1 }}</td>
+          <td class="col-fecha">{{ t.fechaHoraTransaccion | date: 'short' }}</td>
+          <td class="col-monto" [ngClass]="{
+            'text-success': t.tipo.id === 1,
+            'text-danger': t.tipo.id === 2,
+            'text-apertura': t.tipo.id === 3,
+            'text-cierre': t.tipo.id === 4
+          }">
+            {{ t.tipo.id === 1 ? '+' : t.tipo.id === 2 ? '-' : '' }} S/.{{ t.montoTransaccion.toFixed(2) }}
+          </td>
+          <td class="col-tipo">
+            <span class="badge" [ngClass]="{
+              'badge-disponible': t.tipo.id === 1,
+              'badge-ocupado': t.tipo.id === 2,
+              'badge-apertura': t.tipo.id === 3,
+              'badge-cierre': t.tipo.id === 4
+            }">
+              {{ t.tipo.nombre | uppercase }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </div>
+  <nav *ngIf="totalPaginas > 1" class="mt-3">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="paginaActual === 1">
+        <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
+      </li>
+  
+      <li class="page-item" *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
+          [class.active]="paginaActual === i + 1">
+        <button class="page-link" (click)="cambiarPagina(i + 1)">{{ i + 1 }}</button>
+      </li>
+  
+      <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+        <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
+      </li>
+    </ul>
+  </nav>
+  
+
+  <!-- Template si no hay transacciones -->
+  <ng-template #sinTransacciones>
+    <div class="text-muted text-center">
+      <i class="bi bi-inbox fs-1"></i>
+      <p>No hay transacciones registradas</p>
+    </div>
+  </ng-template>
+</div>
+
+
+      <!-- ARQUEO -->
+      <div *ngSwitchCase="'arqueo'">
+        <div *ngIf="arqueo.length > 0; else sinArqueo">
+<!-- Filtros -->
+<div class="row mb-3">
+  <div class="col-md-auto">
+    <label class="form-label">Desde</label>
+    <input type="date" class="form-control input-filtro" [(ngModel)]="filtroArqueoDesde" />
+  </div>
+  <div class="col-md-auto">
+    <label class="form-label">Hasta</label>
+    <input type="date" class="form-control input-filtro" [(ngModel)]="filtroArqueoHasta" />
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Orden</label>
+    <select class="form-select input-filtro" [(ngModel)]="ordenArqueosDesc">
+      <option [ngValue]="true">Más recientes primero</option>
+      <option [ngValue]="false">Más antiguos primero</option>
+    </select>
+  </div>
+</div>
+
+
+
+<div class="text-end mb-2">
+  <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltrosArqueo()">
+    <i class="bi bi-x-circle me-1"></i> Limpiar Filtros
+  </button>
+</div>
+
+<!-- Lista de arqueos -->
+<div *ngFor="let a of arqueosPaginados" class="card p-3 mb-3">
+  <h5 class="mb-2">Arqueo - {{ a.fechaArqueo | date:'short' }}</h5>
+  <p><strong>Total dinero físico:</strong> S/. {{ a.totalArqueo.toFixed(2) }}</p>
+  <p><strong>Observaciones:</strong> {{ a.observaciones || '—' }}</p>
+  <button class="btn btn-outline-primary btn-sm float-end" (click)="abrirDetalleArqueo(a.id)">
+    <i class="bi bi-eye-fill me-1"></i> Detalles
+  </button>
+</div>
+
+<!-- Paginación -->
+<nav *ngIf="totalPaginasArqueo > 1" class="mt-3">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="paginaArqueoActual === 1">
+      <button class="page-link" (click)="cambiarPaginaArqueo(paginaArqueoActual - 1)">Anterior</button>
+    </li>
+
+    <li class="page-item" *ngFor="let pagina of [].constructor(totalPaginasArqueo); let i = index"
+        [class.active]="paginaArqueoActual === i + 1">
+      <button class="page-link" (click)="cambiarPaginaArqueo(i + 1)">{{ i + 1 }}</button>
+    </li>
+
+    <li class="page-item" [class.disabled]="paginaArqueoActual === totalPaginasArqueo">
+      <button class="page-link" (click)="cambiarPaginaArqueo(paginaArqueoActual + 1)">Siguiente</button>
+    </li>
+  </ul>
+</nav>
+
         </div>
-
-        <!-- Historial Card -->
-        <div class="historial-card shadow-sm mb-4" *ngIf="cajaAperturada">
-          <div class="card-body">
-            <h4 class="mb-4 d-flex align-items-center">
-              <i class="bi bi-unlock me-2 text-success"></i>
-              <span class="text-success">Caja actual</span>
-            </h4>            
-        
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th>Fecha Apertura</th>
-                    <th class="text-center">Monto Apertura</th>
-                    <th class="text-center">Saldo</th>
-                    <th class="text-end">Usuario</th>
-                    <th class="text-end">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="text-center">{{ cajaAperturada.id }}</td>
-                    <td>{{ cajaAperturada.fechaApertura | date:'short' }}</td>
-                    <td class="text-center money-amount">S/.{{ cajaAperturada.montoApertura.toFixed(2) }}</td>
-                    <td class="text-center money-amount">S/.{{ cajaAperturada.saldo.toFixed(2) }}</td>
-                    <td class="text-end">{{ cajaAperturada.usuario?.nombre || '—' }}</td>
-                    <td class="text-end">
-                      <a class="btn btn-info btn-sm" [routerLink]="['/admin/detalle-caja']">
-                        <i class="bi bi-eye me-1"></i> Ver Detalle
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>              
-            </div>
+        <ng-template #sinArqueo>
+          <div class="text-muted text-center">
+            <i class="bi bi-inbox fs-1"></i>
+            <p>No hay arqueos realizados aún</p>
           </div>
-        </div>
-        <div class="historial-card shadow-sm">
-          <div class="card-body">
-            <h4 class="mb-4 d-flex align-items-center">
-              <i class="bi bi-clock-history me-2"></i>
-              Historial de Cajas
-            </h4>
-            <a class="btn btn-outline-primary" [routerLink]="['/admin/transacciones/historial']">
-              <i class="bi bi-clock-history me-2"></i>
-              Ver Historial de Transacciones
-            </a>
-            <div *ngIf="historial.length > 0; else sinHistorial">
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th>Fecha Apertura</th>
-                      <th>Fecha Cierre</th>
-                      <th class="text-end">Monto Apertura</th>
-                      <th class="text-end">Monto Cierre</th>
-                      <th>Usuario</th>
-                      <th class="text-center">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let caja of historial; let i = index">
-                      <td class="text-center">{{ i + 1 }}</td>
-                      <td>{{ caja.fechaApertura | date:'short' }}</td>
-                      <td>{{ caja.fechaCierre | date:'short' }}</td>
-                      <td class="text-end money-amount">S/.{{ caja.montoApertura.toFixed(2) }}</td>
-                      <td class="text-end money-amount">S/.{{ caja.montoCierre.toFixed(2) }}</td>
-                      <td class="text-end">{{ caja.usuario?.nombre || '—' }}</td>
-                      <td class="text-end" style="min-width: 130px;">
-                        <div class="btn-group" role="group" aria-label="Acciones">
-                          <a class="btn btn-outline-info btn-sm" [routerLink]="['/admin/detalle-caja', caja.id]" title="Ver Detalle">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/caja/arqueo', caja.id]" title="Ver Arqueo">
-                            <i class="bi bi-calculator"></i>
-                          </a>
-                          <a class="btn btn-outline-primary btn-sm" [routerLink]="['/admin/transacciones', caja.id]" title="Ver Transacciones">
-                            <i class="bi bi-list-ul"></i>
-                          </a>
-                        </div>
-                      </td>                                       
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <ng-template #sinHistorial>
-              <div class="empty-state">
-                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                <p class="mb-0">No hay registros de cajas anteriores</p>
-              </div>
-            </ng-template>
-          </div>
-        </div>
+        </ng-template>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Modal Apertura -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: mostrarModalApertura ? 'block' : 'none' }" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-box-arrow-in-right me-2"></i> Apertura de Caja</h5>
+        <button type="button" class="btn-close" (click)="mostrarModalApertura = false"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="aperturarDesdeModal()">
+          <!-- PRIMERA APERTURA -->
+<!-- PRIMERA APERTURA -->
+<div *ngIf="requiereMontoInicial">
+<label class="form-label">Monto de Apertura</label>
+<div class="input-group mb-3">
+<span class="input-group-text">S/</span>
+<input type="number" class="form-control" [(ngModel)]="monto" name="monto" required step="0.01" min="1" />
+</div>
+</div>
+
+<!-- REAPERTURA -->
+<div *ngIf="!requiereMontoInicial">
+
+<div *ngIf="!usarMontoAnterior">
+<label class="form-label">Monto de Apertura</label>
+<div class="input-group mb-3">
+<span class="input-group-text">S/</span>
+<input type="number" class="form-control" [(ngModel)]="monto" name="monto" required step="0.01" min="1" />
+</div>
+</div>
+</div>
+
+        
+          <!-- REAPERTURA (SALDO READONLY) -->
+          <ng-template #montoReadOnly>
+            <label class="form-label">Monto de Apertura</label>
+            <div class="input-group mb-3">
+              <span class="input-group-text">S/</span>
+              <input type="number" class="form-control" [value]="cajaAperturada?.saldoFisico?.toFixed(2)" readonly />
+            </div>
+          </ng-template>
+        
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle me-1"></i> Aperturar Caja
+            </button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="mostrarModalApertura"></div>
+
+<!-- Modal de Arqueo -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: mostrarModalArqueo ? 'block' : 'none' }" role="dialog">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+  <h5 class="modal-title"><i class="bi bi-calculator-fill me-2"></i> Arqueo de Caja</h5>
+  <button type="button" class="btn-close" (click)="mostrarModalArqueo = false"></button>
+</div>
+<div class="modal-body">
+  <app-arqueo-caja (onCerrarModal)="mostrarModalArqueo = false" (onCajaCerrada)="verificarEstadoCaja()"></app-arqueo-caja>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Backdrop para modal arqueo -->
+<div class="modal-backdrop fade show" *ngIf="mostrarModalArqueo"></div>
+
+<!-- Modal Detalle de Arqueo -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: mostrarModalDetalleArqueo ? 'block' : 'none' }" role="dialog">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+  <h5 class="modal-title"><i class="bi bi-eye-fill me-2"></i> Detalle de Arqueo</h5>
+  <button type="button" class="btn-close" (click)="mostrarModalDetalleArqueo = false"></button>
+</div>
+<div class="modal-body">
+  <app-arqueo-caja 
+    [modoModal]="true"
+    [soloLectura]="true"
+    [idArqueo]="arqueoSeleccionadoId">
+  </app-arqueo-caja>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Backdrop para detalle -->
+<div class="modal-backdrop fade show" *ngIf="mostrarModalDetalleArqueo"></div>
+
+<!-- Modal Transacción -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: mostrarModalTransaccion ? 'block' : 'none' }" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i> Nueva Transacción</h5>
+        <button type="button" class="btn-close" (click)="mostrarModalTransaccion = false"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="guardarTransaccion(); mostrarModalTransaccion = false">
+          <div class="mb-3">
+            <label class="form-label">Monto</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaTransaccion.montoTransaccion" name="montoTransaccion" required step="0.01" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" [(ngModel)]="nuevaTransaccion.tipo" name="tipo" required>
+              <option [ngValue]="{ id: 1, nombre: 'Ingreso' }">Ingreso</option>
+              <option [ngValue]="{ id: 2, nombre: 'Egreso' }">Egreso</option>
+            </select>
+          </div>
+          <div class="d-grid">
+            <button class="btn btn-primary" type="submit">
+              <i class="bi bi-check-circle me-1"></i> Guardar Transacción
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="mostrarModalTransaccion"></div>

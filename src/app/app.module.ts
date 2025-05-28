@@ -53,6 +53,7 @@ import { ListProductoComponent } from './pages/admin/productos/list-producto/lis
 import { TransaccionesHistorialComponent } from './pages/admin/transacciones-historial/transacciones-historial.component';
 import { AddProductoComponent } from './pages/admin/productos/add-producto/add-producto.component';
 import { ArqueoCajaComponent } from './pages/admin/arqueo-caja/arqueo-caja.component';
+import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -82,6 +83,7 @@ import { ArqueoCajaComponent } from './pages/admin/arqueo-caja/arqueo-caja.compo
     AddProductoComponent,
     TransaccionesHistorialComponent,
     ArqueoCajaComponent,
+    AdminCajasComponent,
 
 
   ],
