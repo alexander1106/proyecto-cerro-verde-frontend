@@ -7,27 +7,28 @@ import Swal from 'sweetalert2';
   selector: 'app-metodo-pago',
   standalone: false,
   templateUrl: './metodo-pago.component.html',
-  styleUrl: './metodo-pago.component.css'
+  styleUrl: './metodo-pago.component.css',
 })
 export class MetodoPagoComponent {
-  metodos: any[] = []
+  metodos: any[] = [];
   metodosFiltrados: any[] = [];
   filtroBusqueda: string = '';
   mostrarModal: boolean = false;
   public metodo = {
     idMetodoPago: '',
     nombre: '',
-    estado: 1
+    estado: 1,
   };
   paginaActual = 1;
   elementosPorPagina = 5;
   habilitado: boolean = true;
   esEditar: boolean = false;
+  relacion: boolean = false;
 
   constructor(
     private metodosService: MetodoPagoService,
-    private snack: MatSnackBar,
-  ) { }
+    private snack: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.listarMetodos();
@@ -42,36 +43,43 @@ export class MetodoPagoComponent {
     this.metodo.nombre = '';
     this.mostrarModal = false;
     this.esEditar = false;
+    this.relacion = false;
   }
 
   //MOSTRAR LOS METODOS DE PAGO
   listarMetodos() {
-    this.metodosService.listarMetodosPago().subscribe(
+    this.metodosService.listarMetodosPagoActivo().subscribe(
       (data: any) => {
         this.metodos = data;
         this.metodosFiltrados = [...this.metodos];
         this.actualizarPaginacion();
-      }, (error) => {
+      },
+      (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo cargar los métodos de pago", 'error')
+        Swal.fire('Error', 'No se pudo cargar los métodos de pago', 'error');
       }
-    )
+    );
   }
 
   //REGISTRAR METODO DE PAGO
   formSubmit() {
-    let auxiliar = this.esEditar ? "editado" : "registrado";
+    let auxiliar = this.esEditar ? 'editado' : 'registrado';
     this.metodosService.registrarMetodoPago(this.metodo).subscribe(
       (data) => {
-        Swal.fire("Excelente", `El Método de Pago fue ${auxiliar} con éxito`, "success");
+        Swal.fire(
+          'Excelente',
+          `El Método de Pago fue ${auxiliar} con éxito`,
+          'success'
+        );
         this.listarMetodos();
         this.cerrarModal();
-      }, (error) => {
+      },
+      (error) => {
         this.snack.open('Ha ocurrido un error en el sistema!', 'Aceptar', {
           duration: 3000,
         });
       }
-    )
+    );
   }
 
   //EDITAR METODO DE PAGO
@@ -80,46 +88,66 @@ export class MetodoPagoComponent {
     this.metodosService.buscarMetodoPagoId(id).subscribe({
       next: (data: any) => {
         this.metodo = data;
+        console.log(data)
         this.verModal();
       },
       error: (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo obtener los datos del método de pago", "error");
-      }
+        Swal.fire(
+          'Error',
+          'No se pudo obtener los datos del método de pago',
+          'error'
+        );
+      },
     });
   }
 
   //ELIMINAR METODO DE PAGO
   eliminarMetodoPago(id: number) {
     Swal.fire({
-      title: "¿Estás seguro?",
-      text: "No podrás recuperar el registro",
-      icon: "warning",
+      title: '¿Estás seguro?',
+      text: 'No podrás recuperar el registro',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar"
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.metodosService.eliminarMetodoPago(id).subscribe({
           next: (response: any) => {
             Swal.fire({
-              title: "Eliminado",
+              title: 'Eliminado',
               text: response.mensaje,
-              icon: "success"
+              icon: 'success',
             });
             this.listarMetodos();
           },
           error: (error) => {
             Swal.fire({
-              title: "Error",
+              title: 'Error',
               text: error.error.mensaje,
-              icon: "error"
+              icon: 'error',
             });
-          }
+          },
         });
       }
     });
+  }
+
+  //VERIFICAR RELACION
+  verificarRelacion(id: number) {
+    this.metodosService.verificarRelacion(id).subscribe({
+      next: (data: any) => {
+        console.log(data)
+        if(data === true) {
+          this.relacion = true;
+        }
+      },  
+      error: (error: any) => {
+        console.log("xd")
+      }
+    })
   }
 
   //BUSCADOR
@@ -130,7 +158,7 @@ export class MetodoPagoComponent {
       this.paginaActual = 1; // Volver a la primera página
       this.actualizarPaginacion(); // Volver a paginar normal
     } else {
-      this.metodosFiltrados = this.metodos.filter(m =>
+      this.metodosFiltrados = this.metodos.filter((m) =>
         m.nombre.toLowerCase().includes(filtro)
       );
     }

@@ -66,7 +66,7 @@
                 <mat-form-field class="w-100" appearance="outline">
                     <mat-label>Nombre</mat-label>
                     <input [(ngModel)]="metodo.nombre" name="nombre" minlength="1" required matInput
-                        placeholder="Digite Nombre" />
+                        placeholder="Digite Nombre" [disabled]="relacion"/>
                 </mat-form-field>
 
                 <mat-label class="me-3">Estado</mat-label>
@@ -77,7 +77,7 @@
                 <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
                     <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
                         class="btn-primary">
-                        Guardar
+                        {{esEditar === true ? "Editar" : "Guardar"}}
                     </button>
                 </div>
             </form>

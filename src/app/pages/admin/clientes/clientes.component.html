@@ -44,9 +44,9 @@
                         <button class="btn-accion editar" (click)="editarCliente(cliente.idCliente)">
                             <mat-icon class="edit" color="primary">edit</mat-icon>
                         </button>
-                        <!-- <button class="btn-accion eliminar" (click)="eliminarCliente(cliente.idCliente)">
+                        <button class="btn-accion eliminar" (click)="eliminarCliente(cliente.idCliente)">
                             <mat-icon class="delete" color="warn">delete</mat-icon>
-                        </button> -->
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -87,13 +87,13 @@
                         Digite {{ longitud }} dígitos.
                     </mat-error>
                 </mat-form-field>
-                <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscar(tipo, cliente.dniRuc)" [disabled]="esEditar">
+                <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscar(tipo, cliente.dniRuc)">
                     Buscar
                 </button>
 
                 <mat-form-field class="w-100" appearance="outline">
                     <mat-label>Nombre</mat-label>
-                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" [disabled]="esEditar" required matInput placeholder="Digite Nombre" />
+                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" required matInput placeholder="Digite Nombre" />
                 </mat-form-field>
 
                 <mat-form-field class="w-100" appearance="outline">

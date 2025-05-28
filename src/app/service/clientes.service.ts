@@ -47,4 +47,8 @@ export class ClientesService {
   buscarDni(numeroDni: string, headers: HttpHeaders) {
     return this.http.get<any>(`${this.apiUrl}/dni/${numeroDni}`, {headers});
   }
+
+  verficarRelacion(id: number) {
+    return this.http.get<any>(`${this.apiUrl}/clienterelacion/${id}`)
+  }
 }

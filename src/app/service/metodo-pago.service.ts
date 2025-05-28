@@ -31,4 +31,8 @@ export class MetodoPagoService {
   eliminarMetodoPago(id: number) {
     return this.http.delete(`http://localhost:8080/cerro-verde/metodopago/${id}`)
   }
+
+  verificarRelacion(id: number){
+    return this.http.get(`http://localhost:8080/cerro-verde/metodopagorelacion/${id}`)
+  }
 }

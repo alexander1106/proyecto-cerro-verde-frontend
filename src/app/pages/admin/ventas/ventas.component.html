@@ -476,6 +476,14 @@
                     </table>
                 </div>
 
+                <!-- <div class="mt-3" *ngIf="venta.ventaMetodoPago.length > 0 && soloEfectivo && vuelto > 0">
+                    <mat-form-field class="w-10">
+                        <mat-label>Vuelto</mat-label>
+                        <input matInput type="number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="vuelto">
+                        <span matTextPrefix>S/.&nbsp;</span>
+                    </mat-form-field>
+                </div> -->
+
                 <div class="text-left mt-3"
                     *ngIf="venta.ventaHabitacion.length > 0 || venta.ventaSalon.length > 0 || venta.detalleVenta.length > 0">
                     <span class="ultimos">
@@ -495,9 +503,11 @@
 
                         <mat-form-field class="igv w-10">
                             <mat-label>IGV</mat-label>
-                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="venta.igv"
-                                (ngModelChange)="actualizarTotales()" placeholder="0" value="0">
-                            <span matTextSuffix>%&nbsp;</span>
+                            <select matNativeControl [(ngModel)]="tipoIgv" name="tipoIgv" (ngModelChange)="seleccionarIgv(tipoIgv); actualizarTotales()" required>
+                                <option value="0">0%</option>
+                                <option value="10">10%</option>
+                                <option value="18">18%</option>
+                            </select>
                         </mat-form-field>
 
                         <mat-form-field class="w-10">

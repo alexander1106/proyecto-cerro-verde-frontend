@@ -75,6 +75,7 @@ export class ClientesComponent {
     this.cliente.telefono = '';
     this.mostrarModal = false;
     this.esEditar = false;
+    this.tipo = 'DNI';
   }
 
   //MOSTRAR LOS CLIENTES
@@ -113,6 +114,10 @@ export class ClientesComponent {
     this.clientesService.getClienteById(id).subscribe({
       next: (data: any) => {
         this.cliente = data;
+        const auxiliar = this.cliente.dniRuc
+        if(auxiliar.length == 11){
+          this.tipo = 'RUC'
+        }
         this.verModal();
       },
       error: (error) => {

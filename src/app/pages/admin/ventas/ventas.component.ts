@@ -18,7 +18,7 @@ import { MetodoPagoService } from '../../../service/metodo-pago.service';
   selector: 'app-ventas',
   standalone: false,
   templateUrl: './ventas.component.html',
-  styleUrl: './ventas.component.css'
+  styleUrl: './ventas.component.css',
 })
 export class VentasComponent {
   //Comprobantes
@@ -31,7 +31,14 @@ export class VentasComponent {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   productoBusqueda: string = '';
-  columnasTabla: string[] = ['nombre', 'unidad', 'cantidad', 'precio', 'subtotal', 'acciones'];
+  columnasTabla: string[] = [
+    'nombre',
+    'unidad',
+    'cantidad',
+    'precio',
+    'subtotal',
+    'acciones',
+  ];
   dataSource = new MatTableDataSource<any>();
   //clientes
   clientes: any[] = [];
@@ -42,7 +49,13 @@ export class VentasComponent {
   reservasFiltrado: any[] = [];
   reservaBusqueda: string = '';
   reservaSeleccionada: any = null;
-  tablaReserva: string[] = ['cliente', 'tipo', 'fechaInicio', 'fechaFin', 'acciones'];
+  tablaReserva: string[] = [
+    'cliente',
+    'tipo',
+    'fechaInicio',
+    'fechaFin',
+    'acciones',
+  ];
   dataReserva = new MatTableDataSource<any>();
   //metodos de pago
   metodos: any[] = [];
@@ -55,13 +68,26 @@ export class VentasComponent {
   habitaciones: any[] = [];
   habitacionesFiltrado: any[] = [];
   habitacionBusqueda: string = '';
-  tablaHabitacion: string[] = ['numero', 'tipo', 'piso', 'dias', 'precio', 'subtotal'];
+  tablaHabitacion: string[] = [
+    'numero',
+    'tipo',
+    'piso',
+    'dias',
+    'precio',
+    'subtotal',
+  ];
   dataHabitacion = new MatTableDataSource<any>();
   //salones
   salones: any[] = [];
   salonesFiltrado: any[] = [];
   salonBusqueda: string = '';
-  tablaSalon: string[] = ['nombre', 'tarifa', 'dias/horas', 'precio', 'subtotal'];
+  tablaSalon: string[] = [
+    'nombre',
+    'tarifa',
+    'dias/horas',
+    'precio',
+    'subtotal',
+  ];
   dataSalon = new MatTableDataSource<any>();
   //Modal
   mostrarModal: boolean = false;
@@ -79,7 +105,7 @@ export class VentasComponent {
     telefono: '',
     correo: '',
     pais: '',
-    estado: 1
+    estado: 1,
   };
   //Objeto Venta
   public venta = {
@@ -97,89 +123,89 @@ export class VentasComponent {
       telefono: '',
       correo: '',
       pais: '',
-      estado: 1
+      estado: 1,
     },
     ventaXReserva: [] as Array<{
-      idVentaReserva: any,
+      idVentaReserva: any;
       reserva: {
-        id_reserva: any,
-        fecha_incio: any,
-        fecha_fin: any,
-        estado_reserva: any,
-        comentarios: any,
-        estado: 1,
-        tipo: any,
+        id_reserva: any;
+        fecha_incio: any;
+        fecha_fin: any;
+        estado_reserva: any;
+        comentarios: any;
+        estado: 1;
+        tipo: any;
         cliente: {
-          idCliente: '',
-          dniRuc: '',
-          nombre: '',
-          telefono: '',
-          correo: '',
-          pais: '',
-          estado: 1
-        }
-      }
+          idCliente: '';
+          dniRuc: '';
+          nombre: '';
+          telefono: '';
+          correo: '';
+          pais: '';
+          estado: 1;
+        };
+      };
     }>,
     detalleVenta: [] as Array<{
-      idDetalleVenta: any,
-      cantidad: any,
-      precioUnit: any,
-      subtotal: any,
-      estado: 1,
+      idDetalleVenta: any;
+      cantidad: any;
+      precioUnit: any;
+      subtotal: any;
+      estado: 1;
       producto?: {
-        id_producto: any,
-        nombre: any,
-        descripcion: any,
-        estado: 1,
-        stock: any,
+        id_producto: any;
+        nombre: any;
+        descripcion: any;
+        estado: 1;
+        stock: any;
         categoriaproducto: {
-          id_categoria: '',
-          nombre: '',
-          estado: 1
-        }
-      }
+          id_categoria: '';
+          nombre: '';
+          estado: 1;
+        };
+      };
     }>,
     ventaHabitacion: [] as Array<{
-      idVentaHabitacion: any,
-      dias: any,
-      subTotal: any,
+      idVentaHabitacion: any;
+      dias: any;
+      subTotal: any;
       habitacion: {
-        id_habitacion: any,
-        numero: any,
-        piso: any,
-        estado_habitacion: any,
-        estado: 1,
+        id_habitacion: any;
+        numero: any;
+        piso: any;
+        estado_habitacion: any;
+        estado: 1;
         tipo_habitacion: {
-          id_tipo_habitacion: any,
-          nombre: any,
-          precio_publico: any,
-          precio_corporativo: any,
-          estado: 1
-        }
-      }
+          id_tipo_habitacion: any;
+          nombre: any;
+          precio_publico: any;
+          precio_corporativo: any;
+          estado: 1;
+        };
+      };
     }>,
     ventaSalon: [] as Array<{
-      idVentaSalon: any,
-      horas: any,
-      dias: any,
-      subTotal: any,
+      idVentaSalon: any;
+      horas: any;
+      dias: any;
+      subTotal: any;
       salon: {
-        id_salon: any,
-        precio_diario: any,
-        precio_hora: any,
-        nombre: any,
-        estado_salon: any,
-        estado: 1
-      }
+        id_salon: any;
+        precio_diario: any;
+        precio_hora: any;
+        nombre: any;
+        estado_salon: any;
+        estado: 1;
+      };
     }>,
     ventaMetodoPago: [] as Array<{
-      idVentaMetodoPago: any,
-      pago: any,
+      idVentaMetodoPago: any;
+      pago: any;
       metodoPago: {
-        idMetodoPago: any,
-        nombre: any,
-        estado: 1
-      }
+        idMetodoPago: any;
+        nombre: any;
+        estado: 1;
+      };
     }>,
     comprobantePago: {
       idVenta: '',
@@ -187,8 +213,8 @@ export class VentasComponent {
       numSerieFactura: '',
       pdfUrl: '',
       numComprobante: '',
-      fechaEmision: ''
-    }
+      fechaEmision: '',
+    },
   };
   customers: any;
   paginaActual = 1;
@@ -197,7 +223,7 @@ export class VentasComponent {
   elementosPorPaginaCompra = 5;
   tipo: string = 'Boleta';
   titulo: string = 'Directa';
-  tipoCliente: string = "DNI";
+  tipoCliente: string = 'DNI';
   longitud: number = 8;
   patronNumerico = '^[0-9]*$';
   fechaActual = new Date();
@@ -205,6 +231,7 @@ export class VentasComponent {
   vuelto: number = 0;
   fechaInicio = '';
   fechaFin = '';
+  tipoIgv: number = 0;
 
   constructor(
     private ventasService: VentasService,
@@ -213,8 +240,8 @@ export class VentasComponent {
     private cajaService: CajaService,
     private router: Router,
     private reservaService: ReservasService,
-    private metodosService: MetodoPagoService,
-  ) { }
+    private metodosService: MetodoPagoService
+  ) {}
 
   ngOnInit(): void {
     this.listarVentas();
@@ -223,15 +250,22 @@ export class VentasComponent {
     this.boletaOFactura(this.tipo);
     this.cargarReservas();
     this.cargarMetodos();
+    this.seleccionarIgv(this.tipoIgv);
+  }
+
+  //SELECCIONAR IGV
+  seleccionarIgv(auxiliar: number) {
+    this.tipoIgv = auxiliar;
+    this.venta.igv = String(this.tipoIgv);
   }
 
   boletaOFactura(auxiliar: string) {
-    if (auxiliar === "Boleta") {
-      this.tipo = "Boleta";
-      this.venta.comprobantePago.numComprobante = "B001";
+    if (auxiliar === 'Boleta') {
+      this.tipo = 'Boleta';
+      this.venta.comprobantePago.numComprobante = 'B001';
     } else {
-      this.tipo = "Factura";
-      this.venta.comprobantePago.numComprobante = "F001";
+      this.tipo = 'Factura';
+      this.venta.comprobantePago.numComprobante = 'F001';
     }
   }
 
@@ -239,28 +273,28 @@ export class VentasComponent {
   esAbierto() {
     this.cajaService.verificarEstadoCaja().subscribe({
       next: (data: any) => {
-        console.log(data.estadoCaja)
-        if (data.estadoCaja == "abierta") {
+        console.log(data.estadoCaja);
+        if (data.estadoCaja == 'abierta') {
           this.abrirModalRegistro();
         } else {
           Swal.fire({
-            title: "Caja Cerrada",
-            text: "¿Deseas aperturar caja?",
-            icon: "info",
+            title: 'Caja Cerrada',
+            text: '¿Deseas aperturar caja?',
+            icon: 'info',
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, aperturar"
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, aperturar',
           }).then((result) => {
             if (result.isConfirmed) {
-              this.router.navigate(['/admin/caja'])
+              this.router.navigate(['/admin/caja']);
             } else {
-              this.router.navigate(['/admin/venta'])
+              this.router.navigate(['/admin/venta']);
             }
-          })
-        };
-      }
-    })
+          });
+        }
+      },
+    });
   }
 
   //MODAL DE DETALLE VENTA
@@ -268,15 +302,19 @@ export class VentasComponent {
     this.ventasService.buscarVentaId(id).subscribe({
       next: (venta) => {
         this.ventaSeleccionada = venta;
-        console.log(this.ventaSeleccionada.ventaXReserva)
+        console.log(this.ventaSeleccionada.ventaXReserva);
         this.paginaActual = 1;
         this.mostrarModal = true;
-        console.log(venta)
+        console.log(venta);
       },
       error: (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo obtener el detalle de la venta", "error");
-      }
+        Swal.fire(
+          'Error',
+          'No se pudo obtener el detalle de la venta',
+          'error'
+        );
+      },
     });
   }
   cerrarModal() {
@@ -303,7 +341,7 @@ export class VentasComponent {
         telefono: '',
         correo: '',
         pais: '',
-        estado: 1
+        estado: 1,
       },
       ventaXReserva: [],
       detalleVenta: [],
@@ -316,9 +354,9 @@ export class VentasComponent {
         numSerieFactura: '',
         pdfUrl: '',
         numComprobante: 'B001',
-        fechaEmision: ''
-      }
-    }
+        fechaEmision: '',
+      },
+    };
     this.modalRegistro = false;
     this.esNuevo = false;
     this.cliente.dniRuc = '';
@@ -327,6 +365,7 @@ export class VentasComponent {
     this.reservaSeleccionada = false;
     this.dataHabitacion.data = [];
     this.dataSalon.data = [];
+    this.tipoIgv = 0;
   }
 
   //LISTAR VENTAS
@@ -336,34 +375,72 @@ export class VentasComponent {
         this.ventas = data;
         this.ventasFiltrados = [...this.ventas];
         this.actualizarPaginacion();
-      }, (error) => {
-        Swal.fire("error !!", "Al cargar el listado de las ventas", 'error')
+      },
+      (error) => {
+        Swal.fire('error !!', 'Al cargar el listado de las ventas', 'error');
       }
-    )
+    );
   }
+
+  //MOSTRAR VUELTO
+  // mostrarVuelto(): void {
+  //   const totalVenta = Number(this.venta.total);
+  //   const totalPagado = Number(
+  //     this.venta.ventaMetodoPago.reduce(
+  //       (acc, metodo) => acc + Number(metodo.pago || 0),
+  //       0
+  //     )
+  //   );
+
+  //   console.log("xddd")
+
+  //   const soloEfectivo =
+  //     this.venta.ventaMetodoPago.length === 1 &&
+  //     this.venta.ventaMetodoPago[0].metodoPago.nombre === 'Efectivo';
+
+  //   if (soloEfectivo && totalPagado > totalVenta) {
+  //     // Aplicar redondeo (puedes ajustar la precisión)
+  //     this.vuelto = +(totalPagado - totalVenta).toFixed(2);
+  //     console.log(this.vuelto)
+  //   } else {
+  //     this.vuelto = 0;
+  //   }
+  // }
+  // get soloEfectivo(): boolean {
+  //   return (
+  //     this.venta.ventaMetodoPago.length === 1 &&
+  //     this.venta.ventaMetodoPago[0].metodoPago.nombre === 'Efectivo'
+  //   );
+  // }
 
   //REGISTRAR VENTA
   formSubmit() {
-    const sumaSubTotales = Number(this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0));
+    const sumaSubTotales = Number(
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+    );
     const descuento = Number(this.venta.descuento) || 0;
 
     this.venta.detalleVenta.forEach((item: any) => {
       item.subTotal = item.cantidad * item.producto.precioVenta;
-      console.log(item.subTotal)
+      console.log(item.subTotal);
     });
 
     if (this.venta.ventaXReserva.length === 0) {
       this.snack.open('Debe seleccionar al menos una reserva.', 'Cerrar', {
-        duration: 3000
+        duration: 3000,
       });
       return;
     }
 
     // Validación: debe haber al menos un método de pago
     if (this.venta.ventaMetodoPago.length === 0) {
-      this.snack.open('Debe seleccionar al menos un método de pago.', 'Cerrar', {
-        duration: 3000
-      });
+      this.snack.open(
+        'Debe seleccionar al menos un método de pago.',
+        'Cerrar',
+        {
+          duration: 3000,
+        }
+      );
       return;
     }
 
@@ -378,10 +455,14 @@ export class VentasComponent {
       }
     }
 
-    if (descuento > (sumaSubTotales)) {
-      this.snack.open('Error: El descuento no puede ser mayor al total', 'Aceptar', {
-        duration: 3000,
-      });
+    if (descuento > sumaSubTotales) {
+      this.snack.open(
+        'Error: El descuento no puede ser mayor al total',
+        'Aceptar',
+        {
+          duration: 3000,
+        }
+      );
       return;
     }
     const hoy = new Date();
@@ -390,44 +471,60 @@ export class VentasComponent {
 
     const totalVenta = Number(this.venta.total);
 
-    const totalPagado = Number(this.venta.ventaMetodoPago.reduce((acc, metodo) => acc + Number(metodo.pago || 0), 0));
+    const totalPagado = Number(
+      this.venta.ventaMetodoPago.reduce(
+        (acc, metodo) => acc + Number(metodo.pago || 0),
+        0
+      )
+    );
 
     if (totalPagado < totalVenta) {
-      this.snack.open('El monto pagado no cubre el total de la venta.', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
+      this.snack.open(
+        'El monto pagado no cubre el total de la venta.',
+        'Cerrar',
+        {
+          duration: 3000,
+          panelClass: ['snackbar-error'],
+        }
+      );
       return;
     }
 
     // Verificar si solo se usó EFECTIVO
-    const soloEfectivo = this.venta.ventaMetodoPago.length === 1 && this.venta.ventaMetodoPago[0].metodoPago.nombre === 'EFECTIVO';
+    // const soloEfectivo =
+    //   this.venta.ventaMetodoPago.length === 1 &&
+    //   this.venta.ventaMetodoPago[0].metodoPago.nombre === 'EFECTIVO';
 
-    if (totalPagado > totalVenta) {
-      this.snack.open('El monto pagado excede el total de la venta.', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-      return;
-    }
+    // if (totalPagado > totalVenta) {
+    //   this.snack.open(
+    //     'El monto pagado excede el total de la venta.',
+    //     'Cerrar',
+    //     {
+    //       duration: 3000,
+    //       panelClass: ['snackbar-error'],
+    //     }
+    //   );
+    //   return;
+    // }
 
-    if (soloEfectivo && totalPagado > totalVenta) {
-      this.vuelto = totalPagado - totalVenta;
-    }
+    // if (soloEfectivo && totalPagado > totalVenta) {
+    //   this.vuelto = totalPagado - totalVenta;
+    // }
 
     this.ventasService.registrarVenta(this.venta).subscribe(
       (data) => {
-        Swal.fire("Excelente", "La venta fue registrado con éxito", "success");
+        Swal.fire('Excelente', 'La venta fue registrado con éxito', 'success');
         this.listarVentas();
         this.cerrarMordalRegistro();
-        console.log(data)
-      }, (error) => {
+        console.log(data);
+      },
+      (error) => {
         console.log(error);
         this.snack.open('Rellene el formulario', 'Aceptar', {
           duration: 3000,
         });
       }
-    )
+    );
   }
 
   //EDITAR VENTA
@@ -440,39 +537,39 @@ export class VentasComponent {
       },
       error: (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo obtener los datos de la venta", "error");
-      }
+        Swal.fire('Error', 'No se pudo obtener los datos de la venta', 'error');
+      },
     });
   }
 
   //ELIMINAR VENTA
   eliminarVenta(id: number) {
     Swal.fire({
-      title: "¿Estás seguro?",
-      text: "No podrás recuperar el registro",
-      icon: "warning",
+      title: '¿Estás seguro?',
+      text: 'No podrás recuperar el registro',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar"
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.ventasService.eliminarVenta(id).subscribe({
           next: (response: any) => {
             Swal.fire({
-              title: "Eliminado",
+              title: 'Eliminado',
               text: response.mensaje,
-              icon: "success"
+              icon: 'success',
             });
             this.listarVentas();
           },
           error: (error) => {
             Swal.fire({
-              title: "Error",
-              text: "No se pudo eliminar la compra",
-              icon: "error"
+              title: 'Error',
+              text: 'No se pudo eliminar la compra',
+              icon: 'error',
             });
-          }
+          },
         });
       }
     });
@@ -481,15 +578,17 @@ export class VentasComponent {
   //BUSQUEDA DE VENTAS
   buscarVentas() {
     const filtro = this.filtroBusqueda.toLowerCase();
-    this.ventasFiltrados = this.ventas.filter(v =>
-      v.comprobantePago.numSerie.toLowerCase().includes(filtro) ||
-      v.cliente.nombre.toLowerCase().includes(filtro)
+    this.ventasFiltrados = this.ventas.filter(
+      (v) =>
+        v.comprobantePago.numSerie.toLowerCase().includes(filtro) ||
+        v.cliente.nombre.toLowerCase().includes(filtro)
     );
   }
 
   // Actualiza las ventas por página
   actualizarPaginacion() {
-    const inicio = (this.paginaActualCompra - 1) * this.elementosPorPaginaCompra;
+    const inicio =
+      (this.paginaActualCompra - 1) * this.elementosPorPaginaCompra;
     const fin = inicio + this.elementosPorPaginaCompra;
     this.ventasFiltrados = this.ventas.slice(inicio, fin);
   }
@@ -522,7 +621,9 @@ export class VentasComponent {
     if (!this.ventaSeleccionada || !this.ventaSeleccionada.detalleVenta) {
       return 0;
     }
-    return Math.ceil(this.ventaSeleccionada.detalleVenta.length / this.elementosPorPagina);
+    return Math.ceil(
+      this.ventaSeleccionada.detalleVenta.length / this.elementosPorPagina
+    );
   }
   cambiarPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
@@ -533,9 +634,9 @@ export class VentasComponent {
   //CARGAR PRODUCTOS
   cargarProductos() {
     this.productosService.listarProductosActivos().subscribe((data) => {
-      this.productos = data.filter(p => p.precioVenta != null);
+      this.productos = data.filter((p) => p.precioVenta != null);
       this.productosFiltrados = [...this.productos];
-    })
+    });
   }
   filtrarProductos() {
     const filtro = this.productoBusqueda.trim().toLowerCase();
@@ -543,13 +644,15 @@ export class VentasComponent {
       this.productosFiltrados = [...this.productos];
       this.cargarProductos();
     } else {
-      this.productosFiltrados = this.productos.filter(producto =>
+      this.productosFiltrados = this.productos.filter((producto) =>
         producto.nombre.toLowerCase().includes(filtro)
       );
     }
   }
   agregarProducto(producto: any) {
-    const yaExiste = this.venta.detalleVenta.find(d => d.producto && d.producto.id_producto == producto.id_producto);
+    const yaExiste = this.venta.detalleVenta.find(
+      (d) => d.producto && d.producto.id_producto == producto.id_producto
+    );
     if (!yaExiste) {
       const nuevoItem = {
         idDetalleVenta: null,
@@ -557,7 +660,7 @@ export class VentasComponent {
         precioUnit: 0,
         subtotal: 0,
         estado: 1 as const,
-        producto: producto
+        producto: producto,
       };
 
       this.venta.detalleVenta.push(nuevoItem);
@@ -578,10 +681,10 @@ export class VentasComponent {
       this.snack.open('La cantidad excede al stock del producto', 'Aceptar', {
         duration: 3000,
       });
-      return
+      return;
     }
-    item.subtotal = (item.cantidad * item.producto?.precioVenta) || 0;
-    console.log(item.subtotal)
+    item.subtotal = item.cantidad * item.producto?.precioVenta || 0;
+    console.log(item.subtotal);
     this.actualizarTotales();
   }
   eliminarProducto(index: number) {
@@ -595,41 +698,64 @@ export class VentasComponent {
 
   //TOTAL
   actualizarTotales() {
-    let sumaSubTotalesProductos = Number(this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0));
-    let sumaSubTotalesHabitaciones = Number(this.venta.ventaHabitacion.reduce((acc, item) => acc + item.subTotal, 0));
-    let sumaSubTotalesSalones = Number(this.venta.ventaSalon.reduce((acc, item) => acc + item.subTotal, 0));
-    let sumaSubTotales = sumaSubTotalesProductos + sumaSubTotalesHabitaciones + sumaSubTotalesSalones;
+    let sumaSubTotalesProductos = Number(
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+    );
+    let sumaSubTotalesHabitaciones = Number(
+      this.venta.ventaHabitacion.reduce((acc, item) => acc + item.subTotal, 0)
+    );
+    let sumaSubTotalesSalones = Number(
+      this.venta.ventaSalon.reduce((acc, item) => acc + item.subTotal, 0)
+    );
+    let sumaSubTotales =
+      sumaSubTotalesProductos +
+      sumaSubTotalesHabitaciones +
+      sumaSubTotalesSalones;
     let descuento = this.venta.descuento || 0;
     let cargo = this.venta.cargo || 0;
     let igv = this.venta.igv || 0;
-    if (Number(descuento) > (sumaSubTotales)) {
-      this.snack.open('Error: El descuento no puede ser mayor al total', 'Aceptar', {
-        duration: 3000,
-      });
-      return
+    if (Number(descuento) > sumaSubTotales) {
+      this.snack.open(
+        'Error: El descuento no puede ser mayor al total',
+        'Aceptar',
+        {
+          duration: 3000,
+        }
+      );
+      return;
     }
     if (Number(igv) > 0) {
-      let conIgv = Number(sumaSubTotales - Number(descuento)) * (Number(igv) / 100);
-      this.venta.total = String(sumaSubTotales - Number(descuento) + conIgv + Number(cargo));
+      let conIgv =
+        Number(sumaSubTotales - Number(descuento)) * (Number(igv) / 100);
+      this.venta.total = String(
+        sumaSubTotales - Number(descuento) + conIgv + Number(cargo)
+      );
     } else {
-      this.venta.total = String(sumaSubTotales + Number(cargo) - Number(descuento));
+      this.venta.total = String(
+        sumaSubTotales + Number(cargo) - Number(descuento)
+      );
     }
   }
 
   //CARGAR RESERVAS
   cargarReservas() {
     this.reservaService.getReservas().subscribe((data) => {
-      this.reservas = data.filter(r => r.estado == 1 && (r.estado_reserva == 'Pendiente' || r.estado_reserva == 'Confirmada'));
+      this.reservas = data.filter(
+        (r) =>
+          r.estado == 1 &&
+          (r.estado_reserva == 'Pendiente' || r.estado_reserva == 'Confirmada')
+      );
       this.reservasFiltrado = [...this.reservas];
-    })
+    });
   }
   filtrarReservas() {
     if (typeof this.reservaSeleccionada === 'string') {
       const texto = this.reservaSeleccionada.toLowerCase();
-      this.reservasFiltrado = this.reservas.filter(reserva =>
-        reserva.cliente.dniRuc.toLowerCase().includes(texto) ||
-        reserva.cliente.nombre.toLowerCase().includes(texto) ||
-        reserva.tipo.toLowerCase().includes(texto)
+      this.reservasFiltrado = this.reservas.filter(
+        (reserva) =>
+          reserva.cliente.dniRuc.toLowerCase().includes(texto) ||
+          reserva.cliente.nombre.toLowerCase().includes(texto) ||
+          reserva.tipo.toLowerCase().includes(texto)
       );
     } else {
       // Si es un objeto (reserva ya seleccionada), no mostrar opciones
@@ -637,27 +763,33 @@ export class VentasComponent {
     }
   }
   seleccionarReserva(reservaSeleccionada: any) {
-
-    if (this.venta.cliente.idCliente && this.venta.cliente.idCliente !== reservaSeleccionada.cliente.idCliente) {
-      this.snack.open('Solo puedes seleccionar reservas del mismo cliente.', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
+    if (
+      this.venta.cliente.idCliente &&
+      this.venta.cliente.idCliente !== reservaSeleccionada.cliente.idCliente
+    ) {
+      this.snack.open(
+        'Solo puedes seleccionar reservas del mismo cliente.',
+        'Cerrar',
+        {
+          duration: 3000,
+          panelClass: ['snackbar-error'],
+        }
+      );
       return;
     }
 
     this.reservaSeleccionada = reservaSeleccionada;
-    console.log(reservaSeleccionada)
+    console.log(reservaSeleccionada);
 
     // Solo agregamos si aún no existe esa reserva
     const yaExiste = this.venta.ventaXReserva.some(
-      vxr => vxr.reserva.id_reserva === reservaSeleccionada.id_reserva
+      (vxr) => vxr.reserva.id_reserva === reservaSeleccionada.id_reserva
     );
 
     if (!yaExiste) {
       this.venta.ventaXReserva.push({
         idVentaReserva: '',
-        reserva: reservaSeleccionada
+        reserva: reservaSeleccionada,
       });
       this.dataReserva.data = this.venta.ventaXReserva;
     }
@@ -665,34 +797,47 @@ export class VentasComponent {
     this.reservaBusqueda = '';
     this.reservasFiltrado = [];
 
-    if (reservaSeleccionada.habitacionesXReserva && reservaSeleccionada.habitacionesXReserva?.length > 0) {
+    if (
+      reservaSeleccionada.habitacionesXReserva &&
+      reservaSeleccionada.habitacionesXReserva?.length > 0
+    ) {
       this.venta.cliente = { ...reservaSeleccionada.cliente };
       reservaSeleccionada.habitacionesXReserva.forEach((habitacion: any) => {
-        const dias = this.calcularDiasReserva(reservaSeleccionada.fecha_inicio, reservaSeleccionada.fecha_fin)
+        const dias = this.calcularDiasReserva(
+          reservaSeleccionada.fecha_inicio,
+          reservaSeleccionada.fecha_fin
+        );
         this.venta.ventaHabitacion.push({
           idVentaHabitacion: '',
           dias: dias,
-          subTotal: (habitacion.habitacion.tipo_habitacion?.precio_publico || 0) * dias,
-          habitacion: habitacion.habitacion
-        })
+          subTotal:
+            (habitacion.habitacion.tipo_habitacion?.precio_publico || 0) * dias,
+          habitacion: habitacion.habitacion,
+        });
         this.actualizarTotales();
         this.dataHabitacion.data = this.venta.ventaHabitacion;
       });
     }
 
-    if (reservaSeleccionada.salonesXReserva && reservaSeleccionada.salonesXReserva?.length > 0) {
+    if (
+      reservaSeleccionada.salonesXReserva &&
+      reservaSeleccionada.salonesXReserva?.length > 0
+    ) {
       this.venta.cliente = { ...reservaSeleccionada.cliente };
       reservaSeleccionada.salonesXReserva.forEach((salon: any) => {
-        const dias = this.calcularDiasReserva(reservaSeleccionada.fecha_inicio, reservaSeleccionada.fecha_fin);
+        const dias = this.calcularDiasReserva(
+          reservaSeleccionada.fecha_inicio,
+          reservaSeleccionada.fecha_fin
+        );
         this.venta.ventaSalon.push({
           idVentaSalon: '',
           horas: 0, // si tienes datos, reemplaza
           dias: dias,
           subTotal: (salon.salon.precio_diario || 0) * dias,
-          salon: salon.salon
+          salon: salon.salon,
         });
         this.actualizarTotales();
-        this.dataSalon.data = this.venta.ventaSalon
+        this.dataSalon.data = this.venta.ventaSalon;
       });
     }
   }
@@ -707,7 +852,7 @@ export class VentasComponent {
         telefono: '',
         correo: '',
         pais: '',
-        estado: 1 // Mantén el estado si se requiere por lógica
+        estado: 1, // Mantén el estado si se requiere por lógica
       };
     }
     if (reservaEliminada.tipo == 'Salón') {
@@ -739,12 +884,12 @@ export class VentasComponent {
     this.metodosService.listarMetodosPagoActivo().subscribe((data) => {
       this.metodos = data;
       this.metodosFiltrado = [...this.metodos];
-    })
+    });
   }
   filtrarMetodos() {
     if (typeof this.metodoSeleccionada === 'string') {
       const texto = this.metodoSeleccionada.toLowerCase();
-      this.metodosFiltrado = this.metodos.filter(metodo =>
+      this.metodosFiltrado = this.metodos.filter((metodo) =>
         metodo.nombre.toLowerCase().includes(texto)
       );
     } else {
@@ -752,15 +897,17 @@ export class VentasComponent {
     }
   }
   agregarMetodo(metodo: any) {
-    const yaExiste = this.venta.ventaMetodoPago.find(m => m.metodoPago && m.metodoPago.idMetodoPago == metodo.idMetodoPago);
+    const yaExiste = this.venta.ventaMetodoPago.find(
+      (m) => m.metodoPago && m.metodoPago.idMetodoPago == metodo.idMetodoPago
+    );
     if (!yaExiste) {
       const nuevoItem = {
         idVentaMetodoPago: null,
         pago: 0,
-        metodoPago: metodo
+        metodoPago: metodo,
       };
       this.venta.ventaMetodoPago.push(nuevoItem);
-      console.log(this.venta.ventaMetodoPago)
+      console.log(this.venta.ventaMetodoPago);
       this.dataMetodo.data = this.venta.ventaMetodoPago;
     }
     this.cargarMetodos();
