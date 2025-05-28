@@ -4,8 +4,13 @@
       
   <div class="mb-3">
     <label for="piso" class="form-label">Piso</label>
-    <textarea id="piso" formControlName="piso" rows="1" class="form-control"
-              [ngClass]="{'is-invalid': submitted && f['piso'].invalid}"></textarea>
+    <select id="piso" formControlName="piso" class="form-select"
+            [ngClass]="{'is-invalid': submitted && f['piso'].invalid}">
+      <option *ngIf="!isEditing" [ngValue]="null">Seleccione un piso</option>
+      <option *ngFor="let piso of pisos" [ngValue]="piso">
+        {{ piso }}
+      </option>
+    </select>
     <div *ngIf="submitted && f['piso'].invalid" class="invalid-feedback">
       Piso es requerido.
     </div>

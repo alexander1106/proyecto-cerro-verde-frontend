@@ -12,7 +12,7 @@
       <div *ngIf="r.habitacionesXReserva && r.habitacionesXReserva.length > 0; else noHabitaciones">
         <ul>
           <li *ngFor="let hr of r.habitacionesXReserva">
-            Habitación #{{ hr.habitacion.numero }} - Tipo: {{ hr.habitacion.tipo_habitacion?.nombre }}
+            Habitación #{{ hr.habitacion.numero }} - Tipo: {{ hr.habitacion.tipo_habitacion.nombre }}
             (Piso: {{ hr.habitacion.piso }})
           </li>
         </ul>

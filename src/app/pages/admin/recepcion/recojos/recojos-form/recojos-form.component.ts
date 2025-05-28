@@ -6,7 +6,7 @@ import { ReservasService, Reserva } from '../../../../../service/reserva.service
 import { ConductoresService, Conductores } from '../../../../../service/conductores.service';
 import Swal from 'sweetalert2';
 
-declare var google: any; 
+declare var google: any;
 
 @Component({
   selector: 'app-recojos-form',
@@ -45,6 +45,13 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     this.id = +this.route.snapshot.params['id'];
     this.isEditing = !!this.id;
 
+    // 💡 Esta suscripción debe ir después de que se inicialice el formulario (lo hace loadData → initForm)
+    setTimeout(() => {
+      this.recojoForm.get('conductor')?.valueChanges.subscribe(() => {
+        this.recojoForm.get('fecha_hora')?.updateValueAndValidity();
+      });
+    }, 0); // Usamos setTimeout para asegurarnos de que `this.recojoForm` ya está definido
+
     if (this.isEditing) {
       this.loadRecojos();
     }
@@ -53,6 +60,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
       this.initAutocomplete();
     }).catch(err => console.error('Error loading Google Maps', err));
   }
+
 
   ngAfterViewInit(): void {
     this.initAutocomplete();
@@ -65,8 +73,9 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
       estado: [1],
       conductor: [null, Validators.required],
       reserva: [null, Validators.required],
-      estado_recojo: "Pendiente"
+      estado_recojo: ['Pendiente']
     });
+
   }
 
   initAutocomplete(): void {
@@ -77,7 +86,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
         new google.maps.LatLng(-5.8, -74.8)   // Norte-Este San Martín aprox
       ),
       strictbound: true,
-      types: ['address'] 
+      types: ['address']
     });
 
     this.autocomplete.addListener('place_changed', () => {
@@ -104,6 +113,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
       // Actualiza el formulario con la dirección completa
       this.recojoForm.patchValue({
         destino: fullAddress || place.formatted_address
+
       });
     });
   }
@@ -137,22 +147,20 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     this.recojosService.getRecojos().subscribe({
       next: (data) => {
         this.recojos = data;
-        if (!this.recojoForm) return;
-        this.recojoForm.get('numero')?.updateValueAndValidity();
-      },
-      error: (err) => {
-        this.error = 'Error al cargar recojos existentes';
-        console.error('Error:', err);
+
+        if (this.recojoForm) {
+          this.recojoForm.get('fecha_hora')?.setValidators([
+            Validators.required,
+            fechaNoPasada(),
+            this.fechaDuplicadaValidator()
+          ]);
+          this.recojoForm.get('fecha_hora')?.updateValueAndValidity();
+        }
       }
     });
 
-    this.initForm();
 
-    if (!this.isEditing) {
-      this.recojoForm.patchValue({
-        estado_habitacion: 'Disponible'
-      });
-    }
+    this.initForm();
 
     this.conductorService.getConductores().subscribe({
       next: (data) => {
@@ -186,7 +194,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     this.recojosService.getRecojo(this.id).subscribe({
       next: (recojo) => {
         this.recojo = recojo;
-  
+
         // 2. Espera a que reservas y conductores se carguen
         const waitForData = () => {
           if (this.reservas.length && this.conductores.length) {
@@ -202,7 +210,8 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
             setTimeout(waitForData, 100); // vuelve a intentar en 100ms
           }
         };
-  
+        console.log('Valor actualizado:', this.recojoForm.get('estado_recojo')?.value);
+
         waitForData(); // inicia la espera
       },
       error: (err) => {
@@ -224,38 +233,80 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
     const recojo: Recojos = this.recojoForm.value;
     console.log('✅ Enviando recojo:', recojo);
 
-    this.loading = true;
+    const guardar = () => {
+      this.loading = true;
 
-    const obs = this.isEditing
-      ? this.recojosService.updateRecojo({ ...recojo, id_recojo: this.id })
-      : this.recojosService.createRecojo(recojo);
+      const obs = this.isEditing
+        ? this.recojosService.updateRecojo({ ...recojo, id_recojo: this.id })
+        : this.recojosService.createRecojo(recojo);
 
-    obs.subscribe({
-      next: (resp) => {
-        console.log('✅ Respuesta del backend:', resp);
-        this.loading = false;
-        this.router.navigate(['/admin/recepcion/recojos']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Error al guardar el recojo.';
-        console.error('❌ Error al crear:', err);
-      }
-    });
+      obs.subscribe({
+        next: (resp) => {
+          console.log('✅ Respuesta del backend:', resp);
+          this.loading = false;
 
-    const msg = this.isEditing ? 'Recojo actualizado correctamente' : 'Recojo creado correctamente';
+          Swal.fire({
+            icon: 'success',
+            title: this.isEditing ? 'Recojo actualizado correctamente' : 'Recojo creado correctamente',
+            showConfirmButton: false,
+            timer: 2000
+          });
 
-    Swal.fire({
-      icon: 'success',
-      title: msg,
-      showConfirmButton: false,
-      timer: 2000
-    });
+          this.router.navigate(['/admin/programar-recojo']);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error = 'Error al guardar el recojo.';
+          console.error('❌ Error al crear/actualizar:', err);
+        }
+      });
+    };
+
+    if (this.isEditing) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Estás a punto de actualizar este recojo.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          guardar();
+        }
+      });
+    } else {
+      guardar();
+    }
   }
+
 
   volver(): void {
-    this.router.navigate(['/admin/recepcion/recojos']);
+    this.router.navigate(['/admin/programar-recojo']);
   }
+
+  fechaDuplicadaValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value || !this.recojos || !this.recojoForm) return null;
+
+      const inputFecha = new Date(control.value).toISOString();
+      const conductor = this.recojoForm.get('conductor')?.value;
+      if (!conductor) return null;
+
+      const existe = this.recojos.some((r) => {
+        if (this.isEditing && r.id_recojo === this.recojo?.id_recojo) return false;
+        const mismaFecha = new Date(r.fecha_hora).toISOString() === inputFecha;
+        const mismoConductor = r.conductor?.id_conductor === conductor.id_conductor;
+        return mismaFecha && mismoConductor;
+      });
+
+      return existe ? { fechaDuplicada: true } : null;
+    };
+  }
+
+
 }
 
 function fechaNoPasada(): ValidatorFn {

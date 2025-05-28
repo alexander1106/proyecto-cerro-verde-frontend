@@ -27,4 +27,5 @@ export class VentasService {
   eliminarVenta(id: number) {
     return this.http.delete(`http://localhost:8080/cerro-verde/venta/${id}`)
   }
+
 }

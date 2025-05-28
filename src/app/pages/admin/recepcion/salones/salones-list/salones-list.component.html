@@ -1,76 +1,89 @@
 <div class="container">
-    <app-header></app-header>
-      <div class="page-header">
-    <h1>Gestión de Salones</h1>
-    <button class="btn btn-primary" routerLink="/admin/recepcion/salones/nuevo">Nuevo Salón</button>
-  </div>
+  <app-header></app-header>
 
-  <!-- Filtro de búsqueda -->
-  <div class="mb-3">
-    <input type="text" class="form-control" placeholder="Buscar salón..." [(ngModel)]="filtroGeneral" />
-  </div>
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Salones</h4>
 
-  <!-- Indicadores de carga o error -->
-  <div *ngIf="loading" class="loading">Cargando salones...</div>
-
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
-
-  <!-- Tabla de salones -->
-  <div class="table-responsive">
-    <table class="table table-striped" *ngIf="!loading && !error">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Estado</th>
-          <th>Precio Hora</th>
-          <th>Precio Diario</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let salon of salonesPaginadas">
-          <td>{{ salon.nombre }}</td>
-          <td>
-            <span class="badge" [ngClass]="'badge-' + salon.estado_salon.toLowerCase()">
-              {{ salon.estado_salon }}
-            </span>
-          </td>
-          <td>${{ salon.precio_hora }}</td>
-          <td>${{ salon.precio_diario }}</td>
-          <td class="action-buttons">
-            <button class="btn btn-sm btn-primary me-1"
-                    [routerLink]="['/admin/recepcion/salones/editar', salon.id_salon]">
-              Editar
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" placeholder="Buscar salón..." [(ngModel)]="filtroGeneral" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
             </button>
-            <button class="btn btn-sm btn-danger"
-                    (click)="eliminarSalon(salon.id_salon!)">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="salonesActivasFiltradas.length === 0">
-          <td colspan="5" class="text-center">No hay salones que coincidan con el filtro.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          </div>
+        </div>
 
-  <!-- Paginación -->
-  <div class="pagination-controls mt-3">
-    <button class="btn btn-outline-secondary me-2"
-            [disabled]="currentPage === 1"
-            (click)="changePage(-1)">
-      ←
-    </button>
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/salones/nuevo">+ Nuevo Salón</a>
+        </button>
+      </div>
+    </div>
 
-    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <div *ngIf="loading" class="loading">Cargando salones...</div>
 
-    <button class="btn btn-outline-secondary ms-2"
-            [disabled]="currentPage === totalPages"
-            (click)="changePage(1)">
-      →
-    </button>
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Precio Hora</th>
+            <th>Precio Diario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let salon of salonesPaginadas; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ salon.nombre }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + salon.estado_salon.toLowerCase()">
+                {{ salon.estado_salon }}
+              </span>
+            </td>
+            <td>S/. {{ salon.precio_hora }}</td>
+            <td>S/. {{ salon.precio_diario }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar">
+                <a [routerLink]="['/admin/recepcion/salones/editar', salon.id_salon]">
+                  <i class="edit fa-regular fa-pen-to-square"></i>
+                </a>
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminarSalon(salon.id_salon!)">
+                <i class="delete fa-regular fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="salonesActivasFiltradas.length === 0">
+            <td colspan="6" class="text-center text-muted">
+              No hay salones que coincidan con el filtro.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(-1)">
+        ← Anterior
+      </button>
+
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(1)">
+        Siguiente →
+      </button>
+    </div>
   </div>
 </div>

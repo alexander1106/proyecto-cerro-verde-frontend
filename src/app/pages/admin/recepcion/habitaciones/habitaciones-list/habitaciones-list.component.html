@@ -1,80 +1,100 @@
 <div class="container">
-    <app-header></app-header>
-  <div class="page-header">
-    <h1>Gestión de Habitaciones</h1>
-    <button class="btn btn-primary" routerLink="/admin/recepcion/habitaciones/nuevo">
-      + Nueva Habitación
-    </button>
-  </div>
+  <app-header></app-header>
 
-  <div class="mb-3 w-100">
-    <input type="text" class="form-control" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
-  </div>
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Habitaciones</h4>
 
-  <div *ngIf="loading" class="loading">Cargando habitaciones...</div>
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
 
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/habitaciones/nuevo">+ Nueva Habitación</a>
+        </button>
+      </div>
+    </div>
 
-  <div class="table-responsive w-100" *ngIf="!loading && !error">
-    <table class="table table-hover table-bordered align-middle text-center">
-      <thead class="table-light">
-        <tr>
-          <th>Piso</th>
-          <th>Número</th>
-          <th>Estado</th>
-          <th>Tipo</th>
-          <th>Precio Público</th>
-          <th>Precio Corporativo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let habitacion of habitacionesPaginadas">
-          <td>{{ habitacion.piso }}</td>
-          <td>{{ habitacion.numero }}</td>
-          <td>
-            <span class="badge" [ngClass]="'badge-' + habitacion.estado_habitacion.toLowerCase()">
-              {{ habitacion.estado_habitacion }}
-            </span>
-          </td>
-          <td>{{ habitacion.tipo_habitacion?.nombre }}</td>
-          <td>${{ habitacion.tipo_habitacion?.precio_publico }}</td>
-          <td>${{ habitacion.tipo_habitacion?.precio_corporativo }}</td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn btn-sm btn-outline-primary"
-                      [routerLink]="['/admin/recepcion/habitaciones/editar', habitacion.id_habitacion]">
-                Editar
+    <div *ngIf="loading" class="loading">Cargando habitaciones...</div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Piso</th>
+            <th>Número hab.</th>
+            <th>Estado</th>
+            <th>Tipo</th>
+            <th>Precio Público</th>
+            <th>Precio Corporativo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let habitacion of habitacionesPaginadas; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ habitacion.piso }}</td>
+            <td>{{ habitacion.numero }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + habitacion.estado_habitacion.toLowerCase()">
+                {{ habitacion.estado_habitacion }}
+              </span>
+            </td>
+            <td>
+              <span [ngClass]="{
+                'doble': habitacion.tipo_habitacion.nombre === 'Doble',
+                'simple': habitacion.tipo_habitacion.nombre === 'Simple'
+              }">
+              {{ habitacion.tipo_habitacion.nombre }}
+              </span>
+            </td>
+            <td>S/. {{ habitacion.tipo_habitacion.precio_publico }}</td>
+            <td>S/. {{ habitacion.tipo_habitacion.precio_corporativo }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar">
+                <a [routerLink]="['/admin/recepcion/habitaciones/editar', habitacion.id_habitacion]">
+                  <i class="edit fa-regular fa-pen-to-square"></i>
+                </a>
               </button>
-              <button class="btn btn-sm btn-outline-danger"
-                      (click)="eliminarHabitacion(habitacion.id_habitacion!)">
-                Eliminar
+              <button class="btn-accion eliminar" (click)="eliminarHabitacion(habitacion.id_habitacion!)">
+                <i class="delete fa-regular fa-trash-can"></i>
               </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="habitacionesActivasFiltradas.length === 0">
-          <td colspan="7" class="text-center text-muted">No hay habitaciones que coincidan con el filtro.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+            </td>
+          </tr>
+          <tr *ngIf="habitacionesActivasFiltradas.length === 0">
+            <td colspan="7" class="text-center text-muted">
+              No hay habitaciones que coincidan con el filtro.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <div class="pagination-controls mt-4">
-    <button class="btn btn-outline-secondary"
-            [disabled]="currentPage === 1"
-            (click)="changePage(-1)">
-      ← Anterior
-    </button>
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(-1)">
+        ← Anterior
+      </button>
 
-    <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
 
-    <button class="btn btn-outline-secondary"
-            [disabled]="currentPage === totalPages"
-            (click)="changePage(1)">
-      Siguiente →
-    </button>
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(1)">
+        Siguiente →
+      </button>
+    </div>
   </div>
 </div>

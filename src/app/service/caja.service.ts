@@ -13,7 +13,14 @@ export class CajaService {
   constructor(private http: HttpClient) {}
 
   verificarEstadoCaja() {
-    return this.http.get(`${this.baseUrl}`
+    return this.http.get(`${this.baseUrl}`, { responseType: 'text' }).pipe(
+      tap(res => {
+        if (res !== 'no_aperturada') {
+          this.cajaActual.set(JSON.parse(res)); // convierte string a objeto
+        } else {
+          this.cajaActual.set(null);
+        }
+      })
     );
   }
 
@@ -80,6 +87,11 @@ export class CajaService {
   obtenerTransaccionesPorCajaId(cajaId: number) {
     return this.http.get(`${this.baseUrl}/transacciones/caja/${cajaId}`);
   }
+
+  verificarEstadoCajaRaw() {
+    return this.http.get(`${this.baseUrl}`);
+  }
+  
   
 
 }

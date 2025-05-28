@@ -39,7 +39,7 @@
             <th>Reserva</th>
             <th>Cliente</th>
             <th>Destino</th>
-            <th>Fecha</th>
+            <th>Fecha y hora</th>
             <th>Conductor</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -53,7 +53,15 @@
             <td>{{ recojo.destino }}</td>
             <td>{{ formatDate(recojo.fecha_hora) }}</td>
             <td>{{ recojo.conductor.nombre }}</td>
-            <td>{{ recojo.estado_recojo }}</td>
+            <td>
+              <span [ngClass]="{
+                'ruta': recojo.estado_recojo === 'En ruta',
+                'pendiente': recojo.estado_recojo === 'Pendiente',
+                'completo': recojo.estado_recojo === 'Completo'
+              }">
+              {{ recojo.estado_recojo }}
+              </span>
+            </td>
             <td class="acciones">
               <button class="btn-accion editar">
                 <a [routerLink]="['/admin/recepcion/recojos/editar', recojo.id_recojo]">

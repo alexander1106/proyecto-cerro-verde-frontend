@@ -20,6 +20,7 @@ import { MetodoPagoService } from '../../../service/metodo-pago.service';
   templateUrl: './ventas.component.html',
   styleUrl: './ventas.component.css',
 })
+
 export class VentasComponent {
   //Comprobantes
   comprobantes: any[] = [];
@@ -270,32 +271,42 @@ export class VentasComponent {
   }
 
   //VERIFICAR ESTADO DE CAJA
-  esAbierto() {
-    this.cajaService.verificarEstadoCaja().subscribe({
+  esAbierto(): void {
+    this.cajaService.verificarEstadoCajaRaw().subscribe({
       next: (data: any) => {
-        console.log(data.estadoCaja);
-        if (data.estadoCaja == 'abierta') {
+        console.log('💡 Respuesta RAW completa: ', data);
+          const estadoCaja = data?.estadoCaja ?? 'desconocido';
+  
+        if (estadoCaja === 'abierta') {
+          this.cajaAbierta = true;
+          console.log('✅ La caja está abierta');
           this.abrirModalRegistro();
         } else {
-          Swal.fire({
-            title: 'Caja Cerrada',
-            text: '¿Deseas aperturar caja?',
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, aperturar',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.router.navigate(['/admin/caja']);
-            } else {
-              this.router.navigate(['/admin/venta']);
-            }
-          });
+          console.log('🚫 Caja cerrada');
+      Swal.fire({
+        title: "Caja Cerrada",
+        text: "¿Deseas aperturar caja?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, aperturar"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/admin/caja']);
+        } else {
+          this.router.navigate(['/admin/venta']);
         }
-      },
+      });
+    }
+  },
+      error: (error) => {
+        console.error('Error al obtener estado caja:', error);
+        this.cajaAbierta = false; // manejar error marcando como cerrada
+      }
     });
   }
+  
 
   //MODAL DE DETALLE VENTA
   verModal(id: number) {

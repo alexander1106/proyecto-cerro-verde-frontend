@@ -31,7 +31,6 @@ export class ClientesComponent {
   longitud: number = 8;
   patronNumerico = '^[0-9]*$';
   patronCorreo: string = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-  esEditar: boolean = false;
 
   constructor(
     private clientesService: ClientesService,
@@ -43,9 +42,8 @@ export class ClientesComponent {
     this.listarClientes();
   }
 
-  //BOTON SI ES DNI O RUC
-  dniORuc(auxiliar: string) {
-    if (auxiliar === "DNI") {
+  dniORuc(auxiliar: string){
+    if(auxiliar === "DNI"){
       this.tipo = "DNI";
       this.longitud = 8;
     } else {
@@ -54,8 +52,8 @@ export class ClientesComponent {
     }
   }
 
-  buscar(tipo: string, id: string) {
-    if (tipo === "DNI") {
+  buscar(tipo: string, id: string){
+    if(tipo === "DNI"){
       this.buscarDni(id);
     } else if (tipo === "RUC") {
       this.buscarRuc(id);
@@ -74,8 +72,11 @@ export class ClientesComponent {
     this.cliente.pais = '';
     this.cliente.telefono = '';
     this.mostrarModal = false;
+<<<<<<< HEAD
     this.esEditar = false;
     this.tipo = 'DNI';
+=======
+>>>>>>> bf7d1e7a50656401d8373b7cf1f939738e232dd4
   }
 
   //MOSTRAR LOS CLIENTES
@@ -110,7 +111,6 @@ export class ClientesComponent {
 
   //EDITAR CLIENTE
   editarCliente(id: number) {
-    this.esEditar = true;
     this.clientesService.getClienteById(id).subscribe({
       next: (data: any) => {
         this.cliente = data;
@@ -172,7 +172,7 @@ export class ClientesComponent {
     this.clientesService.buscarDni(dni, headers).subscribe({
       next: (data) => {
         const clienteData = JSON.parse(data.datos);
-        this.cliente.nombre = clienteData.apellidoPaterno + " " + clienteData.apellidoMaterno + " " + clienteData.nombres;
+        this.cliente.nombre = clienteData.apellidoPaterno + " " + clienteData.apellidoMaterno + " " + clienteData.nombres ;
       },
       error: (error) => {
         console.log(error);
@@ -201,45 +201,45 @@ export class ClientesComponent {
     })
   }
 
-  //BUSCADOR
-  buscarCliente() {
-    const filtro = this.filtroBusqueda.trim().toLowerCase();
-    if (filtro === '') {
-      this.clientes;
-      this.paginaActual = 1; // Volver a la primera página
-      this.actualizarPaginacion(); // Volver a paginar normal
-    } else {
-      this.clientesFiltrados = this.clientes.filter(c =>
-        c.nombre.toLowerCase().includes(filtro) ||
-        c.dniRuc.toLowerCase().includes(filtro) ||
-        c.telefono.toLowerCase().includes(filtro) ||
-        c.correo.toLowerCase().includes(filtro) ||
-        c.pais.toLowerCase().includes(filtro)
-      );
-    }
+//BUSCADOR
+buscarCliente() {
+  const filtro = this.filtroBusqueda.trim().toLowerCase();
+  if (filtro === '') {
+    this.clientes;
+    this.paginaActual = 1; // Volver a la primera página
+    this.actualizarPaginacion(); // Volver a paginar normal
+  } else {
+    this.clientesFiltrados = this.clientes.filter(c =>
+      c.nombre.toLowerCase().includes(filtro) ||
+      c.dniRuc.toLowerCase().includes(filtro) ||
+      c.telefono.toLowerCase().includes(filtro) ||
+      c.correo.toLowerCase().includes(filtro) ||
+      c.pais.toLowerCase().includes(filtro)
+    );
   }
+}
 
-  // Actualiza las categorias por página
-  actualizarPaginacion() {
-    const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
-    const fin = inicio + this.elementosPorPagina;
-    this.clientesFiltrados = this.clientes.slice(inicio, fin);
-  }
+// Actualiza las categorias por página
+actualizarPaginacion() {
+  const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
+  const fin = inicio + this.elementosPorPagina;
+  this.clientesFiltrados = this.clientes.slice(inicio, fin);
+}
 
   // Obtener categorias de la página actual
   get categoriasPaginados() {
-    return this.clientesFiltrados;
-  }
+  return this.clientesFiltrados;
+}
 
   get totalPaginas(): number {
-    return Math.ceil(this.clientes.length / this.elementosPorPagina);
-  }
+  return Math.ceil(this.clientes.length / this.elementosPorPagina);
+}
 
-  // Cambiar de página
-  cambiarPagina(pagina: number) {
-    if (pagina >= 1 && pagina <= this.totalPaginas) {
-      this.paginaActual = pagina;
-      this.actualizarPaginacion();
-    }
+// Cambiar de página
+cambiarPagina(pagina: number) {
+  if (pagina >= 1 && pagina <= this.totalPaginas) {
+    this.paginaActual = pagina;
+    this.actualizarPaginacion();
   }
+}
 }

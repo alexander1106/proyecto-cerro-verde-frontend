@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HabitacionesService, Habitacion } from '../../../../../service/habitaciones.service';
 import Swal from 'sweetalert2';
 
-
-
 @Component({
   selector: 'app-habitaciones-list',
   templateUrl: './habitaciones-list.component.html',
@@ -50,19 +48,19 @@ export class HabitacionesListComponent implements OnInit {
       if (result.isConfirmed) {
         this.habitacionesService.deleteHabitacion(id).subscribe({
           next: () => {
-            this.habitaciones = this.habitaciones.filter(h => h.id_habitacion !== id);
-            // @ts-ignore
             Swal.fire({
               icon: 'success',
               title: 'Eliminado',
               text: 'La habitación fue eliminada correctamente',
               timer: 1500,
               showConfirmButton: false
+            }).then(() => {
+              this.cargarHabitaciones(); // recarga lista desde el backend
             });
-          },
+          },          
           error: () => {
             // @ts-ignore
-            Swal.fire('Error', 'No se pudo eliminar la habitación', 'error');
+            Swal.fire('Error', 'No se pudo eliminar la habitación porque está relacionada a una reserva', 'error');
           }
         });
       }

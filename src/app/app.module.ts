@@ -70,9 +70,14 @@ import { SalonReservaFormComponent } from './pages/admin/recepcion/reservas/salo
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SalonesListComponent } from './pages/admin/recepcion/salones/salones-list/salones-list.component';
 import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-form/salones-form.component';
+import { ConductoresFormComponent } from './pages/admin/recepcion/recojos/conductores-form/conductores-form.component';
+import { ConductoresListComponent } from './pages/admin/recepcion/recojos/conductores-list/conductores-list.component';
+import { RecojosFormComponent } from './pages/admin/recepcion/recojos/recojos-form/recojos-form.component';
+import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-list/recojos-list.component';
 import { ClientesComponent } from './pages/admin/clientes/clientes.component';
-import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { VentasComponent } from './pages/admin/ventas/ventas.component';
+import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
+import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
 
 @NgModule({
   declarations: [
@@ -117,9 +122,14 @@ import { VentasComponent } from './pages/admin/ventas/ventas.component';
     SalonReservaFormComponent,
     SalonesListComponent,
     SalonesFormComponent,
+    ConductoresFormComponent,
+    ConductoresListComponent,
+    RecojosFormComponent,
+    RecojosListComponent,
     ClientesComponent,
+    VentasComponent,
     MetodoPagoComponent,
-    VentasComponent
+    MovimientoInventarioComponent
 
   ],
   imports: [

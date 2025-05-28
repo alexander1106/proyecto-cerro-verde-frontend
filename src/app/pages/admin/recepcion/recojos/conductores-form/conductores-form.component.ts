@@ -20,8 +20,9 @@ export class ConductoresFormComponent implements OnInit {
   submitted = false;
   loading = false;
   error = '';
+  resultado: any = null;
   conductores: Conductores[] = [];
-    conductor?: Conductores;
+  conductor?: Conductores;
 
   constructor(
     private clientesService: ClientesService,
@@ -32,17 +33,68 @@ export class ConductoresFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.id = +this.route.snapshot.params['id'];
+    this.isEditing = !!this.id;
+
+    // Paso 1: crea el form sin validadores personalizados aún
+    this.conductorForm = this.formBuilder.group({
+      nombre: [null, Validators.required],
+      placa: [null, Validators.required],
+      modelo_vehiculo: [null, Validators.required],
+      dni: [null, [Validators.required, Validators.pattern(/^\d{8}$/)]],
+      estado: [1]
+    });
+
+    // Paso 2: carga lista completa de conductores
     this.conductorService.getConductores().subscribe((conductores) => {
       this.conductores = conductores;
-      this.initForm(); 
-      this.id = +this.route.snapshot.params['id'];
-      this.isEditing = !!this.id;
+
       if (this.isEditing) {
-        this.loadConductor();
+        this.conductorService.getConductor(this.id!).subscribe({
+          next: (conductor) => {
+            this.conductor = conductor;
+
+            this.conductorForm.patchValue({
+              nombre: conductor.nombre,
+              dni: conductor.dni,
+              placa: conductor.placa,
+              modelo_vehiculo: conductor.modelo_vehiculo
+            });
+
+            // Paso 3: aplicar validadores personalizados con contexto ya disponible
+            this.setCustomValidators();
+          },
+          error: (err) => {
+            this.error = 'Error al cargar el conductor';
+          }
+        });
+      } else {
+        // Para nuevo conductor: aplicar validadores también
+        this.setCustomValidators();
       }
     });
   }
-  
+
+
+  setCustomValidators(): void {
+    this.f['nombre'].setValidators([
+      Validators.required,
+    ]);
+    this.f['placa'].setValidators([
+      Validators.required,
+      this.placaDuplicadaValidator()
+    ]);
+    this.f['dni'].setValidators([
+      Validators.required,
+      Validators.pattern(/^\d{8}$/),
+      this.dniDuplicadoValidator()
+    ]);
+
+    this.f['nombre'].updateValueAndValidity();
+    this.f['placa'].updateValueAndValidity();
+    this.f['dni'].updateValueAndValidity();
+  }
+
 
   get f() { return this.conductorForm.controls; }
 
@@ -50,17 +102,21 @@ export class ConductoresFormComponent implements OnInit {
     this.conductorForm = this.formBuilder.group({
       nombre: [
         null,
-        [
-          Validators.required,
-          this.nombreDuplicadoValidator()
-        ]
+        [Validators.required]
       ],
-      placa: [null, [Validators.required, Validators.min(0)]],
-      modelo_vehiculo: [null, [Validators.required, Validators.min(0)]],
-      dni: [null, [Validators.required, Validators.min(0)]],
+      placa: [
+        null,
+        [Validators.required, this.placaDuplicadaValidator()]
+      ],
+      modelo_vehiculo: [null, [Validators.required]],
+      dni: [
+        null,
+        [Validators.required, Validators.pattern(/^\d{8}$/), this.dniDuplicadoValidator()]
+      ],
       estado: [1]
     });
   }
+
 
   loadConductor(): void {
     if (!this.id) return;
@@ -91,75 +147,84 @@ export class ConductoresFormComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
+    if (this.conductorForm.invalid) return;
 
-    if (this.conductorForm.invalid) {
-      return;
-    }
-
-    this.loading = true;
     const conductor: Conductores = {
-      ...this.conductorForm.value,
+      ...this.conductorForm.getRawValue(),
       ...(this.isEditing ? { id_conductor: this.id } : {})
     };
 
-    const saveConductor = this.isEditing ?
-      this.conductorService.updateConductor({ ...conductor, id_conductor: this.id }) :
-      this.conductorService.createConductor(conductor);
+    const guardar = () => {
+      this.loading = true;
 
-    saveConductor.subscribe({
-      next: () => {
-        this.loading = false;
-        this.router.navigate(['/admin/recepcion/conductores']);
-      },
-      error: (err) => {
-        this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el conductor`;
-        this.loading = false;
-        console.error('Error:', err);
-      }
-    });
+      const saveConductor = this.isEditing
+        ? this.conductorService.updateConductor({ ...conductor, id_conductor: this.id })
+        : this.conductorService.createConductor(conductor);
+
+      saveConductor.subscribe({
+        next: () => {
+          this.loading = false;
+          Swal.fire({
+            icon: 'success',
+            title: this.isEditing ? 'Conductor actualizado' : 'Conductor creado',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          this.router.navigate(['/admin/conductores']);
+        },
+        error: (err) => {
+          this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el conductor`;
+          this.loading = false;
+          console.error('Error:', err);
+        }
+      });
+    };
+
+    if (this.isEditing) {
+      Swal.fire({
+        title: '¿Deseas actualizar el conductor?',
+        text: 'Se guardarán los cambios realizados.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          guardar();
+        }else{
+          this.router.navigate(['/admin/conductores']);
+        }
+      });
+    } else {
+      guardar();
+    }
   }
+
 
   volver(): void {
-    this.router.navigate(['/admin/recepcion/conductores']);
+    this.router.navigate(['/admin/conductores']);
   }
 
-  nombreDuplicadoValidator() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!this.conductores || control.value === null) {
-        return null;
-      }
+  buscarDni(): void {
+    const dni = this.conductorForm.get('dni')?.value;
 
-      const normalizar = (valor: string) =>
-        valor.toLowerCase().replace(/\s+/g, '');
-
-      const nombre = normalizar(control.value);
-      const duplicado = this.conductores.some(h =>
-        normalizar(h.nombre) === nombre && h.id_conductor !== this.conductor?.id_conductor
-      );
-
-      return duplicado ? { nombreDuplicado: true } : null;
-    };
-  }
-
-  buscarDni(dni: string) {
     if (!dni || !/^\d{8}$/.test(dni)) {
       Swal.fire("Advertencia", "Ingrese un DNI válido de 8 dígitos", "warning");
       return;
     }
-  
+
     const token = localStorage.getItem('token');
-  
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-  
+
     this.clientesService.buscarDni(dni, headers).subscribe({
       next: (data) => {
         const clienteData = JSON.parse(data.datos);
         const nombreCompleto = `${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`;
-  
-        // Actualiza el campo 'nombre' del formulario reactivo
         this.conductorForm.patchValue({ nombre: nombreCompleto });
+        this.conductorForm.get('nombre')?.updateValueAndValidity();
+        this.conductorForm.markAsDirty();
       },
       error: (error) => {
         console.error(error);
@@ -167,5 +232,69 @@ export class ConductoresFormComponent implements OnInit {
       }
     });
   }
-  
+
+
+  buscarPlaca() {
+    const placa = this.conductorForm.get('placa')?.value;
+
+    if (!placa || placa.trim() === '') {
+      Swal.fire("Error", "Ingrese una placa válida", "warning");
+      return;
+    }
+
+    this.conductorService.buscarPlaca(placa.trim().toUpperCase()).subscribe({
+      next: (response) => {
+
+        if (response.status === 200 && response.data) {
+          this.resultado = response.data;  // guarda toda la data si quieres
+
+          // Actualiza el campo modelo_vehiculo con el valor recibido
+          this.conductorForm.patchValue({
+            modelo_vehiculo: response.data.marca + " " + response.data.modelo + " COLOR: "  + response.data.color
+          });
+          this.conductorForm.get('modelo_vehiculo')?.updateValueAndValidity();
+
+        } else {
+          Swal.fire("Error", "No se encontró información de la placa", "error");
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire("Error", "No se pudo obtener información de la placa", "error");
+      }
+    });
+  }
+
+  placaDuplicadaValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!this.conductores || control.value === null) return null;
+
+      const placa = control.value.trim().toLowerCase();
+      const duplicado = this.conductores.some(c =>
+        c.placa.trim().toLowerCase() === placa &&
+        c.id_conductor !== this.conductor?.id_conductor && c.estado === 1
+      );
+
+      return duplicado ? { placaDuplicada: true } : null;
+    };
+  }
+
+  dniDuplicadoValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!this.conductores || !control.value) return null;
+
+      const dni = control.value.trim();
+      const idActual = this.id; // 👈 asegúrate de comparar con `this.id`, no con `this.conductor`
+
+      const duplicado = this.conductores.some(c =>
+        c.dni.trim() === dni &&
+        c.id_conductor !== idActual && c.estado === 1
+      );
+
+      return duplicado ? { dniDuplicado: true } : null;
+    };
+  }
+
+
+
 }

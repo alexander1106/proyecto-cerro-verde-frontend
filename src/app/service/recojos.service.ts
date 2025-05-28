@@ -40,8 +40,8 @@ export class RecojosService {
     return this.http.put<Recojos>(`${this.apiUrl}/recojos/${recojo.id_recojo}`, recojo);
   }
 
-  deleteRecojo(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/recojos/eliminar/${id}`);
+  deleteRecojo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/recojos/eliminar/${id}`);
   }
 
     

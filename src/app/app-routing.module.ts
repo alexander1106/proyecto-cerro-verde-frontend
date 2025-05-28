@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import { AuthGuard } from './guards/AuthGuard ';
+import {  AuthGuard } from './guards/AuthGuard ';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 import { WelcomeComponent } from './pages/admin/welcome/welcome.component';
 import { PerfilComponent } from './pages/admin/perfil/perfil.component';
@@ -41,183 +41,223 @@ import { SalonesListComponent } from './pages/admin/recepcion/salones/salones-li
 import { SalonesFormComponent } from './pages/admin/recepcion/salones/salones-form/salones-form.component';
 import { ReservaSalonDetalleComponent } from './pages/admin/recepcion/reservas/reserva-salon-detalle/reserva-salon-detalle.component';
 import { ReservaHabitacionDetalleComponent } from './pages/admin/recepcion/reservas/reserva-habitacion-detalle/reserva-habitacion-detalle.component';
+import { ConductoresFormComponent } from './pages/admin/recepcion/recojos/conductores-form/conductores-form.component';
+import { ConductoresListComponent } from './pages/admin/recepcion/recojos/conductores-list/conductores-list.component';
+import { RecojosFormComponent } from './pages/admin/recepcion/recojos/recojos-form/recojos-form.component';
+import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-list/recojos-list.component';
 import { ClientesComponent } from './pages/admin/clientes/clientes.component';
-import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { VentasComponent } from './pages/admin/ventas/ventas.component';
+import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 
 
 const routes: Routes = [{
-  path: '',
+  path:'',
   component: LoginComponent,
-  pathMatch: 'full'
-}, {
-  path: 'login',
-  component: LoginComponent,
-  pathMatch: 'full'
-}, {
-  path: 'enviar-correo',
-  component: EnviarCorreoComponent,
-  pathMatch: 'full'
-}, {
-  path: 'reset-password',
-  component: ConfirmarPasswordComponent,
-  pathMatch: 'full'
+  pathMatch:'full'
+},{
+  path:'login',
+  component:LoginComponent,
+  pathMatch:'full'
+},{
+  path:'enviar-correo',
+  component:EnviarCorreoComponent,
+  pathMatch:'full'
+},{
+  path:'reset-password',
+  component:ConfirmarPasswordComponent,
+  pathMatch:'full'
 },
 {
-  path: 'admin',
+  path:'admin',
   component: DashboardComponent,
-  canActivate: [AuthGuard],
-  children: [
+  canActivate:[AuthGuard ],
+  children:[
     {
-      path: 'perfil',
-      component: PerfilComponent
-    }, {
-      path: '',
-      component: WelcomeComponent
-    }, {
-      path: 'usuarios',
-      component: ListUserComponent
-    }, {
-      path: 'add-usuario',
-      component: AddUserComponent
-    }, {
-      path: 'permisos',
-      component: ListPermisosComponent
-    }, {
-      path: 'add-permiso',
-      component: AddPermisosComponent
-    }, {
-      path: 'roles',
-      component: ListRolesComponent
-    }, {
-      path: 'add-rol',
-      component: AddRolComponent
-    }, {
+      path:'perfil',
+      component:PerfilComponent
+    },{
+      path:'',
+      component:WelcomeComponent
+    },{
+      path:'usuarios',
+      component:ListUserComponent
+    },{
+      path:'add-usuario',
+      component:AddUserComponent
+    },{
+      path:'permisos',
+      component:ListPermisosComponent
+    },{
+      path:'add-permiso',
+      component:AddPermisosComponent
+    },{
+      path:'roles',
+      component:ListRolesComponent
+    },{
+      path:'add-rol',
+      component:AddRolComponent
+    },{
       path: 'edit-rol/:id',
       component: ActualizarRolComponent
-    }, {
+    },{
       path: 'edit-user/:id',
       component: ActualizarUserComponent,
-    }, {
+    },{
       path: 'proveedores',
-      component: ListProveedorComponent
+      component:ListProveedorComponent
     },
     {
       path: 'productos',
-      component: ListProductoComponent,
+      component:ListProductoComponent,
     }, {
       path: 'categorias',
-      component: ListCategoriasComponent,
+      component:ListCategoriasComponent,
     },
     {
       path: 'unidad',
-      component: ListUnidadComponent,
-    }, {
+      component:ListUnidadComponent,
+    },{
       path: 'compras',
-      component: ListCompraComponent,
+      component:ListCompraComponent,
     }
-    , {
+    ,{
       path: 'add-proveedor',
-      component: AddProveedorComponent
-    }, {
+      component:AddProveedorComponent
+    },{
       path: 'edit-proveedor/:ruc',
-      component: AddProveedorComponent
-    }, {
+      component:AddProveedorComponent
+    },{
       path: 'categorias',
-      component: ListCategoriasComponent
-    }, {
+      component:ListCategoriasComponent
+    },{
       path: 'add-categoria',
-      component: AddCategoriasComponent
-    }, {
+      component:AddCategoriasComponent
+    },{
       path: 'edit-categoria/:id',
-      component: AddCategoriasComponent
-    }, {
+      component:AddCategoriasComponent
+    },{
       path: 'edit-producto/:id',
-      component: AddProductoComponent
-    }, {
+      component:AddProductoComponent
+    },{
       path: 'caja',
-      component: CajaAperturaComponent
-    }, {
+      component:CajaAperturaComponent
+    },{
       path: 'detalle-caja',
-      component: CajaDetalleComponent
-    }, {
+      component:CajaDetalleComponent
+    },{
       path: 'detalle-caja/:id',
       component: CajaDetalleComponent
-    }, {
+    },
+    {
       path: 'transacciones',
-      component: TransaccionesComponent
-    }, {
+      component:TransaccionesComponent
+    },
+    {
       path: 'arqueo-caja',
       component: ArqueoCajaComponent
-    }, {
+    },{
       path: 'caja/arqueo/:id',
       component: ArqueoCajaComponent
-    }, {
+    },{
       path: 'transacciones/historial',
       component: TransaccionesHistorialComponent
     }, {
       path: 'add-producto',
       component: AddProductoComponent
-    }, {
+    },{
       path: 'perfil-user',
-      component: PerfilUserComponent
-    }, {
+      component:PerfilUserComponent
+    },
+    {
       path: 'habitaciones',
-      component: HabitacionesListComponent
-    }, {
+      component:HabitacionesListComponent
+    },{
       path: 'recepcion/habitaciones/nuevo',
       component: HabitacionesFormComponent
-    }, {
+    },{
       path: 'recepcion/habitaciones/editar/:id',
       component: HabitacionesFormComponent
-    }, {
+    },
+    {
       path: 'tipos-habitaciones',
       component: TipoHabitacionListComponent
-    }, {
+    },
+    {
       path: 'recepcion/tipos/nuevo',
       component: TipoHabitacionFormComponent,
-    }, {
+    },
+    {
       path: 'recepcion/tipos/editar/:id',
-      component: TipoHabitacionFormComponent
-    }, {
-      path: 'recepcion/reservas/habitaciones/nuevo',
-      component: HabitacionReservaFormComponent
-    }, {
-      path: 'recepcion/reservas/salones/nuevo',
-      component: SalonReservaFormComponent
-    }, {
+      component:TipoHabitacionFormComponent
+    },{
+    path: 'recepcion/reservas/habitaciones/nuevo',
+    component:HabitacionReservaFormComponent
+  },{
+    path: 'recepcion/reservas/salones/nuevo',
+    component:SalonReservaFormComponent
+  },
+    {
       path: 'reservas',
-      component: ReservasListComponent
-    }, {
+      component:ReservasListComponent
+    },
+    {
       path: 'salones',
-      component: SalonesListComponent
-    }, {
+      component:SalonesListComponent
+    },
+    {
       path: 'recepcion/salones/nuevo',
-      component: SalonesFormComponent
+      component:SalonesFormComponent
     }, {
       path: 'recepcion/salones/editar/:id',
-      component: SalonesFormComponent
-    }, {
+      component:SalonesFormComponent
+    },
+    {
       path: 'recepcion/reservas/salones/ver/:id',
-      component: ReservaSalonDetalleComponent
-    }, {
+      component:ReservaSalonDetalleComponent
+    },
+    {
       path: 'recepcion/reservas/salones/editar/:id',
-      component: SalonReservaFormComponent
-    }, {
+      component:SalonReservaFormComponent
+    },
+    {
       path: 'recepcion/reservas/habitaciones/editar/:id',
-      component: HabitacionReservaFormComponent
-    }, {
+      component:HabitacionReservaFormComponent
+    },{
       path: 'recepcion/reservas/habitaciones/ver/:id',
-      component: ReservaHabitacionDetalleComponent
-    }, {
+      component:ReservaHabitacionDetalleComponent
+    },
+    {
+      path: 'recepcion/conductores/nuevo',
+      component:ConductoresFormComponent
+    },
+    {
+      path: 'conductores',
+      component:ConductoresListComponent
+    },
+    {
+      path: 'recepcion/conductores/editar/:id',
+      component:ConductoresFormComponent
+    },
+    {
+      path: 'recepcion/recojos/nuevo',
+      component:RecojosFormComponent
+    },
+    {
+      path: 'programar-recojo',
+      component:RecojosListComponent
+    },
+    {
+      path: 'recepcion/recojos/editar/:id',
+      component:RecojosFormComponent
+    },{
       path: 'clientes',
       component: ClientesComponent
-    }, {
-      path: 'metodo-de-pago',
-      component: MetodoPagoComponent
-    }, {
+    },{
       path: 'venta',
       component: VentasComponent
+    },{
+      path: 'metodo-de-pago',
+      component: MetodoPagoComponent
     }
 
   ]

@@ -1,43 +1,48 @@
 <div class="container">
   <app-header></app-header>
 
-  <form [formGroup]="conductorForm" (ngSubmit)="onSubmit()" [class.disabled]="loading" class="form-container shadow rounded bg-white" novalidate>
+  <form *ngIf="conductorForm"
+  [formGroup]="conductorForm"
+  (ngSubmit)="onSubmit()"
+  [class.disabled]="loading"
+  class="form-container shadow rounded bg-white"
+  novalidate>
 
     <h3>{{ isEditing ? 'Editar' : 'Nuevo' }} Conductor</h3>
 
     <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-    <div class="d-flex align-items-end gap-2">
-      <mat-form-field appearance="outline" class="flex-grow-1">
-        <mat-label>DNI</mat-label>
+    <div class="mb-3">
+      <label for="dni" class="form-label">DNI</label>
+      <div class="d-flex gap-2">
         <input
-          matInput
           type="text"
+          id="dni"
           formControlName="dni"
-          maxlength="8"
-          minlength="8"
-          pattern="[0-9]*"
-          placeholder="Ingrese DNI"
+          class="form-control"
           [ngClass]="{ 'is-invalid': submitted && f['dni'].errors }"
         />
-        <mat-error *ngIf="f['dni'].errors?.['required']">DNI es requerido</mat-error>
-        <mat-error *ngIf="f['dni'].errors?.['pattern']">Solo se permiten números</mat-error>
-        <mat-error *ngIf="(f['dni'].errors?.['minlength'] || f['dni'].errors?.['maxlength'])">
-          El DNI debe tener 8 dígitos
-        </mat-error>
-      </mat-form-field>
-    
-      <button mat-raised-button color="primary" type="button" (click)="buscarDni(f['dni'].value)">
-        Buscar
-      </button>
-    </div>
-    
-    
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="buscarDni()"
+          style="white-space: nowrap"
+        >
+          Buscar
+        </button>
+      </div>
+      <div *ngIf="submitted && f['dni'].errors" class="invalid-feedback d-block">
+        <div *ngIf="f['dni'].errors['required']">DNI es requerido</div>
+      </div>
+      <div *ngIf="submitted && f['dni'].errors?.['dniDuplicado']" class="invalid-feedback d-block">
+        Ya existe un conductor con este dni.
+      </div>
+    </div>   
 
     <div class="mb-3">
       <label for="nombre" class="form-label">Nombre</label>
       <input type="text" id="nombre" formControlName="nombre" class="form-control"
-             [ngClass]="{'is-invalid': submitted && f['nombre'].errors}">
+             [ngClass]="{'is-invalid': submitted && f['nombre'].errors}" readonly>
       <div *ngIf="submitted && f['nombre'].errors" class="invalid-feedback">
         <div *ngIf="f['nombre'].errors['required']">Nombre es requerido</div>
       </div>
@@ -47,23 +52,44 @@
     </div>
 
     <div class="mb-3">
+      <label for="placa" class="form-label">Placa</label>
+      <div class="d-flex gap-2">
+        <input
+          type="text"
+          id="placa"
+          formControlName="placa"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['placa'].errors }"
+        />
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="buscarPlaca()"
+          style="white-space: nowrap"
+        >
+          Buscar
+        </button>
+      </div>
+      <div *ngIf="submitted && f['placa'].errors" class="invalid-feedback d-block">
+        <div *ngIf="f['placa'].errors['required']">Placa es requerida</div>
+      </div>
+      <div *ngIf="submitted && f['placa'].errors?.['placaDuplicada']" class="invalid-feedback d-block">
+        Ya existe un conductor con esta placa.
+      </div>
+    </div>
+    
+    
+
+    <div class="mb-3">
       <label for="modelo_vehiculo" class="form-label">Modelo del Vehículo</label>
       <input type="text" id="modelo_vehiculo" formControlName="modelo_vehiculo" class="form-control"
-             [ngClass]="{'is-invalid': submitted && f['modelo_vehiculo'].errors}">
+             [ngClass]="{'is-invalid': submitted && f['modelo_vehiculo'].errors}" readonly>
       <div *ngIf="submitted && f['modelo_vehiculo'].errors" class="invalid-feedback">
         <div *ngIf="f['modelo_vehiculo'].errors['required']">Modelo del vehículo es requerido</div>
       </div>
     </div>
 
-    <div class="mb-3">
-      <label for="placa" class="form-label">Placa</label>
-      <input type="text" id="placa" formControlName="placa" class="form-control"
-             [ngClass]="{'is-invalid': submitted && f['placa'].errors}">
-      <div *ngIf="submitted && f['placa'].errors" class="invalid-feedback">
-        <div *ngIf="f['placa'].errors['required']">Placa es requerida</div>
-      </div>
-    </div>
-
+    
     <div class="form-buttons">
       <button type="submit" class="btn btn-success">
         {{ isEditing ? 'Actualizar' : 'Crear' }}
