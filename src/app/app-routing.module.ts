@@ -253,7 +253,7 @@ const routes: Routes = [{
       path: 'clientes',
       component: ClientesComponent
     },{
-      path: 'registrar-venta',
+      path: 'venta',
       component: VentasComponent
     },{
       path: 'metodo-de-pago',
