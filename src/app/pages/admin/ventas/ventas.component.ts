@@ -13,6 +13,7 @@ import { ProveedoresService } from '../../../service/proveedores.service';
 import { HabitacionesService } from '../../../service/habitaciones.service';
 import { SalonesService } from '../../../service/salones.service';
 import { MetodoPagoService } from '../../../service/metodo-pago.service';
+import { ComprobantePagoService } from '../../../service/comprobante-pago.service';
 
 @Component({
   selector: 'app-ventas',
@@ -20,7 +21,6 @@ import { MetodoPagoService } from '../../../service/metodo-pago.service';
   templateUrl: './ventas.component.html',
   styleUrl: './ventas.component.css',
 })
-
 export class VentasComponent {
   //Comprobantes
   comprobantes: any[] = [];
@@ -241,7 +241,8 @@ export class VentasComponent {
     private cajaService: CajaService,
     private router: Router,
     private reservaService: ReservasService,
-    private metodosService: MetodoPagoService
+    private metodosService: MetodoPagoService,
+    private comprobanteService: ComprobantePagoService
   ) {}
 
   ngOnInit(): void {
@@ -268,6 +269,28 @@ export class VentasComponent {
       this.tipo = 'Factura';
       this.venta.comprobantePago.numComprobante = 'F001';
     }
+
+    this.correlativo();
+  }
+
+  correlativo() {
+    console.log(this.tipo)
+    this.comprobanteService
+      .numeroCorrelativo(this.tipo)
+      .subscribe(
+        (response) => {
+          const correlativo = response.correlativo;
+
+          if (this.tipo === 'Boleta') {
+            this.venta.comprobantePago.numSerieBoleta = correlativo;
+          } else {
+            this.venta.comprobantePago.numSerieFactura = correlativo;
+          }
+        },
+        (error) => {
+          console.error('Error obteniendo correlativo:', error);
+        }
+      );
   }
 
   //VERIFICAR ESTADO DE CAJA
@@ -275,38 +298,37 @@ export class VentasComponent {
     this.cajaService.verificarEstadoCajaRaw().subscribe({
       next: (data: any) => {
         console.log('💡 Respuesta RAW completa: ', data);
-          const estadoCaja = data?.estadoCaja ?? 'desconocido';
-  
+        const estadoCaja = data?.estadoCaja ?? 'desconocido';
+
         if (estadoCaja === 'abierta') {
           this.cajaAbierta = true;
           console.log('✅ La caja está abierta');
           this.abrirModalRegistro();
         } else {
           console.log('🚫 Caja cerrada');
-      Swal.fire({
-        title: "Caja Cerrada",
-        text: "¿Deseas aperturar caja?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, aperturar"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.router.navigate(['/admin/caja']);
-        } else {
-          this.router.navigate(['/admin/venta']);
+          Swal.fire({
+            title: 'Caja Cerrada',
+            text: '¿Deseas aperturar caja?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, aperturar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.router.navigate(['/admin/caja']);
+            } else {
+              this.router.navigate(['/admin/venta']);
+            }
+          });
         }
-      });
-    }
-  },
+      },
       error: (error) => {
         console.error('Error al obtener estado caja:', error);
         this.cajaAbierta = false; // manejar error marcando como cerrada
-      }
+      },
     });
   }
-  
 
   //MODAL DE DETALLE VENTA
   verModal(id: number) {
@@ -378,6 +400,7 @@ export class VentasComponent {
     this.dataSalon.data = [];
     this.tipoIgv = 0;
     this.cargarReservas();
+    this.boletaOFactura('Boleta')
   }
 
   //LISTAR VENTAS
