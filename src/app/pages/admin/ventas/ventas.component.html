@@ -36,7 +36,7 @@
                 <tr *ngFor="let venta of ventasFiltrados">
                     <td>{{ venta.comprobantePago.numComprobante }} - {{venta.comprobantePago.numComprobante == 'B001' ?
                         venta.comprobantePago.numSerieBoleta : venta.comprobantePago.numSerieFactura}}</td>
-                    <td>{{ venta.fecha }}</td>
+                    <td>{{ venta.fecha | date: 'dd/MM/yyyy'}}</td>
                     <td>{{ venta.cliente.nombre }}</td>
                     <td>S/. {{ venta.total }}</td>
                     <td class="acciones">
@@ -72,7 +72,7 @@
                     <p><strong>Número:</strong> {{ ventaSeleccionada?.comprobantePago.numComprobante }} -
                         {{venta.comprobantePago.numComprobante == 'B001' ? venta.comprobantePago.numSerieBoleta :
                         venta.comprobantePago.numSerieFactura}}</p>
-                    <p><strong>Fecha:</strong> {{ ventaSeleccionada?.fecha }}</p>
+                    <p><strong>Fecha:</strong> {{ ventaSeleccionada?.fecha | date: 'dd/MM/yyyy'}}</p>
                     <p><strong>Cliente:</strong> {{ ventaSeleccionada?.cliente?.nombre }}</p>
                 </span>
                 <span>
@@ -210,17 +210,17 @@
 
                 <mat-form-field class="w-25 me-2">
                     <input type="text" name="numSerie" id="numSerie" [(ngModel)]="venta.comprobantePago.numComprobante"
-                        #numSerie="ngModel" required matInput>
+                        #numSerie="ngModel" required matInput disabled="true">
                 </mat-form-field> -
 
                 <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'B001')">
                     <input type="text" name="numComprobante" id="numComprobante"
-                        [(ngModel)]="venta.comprobantePago.numSerieBoleta" #numComprobante="ngModel" required matInput>
+                        [(ngModel)]="venta.comprobantePago.numSerieBoleta" #numComprobante="ngModel" required matInput >
                 </mat-form-field>
 
                 <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'F001')">
                     <input type="text" name="numComprobante" id="numComprobante"
-                        [(ngModel)]="venta.comprobantePago.numSerieFactura" #numComprobante="ngModel" required matInput>
+                        [(ngModel)]="venta.comprobantePago.numSerieFactura" #numComprobante="ngModel" required matInput >
                 </mat-form-field>
 
                 <h3 class="h3 mt-3">Reserva</h3>

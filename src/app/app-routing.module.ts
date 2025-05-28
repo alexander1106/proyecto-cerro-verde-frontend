@@ -48,6 +48,7 @@ import { RecojosListComponent } from './pages/admin/recepcion/recojos/recojos-li
 import { ClientesComponent } from './pages/admin/clientes/clientes.component';
 import { VentasComponent } from './pages/admin/ventas/ventas.component';
 import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
+import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
 
 
 const routes: Routes = [{
@@ -258,6 +259,9 @@ const routes: Routes = [{
     },{
       path: 'metodo-de-pago',
       component: MetodoPagoComponent
+    },{
+      path: 'movimientos-de-almacen',
+      component: MovimientoInventarioComponent
     }
 
   ]

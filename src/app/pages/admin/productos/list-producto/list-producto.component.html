@@ -27,6 +27,7 @@
         <tr>
           <th>Nombre</th>
           <th>Descripción</th>
+          <th>Stock</th>
           <th>Categoria</th>
           <th>Acciones</th>
         </tr>
@@ -35,6 +36,7 @@
         <tr *ngFor="let producto of (productosFiltrados.length ? productosFiltrados : productos)">
           <td>{{ producto.nombre }}</td>
           <td>{{ producto.descripcion }}</td>
+          <td>{{ producto.stock }}</td>
           <td>{{ producto.categoriaproducto?.nombre }}</td>
           <td class="acciones">
             <button class="btn-accion editar" (click)="editarProducto(producto.id_producto)">

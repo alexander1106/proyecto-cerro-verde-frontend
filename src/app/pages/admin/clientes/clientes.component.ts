@@ -31,6 +31,7 @@ export class ClientesComponent {
   longitud: number = 8;
   patronNumerico = '^[0-9]*$';
   patronCorreo: string = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  esEditar: boolean = false;
 
   constructor(
     private clientesService: ClientesService,
@@ -72,11 +73,8 @@ export class ClientesComponent {
     this.cliente.pais = '';
     this.cliente.telefono = '';
     this.mostrarModal = false;
-<<<<<<< HEAD
     this.esEditar = false;
     this.tipo = 'DNI';
-=======
->>>>>>> bf7d1e7a50656401d8373b7cf1f939738e232dd4
   }
 
   //MOSTRAR LOS CLIENTES
@@ -113,6 +111,7 @@ export class ClientesComponent {
   editarCliente(id: number) {
     this.clientesService.getClienteById(id).subscribe({
       next: (data: any) => {
+        this.esEditar = true;
         this.cliente = data;
         const auxiliar = this.cliente.dniRuc
         if(auxiliar.length == 11){

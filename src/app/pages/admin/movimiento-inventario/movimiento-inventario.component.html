@@ -1,1 +1,88 @@
-<p>movimiento-inventario works!</p>
+<div class="container">
+    <app-header></app-header>
+
+    <div class="card">
+        <div class="info-categorias-linea">
+            <h3 class="h3 mb-3">Movimientos de Almacén</h3>
+            <!-- Buscador personalizado sin Angular Material -->
+            <div class="mover">
+                <!-- <button (click)="verModal()" class="btn-agregar">
+                    + Método de Pago
+                </button> -->
+            </div>
+            <div class="content">
+                <section class="filtros w-25">
+                    <h6 class="h5">Filtros</h6>
+                    <span>
+                        <h6 class="h6 mb-3">Producto</h6>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Selecciona Producto</mat-label>
+                            <input type="text" id="searchInput" placeholder="Seleccione producto" matInput
+                                (input)="filtrarProductos()" [(ngModel)]="productoBusqueda"
+                                [matAutocomplete]="autoProducto" [ngModelOptions]="{standalone: true}">
+                            <mat-autocomplete #autoProducto="matAutocomplete" [displayWith]="mostrarNombreProducto">
+                                <mat-option *ngFor=" let producto of productosFiltrados" [value]="producto">
+                                    {{producto.nombre}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </span>
+                    <span>
+                        <h6 class="h6">Fechas</h6>
+                        <mat-form-field class="" appearance="outline">
+                            <mat-label>Fecha Inicio</mat-label>
+                            <input name="fecha_inicio" id="fecha_inicio" [(ngModel)]="fechaInicio"
+                                #fecha_compra="ngModel" matInput [matDatepicker]="picker1">
+                            <mat-hint>DD/MM/AAAA</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                            <mat-datepicker #picker1></mat-datepicker>
+                        </mat-form-field>
+
+                        <mat-form-field class="mt-2" appearance="outline">
+                            <mat-label>Fecha Final</mat-label>
+                            <input name="fecha_fin" id="fecha_fin" [(ngModel)]="fechaFinal" #fecha_compra="ngModel"
+                                matInput [matDatepicker]="picker2">
+                            <mat-hint>DD/MM/AAAA</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                        </mat-form-field>
+                    </span>
+                    <span>
+                        <button type="button" class="btn btn-secondary me-3 mt-3" (click)="limpiar()">Limpiar</button>
+                        <button type="button" class="btn btn-primary mt-3" (click)="buscar()">Buscar</button>
+                    </span>
+                </section>
+                <section class="datos w-75">
+                    <h6 class="h5">Movimientos</h6>
+                    <table class="table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Fecha</th>
+                                <th>Tipo Movimiento</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-light" *ngFor="let m of movimientosFiltrados">
+                                <td>{{ m.producto.nombre }}</td>
+                                <td>{{ m.fecha | date: 'dd/MM/yyyy'}}</td>
+                                <td>{{ m.tipo_movimiento }}</td>
+                                <td>{{ m.tipo_movimiento == 'Entrada' ? '+ ' + m.cantidad : '- ' + m.cantidad}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+
+        <!-- <div *ngIf="totalPaginas > 1"
+            class="paginacion position-absolute bottom-0 start-50 translate-middle-x p-4 text-center mt-4">
+            <button class="btn btn-primary me-3" (click)="cambiarPagina(paginaActual - 1)"
+                [disabled]="paginaActual === 1">Anterior</button>
+            <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button class="btn btn-primary ms-3" (click)="cambiarPagina(paginaActual + 1)"
+                [disabled]="paginaActual === totalPaginas">Siguiente</button>
+        </div> -->
+    </div>
+</div>

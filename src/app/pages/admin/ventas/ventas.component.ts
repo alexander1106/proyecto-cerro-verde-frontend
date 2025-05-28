@@ -377,6 +377,7 @@ export class VentasComponent {
     this.dataHabitacion.data = [];
     this.dataSalon.data = [];
     this.tipoIgv = 0;
+    this.cargarReservas();
   }
 
   //LISTAR VENTAS
@@ -477,7 +478,7 @@ export class VentasComponent {
       return;
     }
     const hoy = new Date();
-    const fechaFormateada = hoy.toLocaleDateString('es-PE'); // "21/05/2025"
+    const fechaFormateada = hoy.toISOString().split('T')[0];
     this.venta.fecha = fechaFormateada;
 
     const totalVenta = Number(this.venta.total);
