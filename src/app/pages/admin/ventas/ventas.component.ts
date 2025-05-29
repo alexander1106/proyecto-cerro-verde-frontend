@@ -276,7 +276,7 @@ export class VentasComponent {
       next: (data: any) => {
         console.log('💡 Respuesta RAW completa: ', data);
           const estadoCaja = data?.estadoCaja ?? 'desconocido';
-  
+
         if (estadoCaja === 'abierta') {
           this.cajaAbierta = true;
           console.log('✅ La caja está abierta');
@@ -306,7 +306,7 @@ export class VentasComponent {
       }
     });
   }
-  
+
 
   //MODAL DE DETALLE VENTA
   verModal(id: number) {

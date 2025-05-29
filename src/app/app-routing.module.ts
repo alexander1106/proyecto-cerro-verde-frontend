@@ -49,6 +49,7 @@ import { ClientesComponent } from './pages/admin/clientes/clientes.component';
 import { VentasComponent } from './pages/admin/ventas/ventas.component';
 import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
+import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 
 
 const routes: Routes = [{
@@ -139,27 +140,40 @@ const routes: Routes = [{
     },{
       path: 'edit-producto/:id',
       component:AddProductoComponent
-    },{
+    },
+    {
       path: 'caja',
       component:CajaAperturaComponent
     },{
       path: 'detalle-caja',
       component:CajaDetalleComponent
-    },{
+    },
+    {
       path: 'detalle-caja/:id',
       component: CajaDetalleComponent
-    },
-    {
-      path: 'transacciones',
-      component:TransaccionesComponent
-    },
-    {
-      path: 'arqueo-caja',
-      component: ArqueoCajaComponent
+    },{
+      path: 'caja/arqueo',
+      component:ArqueoCajaComponent
     },{
       path: 'caja/arqueo/:id',
       component: ArqueoCajaComponent
     },{
+      path: 'transacciones',
+      component:TransaccionesComponent
+    },{
+      path: 'transacciones/:id',
+      component: TransaccionesComponent
+    },{
+      path: 'transacciones/historial',
+      component: TransaccionesHistorialComponent
+    }, {
+      path: 'add-producto',
+      component: AddProductoComponent
+    }, {
+      path: 'cajas',
+      component: AdminCajasComponent
+    }
+    ,{
       path: 'transacciones/historial',
       component: TransaccionesHistorialComponent
     }, {

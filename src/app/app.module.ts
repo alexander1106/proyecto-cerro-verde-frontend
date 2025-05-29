@@ -78,6 +78,7 @@ import { ClientesComponent } from './pages/admin/clientes/clientes.component';
 import { VentasComponent } from './pages/admin/ventas/ventas.component';
 import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
+import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventar
     AddCategoriasComponent,
     CajaAperturaComponent,
     CajaDetalleComponent,
+    CajaDetalleComponent,
     ListProductoComponent,
     ActualizarUserComponent,
     AddProductoComponent,
@@ -110,6 +112,7 @@ import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventar
     PerfilUserComponent,
     ListUnidadComponent,
     ListCompraComponent,
+    AdminCajasComponent,
     ArqueoCajaComponent,
     HabitacionesFormComponent,
     HabitacionesListComponent,
