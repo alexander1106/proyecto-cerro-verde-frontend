@@ -113,9 +113,9 @@ export class VentasComponent {
     idVenta: '',
     fecha: '',
     total: '',
-    descuento: '',
-    cargo: '',
-    igv: '',
+    descuento: 0,
+    cargo: 0,
+    igv: 0,
     estado: 1,
     cliente: {
       idCliente: '',
@@ -258,7 +258,7 @@ export class VentasComponent {
   //SELECCIONAR IGV
   seleccionarIgv(auxiliar: number) {
     this.tipoIgv = auxiliar;
-    this.venta.igv = String(this.tipoIgv);
+    this.venta.igv = this.tipoIgv;
   }
 
   boletaOFactura(auxiliar: string) {
@@ -274,23 +274,21 @@ export class VentasComponent {
   }
 
   correlativo() {
-    console.log(this.tipo)
-    this.comprobanteService
-      .numeroCorrelativo(this.tipo)
-      .subscribe(
-        (response) => {
-          const correlativo = response.correlativo;
+    console.log(this.tipo);
+    this.comprobanteService.numeroCorrelativo(this.tipo).subscribe(
+      (response) => {
+        const correlativo = response.correlativo;
 
-          if (this.tipo === 'Boleta') {
-            this.venta.comprobantePago.numSerieBoleta = correlativo;
-          } else {
-            this.venta.comprobantePago.numSerieFactura = correlativo;
-          }
-        },
-        (error) => {
-          console.error('Error obteniendo correlativo:', error);
+        if (this.tipo === 'Boleta') {
+          this.venta.comprobantePago.numSerieBoleta = correlativo;
+        } else {
+          this.venta.comprobantePago.numSerieFactura = correlativo;
         }
-      );
+      },
+      (error) => {
+        console.error('Error obteniendo correlativo:', error);
+      }
+    );
   }
 
   //VERIFICAR ESTADO DE CAJA
@@ -363,9 +361,9 @@ export class VentasComponent {
       idVenta: '',
       fecha: '',
       total: '',
-      descuento: '',
-      cargo: '',
-      igv: '',
+      descuento: 0,
+      cargo: 0,
+      igv: 0,
       estado: 1,
       cliente: {
         idCliente: '',
@@ -400,7 +398,7 @@ export class VentasComponent {
     this.dataSalon.data = [];
     this.tipoIgv = 0;
     this.cargarReservas();
-    this.boletaOFactura('Boleta')
+    this.boletaOFactura('Boleta');
   }
 
   //LISTAR VENTAS
@@ -608,6 +606,24 @@ export class VentasComponent {
         });
       }
     });
+  }
+
+  //GENERAR PDF
+  generarComprobante(idVenta: number) {
+    this.ventasService.descargarComprobante(idVenta).subscribe(
+      (pdfBlob) => {
+        const blob = new Blob([pdfBlob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `comprobante_${idVenta}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      (error) => {
+        console.error('Error al descargar el comprobante:', error);
+      }
+    );
   }
 
   //BUSQUEDA DE VENTAS

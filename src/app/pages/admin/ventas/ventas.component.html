@@ -43,6 +43,9 @@
                         <button class="btn-accion ver" (click)="verModal(venta.idVenta)">
                             <mat-icon color="accent">visibility</mat-icon>
                         </button>
+                        <button class="btn-accion" (click)="generarComprobante(venta.idVenta)">
+                            <mat-icon color="accent">download</mat-icon>
+                        </button>
                         <!-- <button class="btn-accion editar" (click)="editarVenta(venta.idVenta)">
                             <mat-icon class="edit" color="primary">edit</mat-icon>
                         </button>
