@@ -6,9 +6,6 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class CajaService {
 
-  verificarEstadoCajaRaw() {
-    throw new Error('Method not implemented.');
-  }
 
   private baseUrl = 'http://localhost:8080/cerro-verde/caja';
   cajaActual = signal<any | null>(null);
@@ -17,6 +14,10 @@ export class CajaService {
 
   obtenerTodasLasCajas() {
     return this.http.get<any[]>(`${this.baseUrl}/admin/listar`);
+  }
+
+  verificarEstadoCajaRaw() {
+    return this.http.get(`${this.baseUrl}`);
   }
 
   verificarEstadoCaja() {
