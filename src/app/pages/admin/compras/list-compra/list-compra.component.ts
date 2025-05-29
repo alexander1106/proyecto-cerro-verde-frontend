@@ -11,7 +11,7 @@ import { DetalleComprasService } from '../../../../service/detalle-compras.servi
   selector: 'app-list-compra',
   standalone: false,
   templateUrl: './list-compra.component.html',
-  styleUrl: './list-compra.component.css'
+  styleUrl: './list-compra.component.css',
 })
 export class ListCompraComponent {
   //Compras
@@ -22,7 +22,14 @@ export class ListCompraComponent {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   productoBusqueda: string = '';
-  columnasTabla: string[] = ['nombre', 'unidad', 'cantidad', 'precio', 'subtotal', 'acciones'];
+  columnasTabla: string[] = [
+    'nombre',
+    'unidad',
+    'cantidad',
+    'precio',
+    'subtotal',
+    'acciones',
+  ];
   dataSource = new MatTableDataSource<any>();
   //Proveedores
   proveedores: any[] = [];
@@ -34,7 +41,8 @@ export class ListCompraComponent {
   compraSeleccionada: any = null;
   public compra = {
     id_compra: '',
-    numeroDoc: '',
+    correlativo: '',
+    numeroDoc: 'C001',
     fecha_compra: '',
     total: '',
     flete: '',
@@ -45,34 +53,34 @@ export class ListCompraComponent {
       ruc_proveedor: '',
       razon_social: '',
       direccion: '',
-      estado: 1
+      estado: 1,
     },
     detallecompra: [] as Array<{
-      id_detalle_compra: any,
-      cantidad: any,
-      precio: any,
-      subtotal: any,
-      estado: 1,
+      id_detalle_compra: any;
+      cantidad: any;
+      precio: any;
+      subtotal: any;
+      estado: 1;
       producto?: {
-        id_producto: any,
-        nombre: any,
-        descripcion: any,
-        estado: 1,
+        id_producto: any;
+        nombre: any;
+        descripcion: any;
+        estado: 1;
         categoriaproducto: {
-          id_categoria: '',
-          nombre: '',
-          estado: 1
-        },
+          id_categoria: '';
+          nombre: '';
+          estado: 1;
+        };
         unidad: {
-          idUnidad: '',
-          nombre: '',
-          abreviatura: '',
-          equivalencia: '',
-          estado: 1
-        }
-      }
-    }>
-  }
+          idUnidad: '';
+          nombre: '';
+          abreviatura: '';
+          equivalencia: '';
+          estado: 1;
+        };
+      };
+    }>,
+  };
   customers: any;
   paginaActual = 1;
   elementosPorPagina = 5;
@@ -85,7 +93,7 @@ export class ListCompraComponent {
     private proveedoresService: ProveedoresService,
     private snack: MatSnackBar,
     private detalleComprasService: DetalleComprasService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.listarCompras();
@@ -104,8 +112,12 @@ export class ListCompraComponent {
       },
       error: (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo obtener el detalle de la compra", "error");
-      }
+        Swal.fire(
+          'Error',
+          'No se pudo obtener el detalle de la compra',
+          'error'
+        );
+      },
     });
   }
   cerrarModal() {
@@ -115,10 +127,12 @@ export class ListCompraComponent {
   //MODAL DE REGISTRO O EDICION
   abrirModalRegistro() {
     this.modalRegistro = true;
+    this.cargarDatosCompra();
   }
   cerrarMordalRegistro() {
     this.compra.id_compra = '';
-    this.compra.numeroDoc = '';
+    this.compra.correlativo = '';
+    this.compra.numeroDoc = 'C001';
     this.compra.fecha_compra = '';
     this.compra.proveedor.razon_social = '';
     this.compra.proveedor.ruc_proveedor = '';
@@ -132,6 +146,17 @@ export class ListCompraComponent {
     this.cargarProveedores();
   }
 
+  cargarDatosCompra() {
+    this.comprasService.obtenerDatosNuevaCompra().subscribe({
+      next: (data) => {
+        this.compra.correlativo = data.correlativo;
+      },
+      error: (err) => {
+        console.error('Error al obtener datos de nueva compra', err);
+      },
+    });
+  }
+
   //LISTAR COMPRAS
   listarCompras() {
     this.comprasService.listarCompra().subscribe(
@@ -139,23 +164,30 @@ export class ListCompraComponent {
         this.compras = data;
         this.comprasFiltrados = [...this.compras];
         this.actualizarPaginacion();
-      }, (error) => {
+      },
+      (error) => {
         console.log(error);
-        Swal.fire("error !!", "Al cargar el listado de las compras", 'error')
+        Swal.fire('error !!', 'Al cargar el listado de las compras', 'error');
       }
-    )
+    );
   }
 
   //REGISTRAR COMPRA
   formSubmit() {
-    const sumaSubTotales = Number(this.compra.detallecompra.reduce((acc, item) => acc + item.subtotal, 0));
+    const sumaSubTotales = Number(
+      this.compra.detallecompra.reduce((acc, item) => acc + item.subtotal, 0)
+    );
     const flete = Number(this.compra.flete) || 0;
     const descuento = Number(this.compra.descuento) || 0;
 
-    if (descuento > (sumaSubTotales + flete)) {
-      this.snack.open('Error: El descuento no puede ser mayor al total', 'Aceptar', {
-        duration: 3000,
-      });
+    if (descuento > sumaSubTotales + flete) {
+      this.snack.open(
+        'Error: El descuento no puede ser mayor al total',
+        'Aceptar',
+        {
+          duration: 3000,
+        }
+      );
       return;
     }
     const fecha = new Date(this.compra.fecha_compra);
@@ -163,17 +195,18 @@ export class ListCompraComponent {
     this.compra.fecha_compra = fechaFormateada;
     this.comprasService.registrarCompra(this.compra).subscribe(
       (data) => {
-        Swal.fire("Excelente", "La compra fue registrado con éxito", "success");
+        Swal.fire('Excelente', 'La compra fue registrado con éxito', 'success');
         this.listarCompras();
         this.cerrarMordalRegistro();
-        console.log(this.compra)
-      }, (error) => {
+        console.log(this.compra);
+      },
+      (error) => {
         console.log(error);
         this.snack.open('Rellene el formulario', 'Aceptar', {
           duration: 3000,
         });
       }
-    )
+    );
   }
 
   //EDITAR COMPRA
@@ -186,48 +219,52 @@ export class ListCompraComponent {
       },
       error: (error) => {
         console.log(error);
-        Swal.fire("Error", "No se pudo obtener los datos de la categoria", "error");
-      }
+        Swal.fire(
+          'Error',
+          'No se pudo obtener los datos de la categoria',
+          'error'
+        );
+      },
     });
   }
 
-  eliminarDetalle(id: number){
+  eliminarDetalle(id: number) {
     this.detalleComprasService.eliminarCategoria(id).subscribe({
       next: (data: any) => {
-        console.log("eliminado")
-      }
-    })
+        console.log('eliminado');
+      },
+    });
   }
 
   //ELIMINAR COMPRAS
   eliminarCompra(id: number) {
     Swal.fire({
-      title: "¿Estás seguro?",
-      text: "No podrás recuperar el registro",
-      icon: "warning",
+      title: '¿Estás seguro?',
+      text: 'No podrás recuperar el registro',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar"
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.comprasService.eliminarCompra(id).subscribe({
           next: (response: any) => {
             Swal.fire({
-              title: "Eliminado",
+              title: 'Eliminado',
               text: response.mensaje,
-              icon: "success"
+              icon: 'success',
             });
             this.listarCompras();
           },
           error: (error) => {
             Swal.fire({
-              title: "Error",
-              text: "No se pudo eliminar la compra",
-              icon: "error"
+              title: 'Error',
+              text: 'No se pudo eliminar la compra',
+              icon: 'error',
             });
             console.log(error);
-          }
+          },
         });
       }
     });
@@ -236,19 +273,20 @@ export class ListCompraComponent {
   //BUSQUEDA DE COMPRAS
   buscarCompras() {
     const filtro = this.filtroBusqueda.toLowerCase();
-    this.comprasFiltrados = this.compras.filter(c =>
-      c.numeroDoc.toLowerCase().includes(filtro) ||
-      c.proveedor.razon_social.toLowerCase().includes(filtro)
+    this.comprasFiltrados = this.compras.filter(
+      (c) =>
+        c.numeroDoc.toLowerCase().includes(filtro) ||
+        c.proveedor.razon_social.toLowerCase().includes(filtro)
     );
   }
 
-
   // Actualiza las compras por página
   actualizarPaginacion() {
-    const inicio = (this.paginaActualCompra - 1) * this.elementosPorPaginaCompra;
+    const inicio =
+      (this.paginaActualCompra - 1) * this.elementosPorPaginaCompra;
     const fin = inicio + this.elementosPorPaginaCompra;
     this.comprasFiltrados = this.compras.slice(inicio, fin);
-    console.log(this.comprasFiltrados)
+    console.log(this.comprasFiltrados);
   }
   // Obtener productos de la página actual
   get comprasPaginados() {
@@ -279,7 +317,9 @@ export class ListCompraComponent {
     if (!this.compraSeleccionada || !this.compraSeleccionada.detallecompra) {
       return 0;
     }
-    return Math.ceil(this.compraSeleccionada.detallecompra.length / this.elementosPorPagina);
+    return Math.ceil(
+      this.compraSeleccionada.detallecompra.length / this.elementosPorPagina
+    );
   }
   cambiarPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
@@ -292,7 +332,7 @@ export class ListCompraComponent {
     this.proveedoresService.listarProveedoresActivo().subscribe((data) => {
       this.proveedores = data;
       this.proveedorFiltrado = [...this.proveedores];
-    })
+    });
   }
   filtrarProveedores() {
     const filtro = String(this.compra.proveedor).trim().toLowerCase();
@@ -300,20 +340,23 @@ export class ListCompraComponent {
       this.proveedorFiltrado = [...this.proveedores];
       this.cargarProveedores();
     } else {
-      this.proveedorFiltrado = this.proveedores.filter(proveedor =>
-        proveedor.ruc_proveedor.toLowerCase().includes(filtro) ||
-        proveedor.razon_social.toLowerCase().includes(filtro)
+      this.proveedorFiltrado = this.proveedores.filter(
+        (proveedor) =>
+          proveedor.ruc_proveedor.toLowerCase().includes(filtro) ||
+          proveedor.razon_social.toLowerCase().includes(filtro)
       );
     }
   }
   seleccionarProveedor(proveedorSeleccionado: string) {
-    const seleccionada = this.proveedores.find(p => p.ruc_proveedor === proveedorSeleccionado);
+    const seleccionada = this.proveedores.find(
+      (p) => p.ruc_proveedor === proveedorSeleccionado
+    );
     if (seleccionada) {
       this.compra.proveedor.ruc_proveedor = seleccionada.ruc_proveedor;
       this.compra.proveedor.razon_social = seleccionada.razon_social;
       this.compra.proveedor.direccion = seleccionada.direccion;
     }
-    console.log(seleccionada)
+    console.log(seleccionada);
   }
   mostrarProveedor = (proveedor: any): string => {
     if (!proveedor || !proveedor.ruc_proveedor || !proveedor.razon_social) {
@@ -327,7 +370,7 @@ export class ListCompraComponent {
     this.productosService.listarProductosActivos().subscribe((data) => {
       this.productos = data;
       this.productosFiltrados = [...this.productos];
-    })
+    });
   }
   filtrarProductos() {
     const filtro = this.productoBusqueda.trim().toLowerCase();
@@ -335,13 +378,15 @@ export class ListCompraComponent {
       this.productosFiltrados = [...this.productos];
       this.cargarProductos();
     } else {
-      this.productosFiltrados = this.productos.filter(producto =>
+      this.productosFiltrados = this.productos.filter((producto) =>
         producto.nombre.toLowerCase().includes(filtro)
       );
     }
   }
   agregarProducto(producto: any) {
-    const yaExiste = this.compra.detallecompra.find(d => d.producto && d.producto.id_producto == producto.id_producto);
+    const yaExiste = this.compra.detallecompra.find(
+      (d) => d.producto && d.producto.id_producto == producto.id_producto
+    );
     if (!yaExiste) {
       this.compra.detallecompra.push({
         id_detalle_compra: null,
@@ -349,7 +394,7 @@ export class ListCompraComponent {
         precio: 0,
         subtotal: 0,
         estado: 1,
-        producto: producto
+        producto: producto,
       });
       this.dataSource.data = this.compra.detallecompra;
     }
@@ -359,7 +404,7 @@ export class ListCompraComponent {
     this.actualizarTotales();
   }
   actualizarSubtotal(item: any) {
-    item.subtotal = (item.cantidad * item.precio) || 0;
+    item.subtotal = item.cantidad * item.precio || 0;
     this.actualizarTotales();
   }
   eliminarProducto(index: number) {
@@ -368,21 +413,33 @@ export class ListCompraComponent {
     this.actualizarTotales();
   }
   actualizarTotales() {
-    let sumaSubTotales = Number(this.compra.detallecompra.reduce((acc, item) => acc + item.subtotal, 0));
+    let sumaSubTotales = Number(
+      this.compra.detallecompra.reduce((acc, item) => acc + item.subtotal, 0)
+    );
     let flete = this.compra.flete || 0;
     let descuento = this.compra.descuento || 0;
     let igv = this.compra.igv || 0;
-    if (Number(descuento) > (sumaSubTotales + Number(flete))) {
-      this.snack.open('Error: El descuento no puede ser mayor al total', 'Aceptar', {
-        duration: 3000,
-      });
-      return
+    if (Number(descuento) > sumaSubTotales + Number(flete)) {
+      this.snack.open(
+        'Error: El descuento no puede ser mayor al total',
+        'Aceptar',
+        {
+          duration: 3000,
+        }
+      );
+      return;
     }
     if (Number(igv) > 0) {
-      let conIgv = Number(sumaSubTotales + Number(flete) - Number(descuento)) * (Number(igv) / 100);
-      this.compra.total = String(sumaSubTotales + Number(flete) - Number(descuento) + conIgv);
+      let conIgv =
+        Number(sumaSubTotales + Number(flete) - Number(descuento)) *
+        (Number(igv) / 100);
+      this.compra.total = String(
+        sumaSubTotales + Number(flete) - Number(descuento) + conIgv
+      );
     } else {
-      this.compra.total = String(sumaSubTotales + Number(flete) - Number(descuento));
+      this.compra.total = String(
+        sumaSubTotales + Number(flete) - Number(descuento)
+      );
     }
   }
   mostrarNombreProducto(producto: any): string {

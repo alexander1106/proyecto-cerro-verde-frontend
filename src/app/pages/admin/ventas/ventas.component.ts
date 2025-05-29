@@ -543,6 +543,31 @@ export class VentasComponent {
     // if (soloEfectivo && totalPagado > totalVenta) {
     //   this.vuelto = totalPagado - totalVenta;
     // }
+    // Buscar el método de pago que sea 'Efectivo'
+    const efectivoPago = this.venta.ventaMetodoPago.find(
+      (m) => m.metodoPago.nombre === 'Efectivo'
+    );
+
+    console.log("EFECTIVO PAGO: ", efectivoPago)
+
+    // Si existe y tiene un monto válido, generar la transacción
+    if (efectivoPago && efectivoPago.pago > 0) {
+      const nuevaTransaccion = {
+        montoTransaccion: efectivoPago.pago,
+        tipo:{ id: 1} // 1: ingreso
+      };
+
+      console.log('NUEVA TRANSACCION', nuevaTransaccion);
+
+      this.cajaService.guardarTransaccion(nuevaTransaccion).subscribe({
+        next: () => {
+          console.log('Transacción guardada correctamente');
+        },
+        error: (err) => {
+          console.error('Error al guardar transacción', err);
+        },
+      });
+    }
 
     this.ventasService.registrarVenta(this.venta).subscribe(
       (data) => {

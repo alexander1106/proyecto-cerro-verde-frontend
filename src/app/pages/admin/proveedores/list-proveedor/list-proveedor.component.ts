@@ -25,6 +25,7 @@ export class ListProveedorComponent {
   proveedorData: any;
   paginaActual = 1;
   elementosPorPagina = 5;
+  esEditar: boolean = false;
 
   constructor(
     private proveedoresService: ProveedoresService,
@@ -44,6 +45,7 @@ export class ListProveedorComponent {
     this.proveedor.direccion = '';
     this.proveedor.ruc_proveedor = '';
     this.mostrarModal = false;
+    this.esEditar = false;
   }
 
   //MOSTRAR LOS PROVEEDORES
@@ -80,6 +82,7 @@ export class ListProveedorComponent {
   editarProveedor(id: string) {
     this.proveedoresService.buscarProveedorId(id).subscribe({
       next: (data: any) => {
+        this.esEditar = true;
         this.proveedor = data;
         this.verModal();
       },

@@ -42,12 +42,12 @@
                         <button class="btn-accion ver" (click)="verModal(compra.id_compra)">
                             <mat-icon color="accent">visibility</mat-icon>
                         </button>
-                        <button class="btn-accion editar" (click)="editarCompra(compra.id_compra)">
+                        <!-- <button class="btn-accion editar" (click)="editarCompra(compra.id_compra)">
                             <mat-icon class="edit" color="primary">edit</mat-icon>
                         </button>
                         <button class="btn-accion eliminar" (click)="eliminarCompra(compra.id_compra)">
                             <mat-icon class="delete" color="warn">delete</mat-icon>
-                        </button>
+                        </button> -->
                     </td>
                 </tr>
             </tbody>
@@ -121,12 +121,18 @@
             <h2 class="mb-3">Compra</h2>
 
             <form (ngSubmit)="formSubmit()" #formulario="ngForm">
-                <mat-form-field class="w-50" appearance="outline">
-                    <mat-label>Número de Documento</mat-label>
-                    <input type="text" name="numeroDoc" id="numeroDoc" [(ngModel)]="compra.numeroDoc"
-                        #numedoDoc="ngModel" required matInput placeholder="Numero de Documento" minlength="1">
-                </mat-form-field>
-
+                <span>
+                    <mat-form-field class="w-25" appearance="outline">
+                        <mat-label>Número de Documento</mat-label>
+                        <input type="text" name="numeroDoc" id="numeroDoc" [(ngModel)]="compra.numeroDoc"
+                            #numedoDoc="ngModel" required matInput placeholder="Numero de Documento" minlength="1" disabled="true">
+                    </mat-form-field> - 
+                    <mat-form-field class="w-25" appearance="outline">
+                        <mat-label>Correlativo</mat-label>
+                        <input type="text" name="correlativo" id="correlativo" [(ngModel)]="compra.correlativo"
+                            #numedoDoc="ngModel" required matInput placeholder="Numero de Documento" minlength="1" disabled="true">
+                    </mat-form-field>
+                </span>
                 <mat-form-field class="ms-5 w-25" appearance="outline">
                     <mat-label>Fecha</mat-label>
                     <input name="fecha_compra" id="fecha_compra" [(ngModel)]="compra.fecha_compra"

@@ -71,7 +71,7 @@
         <mat-form-field class="w-50" appearance="outline">
           <mat-label>RUC</mat-label>
           <input id="ruc" [(ngModel)]="proveedor.ruc_proveedor" name="ruc" #ruc="ngModel" required matInput placeholder="Digite RUC"
-            type="text" minlength="11" maxlength="11" (keydown)="soloNumeros($event)"/>
+            type="text" minlength="11" maxlength="11" (keydown)="soloNumeros($event)" [disabled]="true"/>
         </mat-form-field>
         <button type="button" class="h-50 btn btn-primary ms-2" (click)="buscarRuc(proveedor.ruc_proveedor)">
           Buscar
