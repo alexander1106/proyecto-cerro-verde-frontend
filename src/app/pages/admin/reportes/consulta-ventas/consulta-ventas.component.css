@@ -1,0 +1,162 @@
+/* consulta-ventas.component.css */
+
+/* Contenedor principal */
+.consulta-container {
+  margin: 24px;
+}
+
+/* Título */
+.titulo {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+/* Tarjeta de filtros */
+.filtro-formul {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+/* Grid para distribuir campos */
+/* Dos columnas en pantallas grandes, una columna en pantallas < 800px */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Para campos que deben ocupar TODO el ancho de la columna */
+.full-width {
+  width: 100%;
+}
+
+/* Para campos numéricos (montoMin, montoMax) que ocuparán mitad de pantalla */
+.half-width {
+  width: 100%;
+  min-width: 120px;
+}
+
+/* Contenedor del botón “Buscar” */
+.btn-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Espaciado de la tabla */
+.tabla-container {
+  margin-top: 24px;
+  padding: 16px;
+}
+
+/* Caja de búsqueda interna de la tabla */
+.search-filtro {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+/* El campo de búsqueda */
+.search-field {
+  width: 250px;
+}
+
+/* Mensaje de “No results” */
+.no-results {
+  margin-top: 24px;
+  text-align: center;
+}
+/* Organiza la fila de filtros en horizontal */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+/* Aplica ancho fijo y consistente para cada campo */
+.fecha-field,
+.tipo-field {
+  flex: 1;
+  min-width: 220px;
+  max-width: 320px;
+}
+
+/* Estilo reducido para el gráfico */
+.grafica-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 0;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* Asegura que los botones se comporten como campos */
+.actions button {
+  height: 56px;
+}
+.acciones-field {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex: 1;
+  min-width: 220px;
+  max-width: 360px;
+}
+
+/* Contenedor en fila */
+.kpi-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+/* Tarjetas más pequeñas y alineadas */
+.kpi-card {
+  flex: 1 1 200px;
+  max-width: 250px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.kpi-card mat-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.kpi-card mat-card-content h3 {
+  font-size: 20px;
+  margin: 0;
+}
+
+
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+  .half-width {
+    min-width: unset;
+  }
+  .search-field {
+    width: 100%;
+  }
+
+}

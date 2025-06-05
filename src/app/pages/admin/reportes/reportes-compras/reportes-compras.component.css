@@ -1,0 +1,76 @@
+/* src/app/pages/admin/reportes/reportes.component.scss */
+
+/* Contenedor general para las pestañas */
+.reportes-container {
+  padding: 16px;
+}
+
+/* Cada pestaña: da padding interno */
+.tab-content {
+  padding: 16px;
+}
+
+/* Título de sección */
+h2 {
+  margin-bottom: 16px;
+}
+
+/* Formulario de filtros: flejado de inputs en fila, con gaps */
+.report-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Cada campo del formulario */
+.form-field {
+  width: 200px;
+}
+
+/* Botón “Generar” alineado al final del row */
+.form-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Separador entre filtros y resultados */
+.mat-divider {
+  margin: 16px 0;
+}
+
+/* Contenedor de los KPI cards */
+.kpi-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Cada tarjeta de KPI se expande igual */
+.kpi-card {
+  flex: 1;
+  text-align: center;
+}
+
+/* Contenedor de la tabla y su buscador */
+.table-container {
+  margin-top: 16px;
+}
+
+/* Input de filtro de tabla */
+.filter-field {
+  width: 300px;
+  margin-bottom: 8px;
+}
+
+/* Aplicar elevación a la tabla */
+.mat-elevation-z8 {
+  width: 100%;
+}
+
+/* Mensaje cuando no hay datos */
+.no-data {
+  margin-top: 24px;
+  font-style: italic;
+  color: gray;
+}

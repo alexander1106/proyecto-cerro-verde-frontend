@@ -1,0 +1,361 @@
+<!-- src/app/pages/admin/reportes/reportes.component.html -->
+
+<app-header></app-header>
+
+<div class="reportes-container">
+  <mat-tab-group>
+    <!-- ——— PESTAÑA: Productos más Comprados ——— -->
+    <mat-tab label="Productos">
+      <div class="tab-content">
+        <!-- Título -->
+        <h2>Productos más Comprados</h2>
+
+        <!-- F O R M U L A R I O   D E   F E C H A S -->
+        <form [formGroup]="prodForm" class="report-form">
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Desde*</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerProdDesde"
+              formControlName="desde"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerProdDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerProdDesde startView="multi-year"></mat-datepicker>
+            <mat-error *ngIf="prodSubmitted && prodForm.get('desde')?.hasError('required')">
+              Fecha “Desde” es obligatoria
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Hasta*</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerProdHasta"
+              formControlName="hasta"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerProdHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerProdHasta startView="multi-year"></mat-datepicker>
+            <mat-error *ngIf="prodSubmitted && prodForm.get('hasta')?.hasError('required')">
+              Fecha “Hasta” es obligatoria
+            </mat-error>
+          </mat-form-field>
+
+          <!-- BOTONES: Generar / Descargar PDF / Descargar Excel -->
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="generarReporteProductos()"
+              [disabled]="prodForm.invalid"
+            >
+              Generar
+            </button>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="descargarPdfProductos()"
+              [disabled]="prodForm.invalid"
+            >
+              Descargar PDF
+            </button>
+            <button
+              mat-raised-button
+              color="warn"
+              (click)="descargarExcelProductos()"
+              [disabled]="prodForm.invalid"
+            >
+              Descargar Excel
+            </button>
+          </div>
+        </form>
+
+        <mat-divider></mat-divider>
+
+        <!-- K P I   C A R D S (solo si hay datos) -->
+        <div class="kpi-container" *ngIf="productosReporte.length > 0">
+          <mat-card class="kpi-card">
+            <mat-card-title>Total Unidades</mat-card-title>
+            <mat-card-content>
+              <h3>{{ totalUnidades() }}</h3>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="kpi-card">
+            <mat-card-title>Total Gastado</mat-card-title>
+            <mat-card-content>
+              <h3>S/ {{ totalGastado() | number:'1.2-2' }}</h3>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="kpi-card">
+            <mat-card-title>Top 1</mat-card-title>
+            <mat-card-content>
+              <h3>
+                {{ productoTop()?.productoNombre || '—' }}
+                ({{ productoTop()?.cantidadComprada || 0 }})
+              </h3>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- G R A F I C O  B A R  — Top 5 productos por cantidad -->
+        <div
+          *ngIf="productosReporte.length > 0"
+          style="height: 300px; margin-bottom: 24px;"
+        >
+          <canvas
+            baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [type]="'bar'"
+          >
+          </canvas>
+        </div>
+
+        <!-- Mensaje “No data” si no hay datos -->
+        <div class="no-data" *ngIf="prodSubmitted && productosReporte.length === 0">
+          <p>No se encontraron registros para el rango seleccionado.</p>
+        </div>
+
+        <!-- T A B L A  A V A N Z A D A -->
+        <div *ngIf="productosReporte.length > 0" class="table-container">
+          <mat-form-field appearance="fill" class="filter-field">
+            <mat-label>Buscar en tabla</mat-label>
+            <input
+              matInput
+              (keyup)="applyProdFilter($event)"
+              placeholder="Ej. Toalla"
+            />
+          </mat-form-field>
+
+          <table
+            mat-table
+            [dataSource]="prodDataSource"
+            matSort
+            class="mat-elevation-z8"
+          >
+            <!-- Columna Producto -->
+            <ng-container matColumnDef="producto">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
+              <td mat-cell *matCellDef="let e">{{ e.productoNombre }}</td>
+            </ng-container>
+
+            <!-- Columna Cantidad -->
+            <ng-container matColumnDef="cantidad">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Cantidad
+              </th>
+              <td mat-cell *matCellDef="let e">{{ e.cantidadComprada }}</td>
+            </ng-container>
+
+            <!-- Columna Total Gastado -->
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Total Gastado (S/.)
+              </th>
+              <td mat-cell *matCellDef="let e">
+                {{ e.totalGastado | number:'1.2-2' }}
+              </td>
+            </ng-container>
+
+            <!-- Header y Filas -->
+            <tr
+              mat-header-row
+              *matHeaderRowDef="prodDisplayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: prodDisplayedColumns"
+            ></tr>
+          </table>
+
+          <mat-paginator
+            #prodPaginator
+            [pageSizeOptions]="[5, 10, 25]"
+            showFirstLastButtons
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ——— PESTAÑA: Proveedores más Comprados ——— -->
+    <mat-tab label="Proveedores">
+      <div class="tab-content">
+        <!-- Título -->
+        <h2>Proveedores más Comprados</h2>
+
+        <!-- F O R M U L A R I O   D E   F E C H A S -->
+        <form [formGroup]="provForm" class="report-form">
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Desde*</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerProvDesde"
+              formControlName="desde"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerProvDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerProvDesde startView="multi-year"></mat-datepicker>
+            <mat-error *ngIf="provSubmitted && provForm.get('desde')?.hasError('required')">
+              Fecha “Desde” es obligatoria
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Hasta*</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerProvHasta"
+              formControlName="hasta"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerProvHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerProvHasta startView="multi-year"></mat-datepicker>
+            <mat-error *ngIf="provSubmitted && provForm.get('hasta')?.hasError('required')">
+              Fecha “Hasta” es obligatoria
+            </mat-error>
+          </mat-form-field>
+
+          <!-- BOTONES: Generar / Descargar PDF / Descargar Excel -->
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="generarReporteProveedores()"
+              [disabled]="provForm.invalid"
+            >
+              Generar
+            </button>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="descargarPdfProveedores()"
+              [disabled]="provForm.invalid"
+            >
+              Descargar PDF
+            </button>
+            <button
+              mat-raised-button
+              color="warn"
+              (click)="descargarExcelProveedores()"
+              [disabled]="provForm.invalid"
+            >
+              Descargar Excel
+            </button>
+          </div>
+        </form>
+
+        <mat-divider></mat-divider>
+
+        <!-- K P I   C A R D S   (solo si hay datos) -->
+        <div class="kpi-container" *ngIf="proveedoresReporte.length > 0">
+          <mat-card class="kpi-card">
+            <mat-card-title>Total Facturas</mat-card-title>
+            <mat-card-content>
+              <h3>{{ totalFacturas() }}</h3>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="kpi-card">
+            <mat-card-title>Total Gastado</mat-card-title>
+            <mat-card-content>
+              <h3>S/ {{ totalGastadoProv() | number:'1.2-2' }}</h3>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="kpi-card">
+            <mat-card-title>Top 1</mat-card-title>
+            <mat-card-content>
+              <h3>
+                {{ proveedorTop()?.proveedorNombre || '—' }}
+                ({{ proveedorTop()?.cantidadFacturas || 0 }})
+              </h3>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- G R A F I C O  B A R   (Top 5 proveedores por facturas) -->
+        <div
+          *ngIf="proveedoresReporte.length > 0"
+          style="height: 300px; margin-bottom: 24px;"
+        >
+          <canvas
+          baseChart
+          [data]="barChartDataProv"
+          [options]="barChartOptionsProv"
+          [type]="'bar'"
+        >
+        </canvas>
+        </div>
+
+        <!-- Mensaje “No data” -->
+        <div class="no-data" *ngIf="provSubmitted && proveedoresReporte.length === 0">
+          <p>No se encontraron registros para el rango seleccionado.</p>
+        </div>
+
+        <!-- T A B L A   P R O V E E D O R E S -->
+        <div *ngIf="proveedoresReporte.length > 0" class="table-container">
+          <mat-form-field appearance="fill" class="filter-field">
+            <mat-label>Buscar en tabla</mat-label>
+            <input
+              matInput
+              (keyup)="applyProvFilter($event)"
+              placeholder="Ej. Distribuidora A"
+            />
+          </mat-form-field>
+
+          <table
+            mat-table
+            [dataSource]="provDataSource"
+            matSort
+            class="mat-elevation-z8"
+          >
+            <!-- Columna Proveedor -->
+            <ng-container matColumnDef="proveedor">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+              <td mat-cell *matCellDef="let e">{{ e.proveedorNombre }}</td>
+            </ng-container>
+
+            <!-- Columna Cantidad de Facturas -->
+            <ng-container matColumnDef="facturas">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Facturas
+              </th>
+              <td mat-cell *matCellDef="let e">{{ e.cantidadFacturas }}</td>
+            </ng-container>
+
+            <!-- Columna Total Gastado -->
+            <ng-container matColumnDef="totalGastado">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Total Gastado (S/.)
+              </th>
+              <td mat-cell *matCellDef="let e">
+                {{ e.totalGastado | number:'1.2-2' }}
+              </td>
+            </ng-container>
+
+            <!-- Header y Filas -->
+            <tr
+              mat-header-row
+              *matHeaderRowDef="provDisplayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: provDisplayedColumns"
+            ></tr>
+          </table>
+
+          <mat-paginator
+            #provPaginator
+            [pageSizeOptions]="[5, 10, 25]"
+            showFirstLastButtons
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
