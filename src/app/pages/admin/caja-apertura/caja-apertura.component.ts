@@ -148,8 +148,9 @@ export class CajaAperturaComponent implements OnInit {
           this.cargarArqueo();
         }
       },
-      error: () => {
+      error: (error: any) => {
         this.cajaAperturada = null;
+        console.log(error)
       }
     });
   }

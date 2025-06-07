@@ -216,8 +216,9 @@ export class ArqueoCajaComponent implements OnInit, OnChanges {
                   this.onCajaCerrada.emit();
                   this.onCerrarModal.emit();
                 },
-                error: () => {
+                error: (error) => {
                   Swal.fire('⚠️ Caja NO se cerró', 'Ocurrió un error al cerrar la caja.', 'error');
+                  console.log(error)
                 }
               });
             };
