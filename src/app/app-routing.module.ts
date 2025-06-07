@@ -50,7 +50,8 @@ import { VentasComponent } from './pages/admin/ventas/ventas.component';
 import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
-
+import { ReportesComprasComponent }  from './pages/admin/reportes/reportes-compras/reportes-compras.component';
+import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 
 const routes: Routes = [{
   path:'',
@@ -276,8 +277,12 @@ const routes: Routes = [{
     },{
       path: 'movimientos-de-almacen',
       component: MovimientoInventarioComponent
+    },
+    { path: 'reportes-compras',
+      component: ReportesComprasComponent },
+    {path: 'consultas-ventas',
+      component: ConsultaVentasComponent
     }
-
   ]
 },
 ];
