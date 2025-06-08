@@ -52,6 +52,8 @@ import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventar
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 import { CheckinCheckoutFormComponent } from './pages/admin/recepcion/reservas/check-form/checkin-checkout-form.component';
 import { ChecksListComponent } from './pages/admin/recepcion/reservas/check-list/check-list.component';
+import { ReportesComprasComponent }  from './pages/admin/reportes/reportes-compras/reportes-compras.component';
+import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 
 const routes: Routes = [{
   path:'',
@@ -289,6 +291,11 @@ const routes: Routes = [{
         path: 'recepcion/checks/editar/:id',
         component:CheckinCheckoutFormComponent
       },
+      { path: 'reportes-compras',
+        component: ReportesComprasComponent },
+      {path: 'consultas-ventas',
+        component: ConsultaVentasComponent
+      }
   ]
 },
 ];
