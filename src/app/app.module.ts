@@ -79,6 +79,8 @@ import { VentasComponent } from './pages/admin/ventas/ventas.component';
 import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
+import { CheckinCheckoutFormComponent } from './pages/admin/recepcion/reservas/check-form/checkin-checkout-form.component';
+import { ChecksListComponent } from './pages/admin/recepcion/reservas/check-list/check-list.component';
 
 @NgModule({
   declarations: [
@@ -132,7 +134,9 @@ import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.compo
     ClientesComponent,
     VentasComponent,
     MetodoPagoComponent,
-    MovimientoInventarioComponent
+    MovimientoInventarioComponent,
+    CheckinCheckoutFormComponent,
+    ChecksListComponent
 
   ],
   imports: [

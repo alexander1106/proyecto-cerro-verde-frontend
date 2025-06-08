@@ -1,0 +1,85 @@
+<div class="container">
+  <app-header></app-header>
+
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Checkin Checkout</h4>
+
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" placeholder="Buscar check..." [(ngModel)]="filtroGeneral" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/checks/nuevo">+ Registrar checkin</a>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">Cargando checkes...</div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && checks.length === 0" class="alert alert-info">
+      No hay checkes registrados. Cree uno nuevo.
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Reserva</th>
+            <th>Fecha Checkin</th>
+            <th>Fecha Checkout</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let check of checksPaginados; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ check.reserva.id_reserva }}</td>
+            <td>{{ formatDate(check.fecha_checkin) }}</td>
+            <td>{{ formatDate(check.fecha_checkout) }}</td>
+            <td class="acciones">
+              <button class="btn-accion editar">
+                <a [routerLink]="['/admin/recepcion/checks/editar', check.id_check]">
+                  <i class="edit fa-regular fa-pen-to-square"></i>
+                </a>
+              </button>
+              <button class="btn-accion eliminar" (click)="eliminar(check.id_check!)">
+                <i class="delete fa-regular fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="checkActivosFiltrados.length === 0">
+            <td colspan="6" class="text-center text-muted">No hay checkes que coincidan con el filtro.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(-1)">
+        ← Anterior
+      </button>
+
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(1)">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+</div>

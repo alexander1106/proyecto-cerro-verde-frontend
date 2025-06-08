@@ -87,8 +87,8 @@ export class HabitacionesService {
     return this.http.put<HabitacionReserva>(`${this.apiUrl}/habitacionreservas/${id}`, habitacionReserva);
   }
 
-  deleteHabitacionReserva(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/habitacionreservas/eliminar/${id}`);
+  deleteHabitacionReserva(id: number) {
+    return this.http.delete(`${this.apiUrl}/habitacionreservas/eliminar/${id}`, { responseType: 'text' });
   }
 
   // Habitaciones Imagenes endpoints

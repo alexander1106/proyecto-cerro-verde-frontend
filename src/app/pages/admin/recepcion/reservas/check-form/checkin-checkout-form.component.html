@@ -1,0 +1,55 @@
+<div class="container">
+    <app-header></app-header>
+  
+    <form *ngIf="checkForm"
+          [formGroup]="checkForm"
+          (ngSubmit)="onSubmit()"
+          [class.disabled]="loading"
+          class="form-container shadow rounded bg-white"
+          novalidate>
+  
+      <h3>{{ isEditing ? 'Editar' : 'Nuevo' }} Checkin/Checkout</h3>
+  
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+        <div class="mb-3">
+          <label for="reserva" class="form-label">Reserva</label>
+          <select id="reserva" formControlName="reserva" class="form-control"
+                  [ngClass]="{'is-invalid': submitted && f['reserva'].errors}">
+                  <option [ngValue]="null">Seleccione una reserva</option>
+                  <option *ngFor="let reserva of reservas" [ngValue]="reserva.id_reserva * 1">
+                    Reserva #{{ reserva.id_reserva }} - {{ reserva.cliente?.nombre }}
+                  </option>                  
+          </select>
+          <div *ngIf="submitted && f['reserva'].errors" class="invalid-feedback">
+            <div *ngIf="f['reserva'].errors['required']">Reserva es requerida</div>
+          </div>
+        </div>
+        
+  
+      <div class="mb-3">
+        <label for="fecha_checkin" class="form-label">Fecha y Hora de Checkin</label>
+        <input type="datetime-local" id="fecha_checkin" formControlName="fecha_checkin" class="form-control"
+               [ngClass]="{'is-invalid': submitted && f['fecha_checkin'].errors}">
+        <div *ngIf="submitted && f['fecha_checkin'].errors" class="invalid-feedback">
+          <div *ngIf="f['fecha_checkin'].errors['required']">Fecha de checkin es requerida</div>
+        </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="fecha_checkout" class="form-label">Fecha y Hora de Checkout</label>
+        <input type="datetime-local" id="fecha_checkout" formControlName="fecha_checkout" class="form-control"
+               [ngClass]="{'is-invalid': submitted && f['fecha_checkout'].errors}">
+      </div>
+  
+      <div class="form-buttons">
+        <button type="submit" class="btn btn-success">
+          {{ isEditing ? 'Actualizar' : 'Registrar' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="volver()">
+          Cancelar
+        </button>
+      </div>
+  
+    </form>
+  </div>
