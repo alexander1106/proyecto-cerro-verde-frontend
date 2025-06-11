@@ -1,0 +1,21 @@
+<div class="custom-modal-backdrop">
+  <div class="custom-modal">
+    <div class="modal-header">
+      <h5 class="modal-title">Registrar Nueva Área</h5>
+      <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="areaForm">
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" formControlName="nombre" />
+        </div>
+      </form>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+      <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+    </div>
+  </div>
+</div>

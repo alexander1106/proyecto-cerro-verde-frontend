@@ -1,0 +1,36 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Historial de Limpiezas</h2>
+  <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Limpieza</button>
+
+  <div *ngIf="loading" class="alert alert-info">Cargando limpiezas...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table *ngIf="!loading && !error" class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Fecha y Hora</th>
+        <th>Observaciones</th>
+        <th>Habitación</th>
+        <th>Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let limpieza of limpiezas">
+        <td>{{ limpieza.id_limpieza }}</td>
+        <td>{{ limpieza.fecha_hora_limpieza }}</td>
+        <td>{{ limpieza.observaciones }}</td>
+        <td>{{ limpieza.habitacion?.numero || 'N/A' }}</td>
+        <td>{{ limpieza.usuario?.nombre || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-registrar-limpieza
+    *ngIf="mostrarModal"
+    (onRegistroExitoso)="registroExitoso()"
+    (onCancelar)="cerrarModal()">
+  </app-registrar-limpieza>
+
+

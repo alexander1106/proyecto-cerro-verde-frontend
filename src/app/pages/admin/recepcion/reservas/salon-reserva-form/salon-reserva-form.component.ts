@@ -1,25 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NgSelectModule } from '@ng-select/ng-select';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormArray,
-  AbstractControl,
-  ValidatorFn
-} from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, Reserva } from '../../../../../service/reserva.service';
 import { SalonesService, Salones, SalonReserva } from '../../../../../service/salones.service';
 import { ClientesService, Cliente } from '../../../../../service/clientes.service';
 import Swal from 'sweetalert2';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-salon-reserva-form',
-  standalone: false,
+  standalone:false,
   templateUrl: './salon-reserva-form.component.html',
   styleUrls: ['./salon-reserva-form.component.css']
 })
@@ -27,12 +17,13 @@ export class SalonReservaFormComponent implements OnInit {
   reservaForm!: FormGroup;
   salones: Salones[] = [];
   clientes: Cliente[] = [];
+  salonesOriginales: { id_salon: number, id_salonreserva: number }[] = [];
+  filtroSalones = '';
   loading = false;
   submitting = false;
-  error = '';
   isEditing = false;
   id: number | null = null;
-  filtroSalones: string = '';
+  error = '';
 
   constructor(
     private fb: FormBuilder,
@@ -41,17 +32,18 @@ export class SalonReservaFormComponent implements OnInit {
     private clientesService: ClientesService,
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.createForm();
     this.loadClientes();
-    this.loadSalones();
 
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     if (this.id) {
       this.isEditing = true;
       this.loadReserva(this.id);
+    } else {
+      this.loadSalones();
     }
   }
 
@@ -62,7 +54,13 @@ export class SalonReservaFormComponent implements OnInit {
       fecha_fin: ['', Validators.required],
       estado_reserva: ['Pendiente', Validators.required],
       comentarios: [''],
-      salones: this.fb.array([], Validators.required)
+      salones: this.fb.array([])
+    }, {
+      validators: [fechaFinMayorQueInicio()]
+    });
+
+    this.reservaForm.get('fecha_inicio')?.valueChanges.subscribe(() => {
+      this.reservaForm.get('fecha_fin')?.updateValueAndValidity();
     });
   }
 
@@ -71,72 +69,87 @@ export class SalonReservaFormComponent implements OnInit {
   }
 
   toggleSalon(salon: Salones): void {
-    const index = this.salonesArray.controls.findIndex(
-      control => control.value.id_salon === salon.id_salon
-    );
+    const index = this.salonesArray.controls.findIndex(ctrl => ctrl.value.id_salon === salon.id_salon);
 
-    if (this.salonesArray.length <= 1 && index !== -1) {
+    if (index !== -1 && this.salonesArray.length <= 1) {
       Swal.fire('No puedes quitar este salón', 'Debe haber al menos un salón seleccionado', 'warning');
       return;
     }
 
     if (index === -1) {
+      // Agregar salón
       this.salonesArray.push(this.fb.control(salon));
-      salon.estado_salon = 'Reservado';
-      this.salonesService.updateSalon(salon).subscribe({
-        next: () => console.log(`Salón ${salon.nombre} actualizado a Reservado`),
-        error: err => console.error(`Error al actualizar salón ${salon.nombre}: `, err)
-      });
-    } else {
+  } else {
+      // Quitar salón
       this.salonesArray.removeAt(index);
-      salon.estado_salon = 'Disponible';
-      this.salonesService.updateSalon(salon).subscribe({
-        next: () => console.log(`Salón ${salon.nombre} actualizado a Disponible`),
-        error: err => console.error(`Error al actualizar salón ${salon.nombre}: `, err)
-      });
-    }
+      
+      // Si estamos editando y quitamos un salón original, marcarlo como disponible
+      if (this.isEditing && this.salonesOriginales.some(s => s.id_salon === salon.id_salon)) {
+          salon.estado_salon = 'Disponible';
+          // No necesitamos actualizar inmediatamente, se hará al guardar
+      }
+  }
+
+    this.salonesService.updateSalon(salon).subscribe({
+      next: () => console.log(`Estado actualizado: ${salon.nombre} => ${salon.estado_salon}`),
+      error: err => console.error(`Error actualizando salón: ${err.message}`)
+    });
   }
 
   loadClientes(): void {
     this.clientesService.getClientes().subscribe({
       next: data => this.clientes = [...data],
-      error: err => this.error = 'Error al cargar los clientes: ' + err.message
+      error: err => this.error = 'Error al cargar clientes: ' + err.message
     });
   }
 
   loadSalones(): void {
     this.salonesService.getSalones().subscribe({
-      next: data => {
-        this.salones = data.filter(s => s.estado === 1 && s.estado_salon === 'Disponible');
-      },
-      error: err => this.error = 'Error al cargar los salones: ' + err.message
+        next: data => {
+            const idsOriginales = this.salonesOriginales.map(s => s.id_salon);
+            this.salones = data.filter(s =>
+                s.estado === 1 &&  // Solo salones activos
+                (s.estado_salon === 'Disponible' || idsOriginales.includes(s.id_salon!))
+            );
+        },
+        error: err => this.error = 'Error al cargar los salones: ' + err.message
     });
   }
+  
 
   loadReserva(id: number): void {
     this.loading = true;
     this.reservasService.getReservaById(id).subscribe({
-      next: reserva => {
-        const salonesReserva = reserva.salonesXReserva || [];
-        salonesReserva.forEach(sr => {
-          this.salonesArray.push(this.fb.control(sr.salon));
-        });
+        next: reserva => {
+            // Filtrar solo relaciones con estado=1 (activas)
+            const relacionesActivas = (reserva.salonesXReserva || [])
+                .filter(sr => sr.estado === 1);
 
-        this.reservaForm.patchValue({
-          fecha_inicio: this.formatDateForInput(reserva.fecha_inicio as string),
-          fecha_fin: this.formatDateForInput(reserva.fecha_fin as string),
-          estado_reserva: reserva.estado_reserva,
-          comentarios: reserva.comentarios,
-          cliente: reserva.cliente.idCliente
-        });
-        this.loading = false;
-      },
-      error: err => {
-        this.error = 'Error al cargar la reserva: ' + err.message;
-        this.loading = false;
-      }
+            relacionesActivas.forEach(sr => {
+                this.salonesArray.push(this.fb.control(sr.salon));
+                this.salonesOriginales.push({
+                    id_salon: sr.salon.id_salon!,
+                    id_salonreserva: sr.id_salon_reserv!
+                });
+            });
+
+            this.reservaForm.patchValue({
+                fecha_inicio: this.formatDateForInput(reserva.fecha_inicio as string),
+                fecha_fin: this.formatDateForInput(reserva.fecha_fin as string),
+                estado_reserva: reserva.estado_reserva,
+                comentarios: reserva.comentarios,
+                cliente: reserva.cliente.idCliente
+            });
+
+            this.loadSalones();
+            this.loading = false;
+        },
+        error: err => {
+            this.error = 'Error al cargar la reserva: ' + err.message;
+            this.loading = false;
+        }
     });
-  }
+}
 
   formatDateForInput(date: string): string {
     const d = new Date(date);
@@ -145,9 +158,9 @@ export class SalonReservaFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.reservaForm.invalid || this.salonesArray.length === 0) {
-      this.markFormGroupTouched(this.reservaForm);
-      this.error = 'Complete todos los campos requeridos y seleccione al menos un salón.';
-      return;
+        this.markFormGroupTouched(this.reservaForm);
+        this.error = 'Complete todos los campos requeridos y seleccione al menos un salón.';
+        return;
     }
 
     this.submitting = true;
@@ -155,83 +168,180 @@ export class SalonReservaFormComponent implements OnInit {
     const cliente = this.clientes.find(c => c.idCliente === formValue.cliente)!;
 
     const reserva: Reserva = {
-      fecha_inicio: new Date(formValue.fecha_inicio),
-      fecha_fin: new Date(formValue.fecha_fin),
-      estado_reserva: formValue.estado_reserva,
-      comentarios: formValue.comentarios,
-      estado: 1,
-      tipo: 'Salón',
-      cliente
+        fecha_inicio: new Date(formValue.fecha_inicio),
+        fecha_fin: new Date(formValue.fecha_fin),
+        estado_reserva: formValue.estado_reserva,
+        comentarios: formValue.comentarios,
+        estado: 1,
+        tipo: 'Salón',
+        cliente
     };
 
     const action$ = this.isEditing && this.id
-      ? this.reservasService.updateReserva(this.id, { ...reserva, id_reserva: this.id })
-      : this.reservasService.createReserva(reserva);
+        ? this.reservasService.updateReserva(this.id, { ...reserva, id_reserva: this.id })
+        : this.reservasService.createReserva(reserva);
 
     action$.subscribe({
-      next: res => {
-        if (this.isEditing && this.id) {
-          this.salonesService.deleteSalonesByReserva(this.id).subscribe({
-            next: () => this.guardarNuevosSalones(res),
-            error: err => {
-              this.error = 'Error al eliminar salones anteriores: ' + err.message;
-              this.submitting = false;
-            }
-          });
-        } else {
-          this.guardarNuevosSalones(res);
-        }
-      },
-      error: err => {
-        this.error = 'Error al guardar la reserva: ' + err.message;
-        this.submitting = false;
-      }
+        next: res => this.manejarSalones(res),
+        error: err => this.mostrarError('Error al guardar la reserva: ' + err.message)
     });
+}
+
+private manejarSalones(reserva: Reserva): void {
+  const salonesSeleccionados = this.salonesArray.value as Salones[];
+  
+  // Filtramos para asegurar que solo tenemos IDs numéricos
+  const idsSeleccionados = salonesSeleccionados
+      .map(s => s.id_salon)
+      .filter((id): id is number => id !== undefined);
+
+  // 1. Identificar salones a actualizar
+  const salonesParaReservar = salonesSeleccionados.map(salon => {
+      salon.estado_salon = 'Reservado';
+      return salon;
+  });
+
+  // 2. Identificar salones a liberar (solo en edición)
+  const salonesParaLiberar = this.isEditing 
+      ? this.salonesOriginales
+          .filter(original => !idsSeleccionados.includes(original.id_salon))
+          .map(original => {
+              const salon = this.salones.find(s => s.id_salon === original.id_salon)!;
+              salon.estado_salon = 'Disponible';
+              return salon;
+          })
+      : [];
+
+  // 3. Actualizar estados de todos los salones
+  forkJoin([
+      ...salonesParaReservar.map(s => this.salonesService.updateSalon(s)),
+      ...salonesParaLiberar.map(s => this.salonesService.updateSalon(s))
+  ]).subscribe({
+      next: () => this.manejarRelacionesSalones(reserva, idsSeleccionados),
+      error: err => this.mostrarError('Error al actualizar estados de salón: ' + err.message)
+  });
+}
+
+private manejarRelacionesSalones(reserva: Reserva, idsSeleccionados: number[]): void {
+  if (!this.isEditing) {
+      // Caso creación: crear todas las relaciones nuevas
+      const nuevasRelaciones = this.salonesArray.value.map((salon: Salones) => ({
+          salon,
+          reserva,
+          estado: 1
+      }));
+
+      forkJoin(
+          nuevasRelaciones.map((sr: SalonReserva) => this.salonesService.createSalonReserva(sr))
+      ).subscribe({
+          next: () => this.finalizarGuardado(),
+          error: err => this.mostrarError('Error al crear relaciones: ' + err.message)
+      });
+  } else {
+      // Caso edición:
+      // a) Relaciones a eliminar (las que estaban pero ya no están)
+      const relacionesAEliminar = this.salonesOriginales
+          .filter(original => !idsSeleccionados.includes(original.id_salon));
+
+      // b) Relaciones a crear (las nuevas que no estaban)
+      const relacionesACrear = this.salonesArray.value
+          .filter((salon: Salones) => salon.id_salon !== undefined && 
+                !this.salonesOriginales.some(o => o.id_salon === salon.id_salon))
+          .map((salon: Salones) => ({
+              salon,
+              reserva,
+              estado: 1
+          }));
+
+      // Primero eliminar las que ya no deben estar
+      if (relacionesAEliminar.length === 0) {
+          this.crearNuevasRelaciones(relacionesACrear);
+      } else {
+          forkJoin(
+              relacionesAEliminar.map(rel => 
+                  this.salonesService.deleteSalonReserva(rel.id_salonreserva)
+              )
+          ).subscribe({
+              next: () => this.crearNuevasRelaciones(relacionesACrear),
+              error: err => this.mostrarError('Error al eliminar relaciones: ' + err.message)
+          });
+      }
   }
+}
+
+private crearNuevasRelaciones(relaciones: SalonReserva[]): void {
+  if (relaciones.length === 0) {
+      this.finalizarGuardado();
+      return;
+  }
+
+  forkJoin(
+      relaciones.map((sr: SalonReserva) => this.salonesService.createSalonReserva(sr))
+  ).subscribe({
+      next: () => this.finalizarGuardado(),
+      error: err => this.mostrarError('Error al crear nuevas relaciones: ' + err.message)
+  });
+}
+
+
+private finalizarGuardado(): void {
+    this.submitting = false;
+    Swal.fire('Éxito', 'Reserva guardada correctamente', 'success');
+    this.router.navigate(['/admin/reservas']);
+}
+
+private mostrarError(mensaje: string): void {
+    this.error = mensaje;
+    this.submitting = false;
+    Swal.fire('Error', mensaje, 'error');
+}
 
   guardarNuevosSalones(reserva: Reserva): void {
-    const salonesReservados: SalonReserva[] = this.salonesArray.value.map((salon: Salones) => {
-      const salonActualizado = { ...salon, estado_salon: 'Reservado' };
-
-      this.salonesService.updateSalon(salonActualizado).subscribe({
-        next: () => console.log(`Salón ${salon.nombre} actualizado a Reservado`),
-        error: err => console.error(`Error al actualizar salón ${salon.nombre}: `, err)
-      });
-
-      return {
-        salon,
-        reserva,
-        estado: 1
-      };
+    // Actualizar estado de salones
+    const salonesParaActualizar = this.salonesArray.value.map((salon: Salones) => {
+        salon.estado_salon = 'Reservado';
+        return salon;
     });
 
-    const total = salonesReservados.length;
-    let exitos = 0;
-
-    salonesReservados.forEach(sr => {
-      this.salonesService.createSalonReserva(sr).subscribe({
+    // Actualizar todos los salones
+    forkJoin(
+        salonesParaActualizar.map((salon: Salones) => 
+            this.salonesService.updateSalon(salon)
+        )
+    ).subscribe({
         next: () => {
-          exitos++;
-          if (exitos === total) {
-            this.submitting = false;
-            Swal.fire('Éxito', 'Reserva guardada correctamente', 'success');
-            this.router.navigate(['/admin/reservas']);
-          }
-        },
-        error: err => {
-          this.error = 'Error al asociar salones a la reserva: ' + err.message;
-          this.submitting = false;
-        }
-      });
-    });
-  }
+            // Crear relaciones de reserva
+            const nuevosSalones: SalonReserva[] = this.salonesArray.value
+                .filter((salon: Salones) => !this.salonesOriginales.some(s => s.id_salon === salon.id_salon))
+                .map((salon: Salones) => ({
+                    salon,
+                    reserva,
+                    estado: 1
+                }));
 
+            if (nuevosSalones.length === 0) {
+                this.finalizarGuardado();
+                return;
+            }
+
+            forkJoin(
+                nuevosSalones.map((sr: SalonReserva) => 
+                    this.salonesService.createSalonReserva(sr)
+                )
+            ).subscribe({
+                next: () => this.finalizarGuardado(),
+                error: err => this.mostrarError('Error al asociar salones: ' + err.message)
+            });
+        },
+        error: err => this.mostrarError('Error al actualizar salones: ' + err.message)
+    });
+}
+
+  
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      }
+      if (control instanceof FormGroup) this.markFormGroupTouched(control);
     });
   }
 
@@ -241,15 +351,12 @@ export class SalonReservaFormComponent implements OnInit {
 
   salonesFiltrados(): Salones[] {
     const filtro = this.filtroSalones?.toLowerCase() || '';
-    return this.salones.filter(s =>
-      s.nombre?.toLowerCase().includes(filtro)
-    );
+    return this.salones.filter(s => s.nombre?.toLowerCase().includes(filtro));
   }
 
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
-    return item.nombre.toLowerCase().includes(term) ||
-      (item.dniRuc && item.dniRuc.toLowerCase().includes(term));
+    return item.nombre.toLowerCase().includes(term) || (item.dniRuc?.toLowerCase().includes(term));
   }
 
   redirigirACrearCliente(): void {
@@ -272,7 +379,7 @@ export class SalonReservaFormComponent implements OnInit {
   }
 
   compareClientes(c1: any, c2: any): boolean {
-    return c1 && c2 ? c1 === c2 : c1 === c2;
+    return c1 === c2;
   }
 }
 
@@ -280,8 +387,16 @@ function fechaNoPasada(): ValidatorFn {
   return (control: AbstractControl) => {
     if (!control.value) return null;
     const ahora = new Date();
-    const fechaInicio = new Date(control.value);
-    return fechaInicio < ahora ? { fechaPasada: true } : null;
+    const fecha = new Date(control.value);
+    return fecha < ahora ? { fechaPasada: true } : null;
   };
 }
 
+function fechaFinMayorQueInicio(): ValidatorFn {
+  return (group: AbstractControl): { [key: string]: any } | null => {
+    const inicio = group.get('fecha_inicio')?.value;
+    const fin = group.get('fecha_fin')?.value;
+    if (!inicio || !fin) return null;
+    return new Date(fin) > new Date(inicio) ? null : { fechaFinInvalida: true };
+  };
+}

@@ -1,0 +1,25 @@
+<div class="custom-modal-backdrop">
+  <div class="custom-modal">
+    <div class="modal-header">
+      <h5 class="modal-title">Registrar Tipo Incidencia</h5>
+      <button type="button" class="btn-close" (click)="cancelar()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="tipoForm">
+        <div class="mb-2">
+          <label>Nombre</label>
+          <input type="text" class="form-control" formControlName="nombre" />
+          <div *ngIf="tipoForm.get('nombre')?.invalid && tipoForm.get('nombre')?.touched" class="text-danger">
+            El nombre es obligatorio
+          </div>
+        </div>
+      </form>
+      <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+      <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+    </div>
+  </div>
+</div>
+
