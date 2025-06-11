@@ -52,6 +52,10 @@ import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventar
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 import { ReportesComprasComponent }  from './pages/admin/reportes/reportes-compras/reportes-compras.component';
 import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
+import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
+import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
 
 const routes: Routes = [{
   path:'',
@@ -282,6 +286,18 @@ const routes: Routes = [{
       component: ReportesComprasComponent },
     {path: 'consultas-ventas',
       component: ConsultaVentasComponent
+    }, {
+      path: 'areashotel',
+      component: ListarAreasHotelComponent
+    }, {
+      path: 'incidencias',
+      component: ListarIncidenciasComponent
+    }, {
+      path: 'limpiezas',
+      component: ListarLimpiezasComponent
+    }, {
+      path: 'tipoincidencia',
+      component: ListarTipoIncidenciaComponent
     }
   ]
 },

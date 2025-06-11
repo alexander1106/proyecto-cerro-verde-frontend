@@ -87,6 +87,18 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { NgChartsModule } from 'ng2-charts';
+import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
+import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
+import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
+import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
+import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
+import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
+
+
+
+
 
 @NgModule({
   declarations: [
@@ -142,7 +154,15 @@ import { NgChartsModule } from 'ng2-charts';
     MetodoPagoComponent,
     MovimientoInventarioComponent,
     ReportesComprasComponent,
-    ConsultaVentasComponent
+    ConsultaVentasComponent,
+    ListarAreasHotelComponent,
+    RegistrarAreaHotelComponent,
+    ListarIncidenciasComponent,
+    RegistrarIncidenciaComponent,
+    ListarLimpiezasComponent,
+    RegistrarLimpiezaComponent,
+    ListarTipoIncidenciaComponent,
+    RegistrarTipoIncidenciaComponent
   ],
   imports: [
 

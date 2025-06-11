@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Áreas del Hotel</h2>
+
+  <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Nueva Área</button>
+
+  <div *ngIf="loading" class="alert alert-info">Cargando áreas...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table *ngIf="!loading && !error" class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Estado</th>
+        <th>Sucursal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let area of areasHotel">
+        <td>{{ area.id_area }}</td>
+        <td>{{ area.nombre }}</td>
+        <td>{{ area.estado === 1 ? 'Activo' : 'Inactivo' }}</td>
+        <td>{{ area.sucursal?.nombre || 'No asignada' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-registrar-area-hotel
+  *ngIf="mostrarModal"
+  (onRegistroExitoso)="registroExitoso()"
+  (onCancelar)="cerrarModal()">
+</app-registrar-area-hotel>

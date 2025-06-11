@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Tipos de Incidencia</h2>
+  <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Tipo Incidencia</button>
+
+  <div *ngIf="loading" class="alert alert-info">Cargando tipos de incidencia...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table *ngIf="!loading && !error" class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tipo of tiposIncidencia">
+        <td>{{ tipo.id_tipo_incidencia }}</td>
+        <td>{{ tipo.nombre }}</td>
+        <td>{{ tipo.estado === 1 ? 'Activo' : 'Inactivo' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ Aquí se renderiza el modal si mostrarModal = true -->
+  <app-registrar-tipo-incidencia
+    *ngIf="mostrarModal"
+    (onRegistroExitoso)="registroExitoso()"
+    (onCancelar)="cerrarModal()">
+  </app-registrar-tipo-incidencia>
+
