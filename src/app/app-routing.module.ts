@@ -50,6 +50,8 @@ import { VentasComponent } from './pages/admin/ventas/ventas.component';
 import { MetodoPagoComponent } from './pages/admin/metodo-pago/metodo-pago.component';
 import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventario/movimiento-inventario.component';
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
+import { CheckinCheckoutFormComponent } from './pages/admin/recepcion/reservas/check-form/checkin-checkout-form.component';
+import { ChecksListComponent } from './pages/admin/recepcion/reservas/check-list/check-list.component';
 import { ReportesComprasComponent }  from './pages/admin/reportes/reportes-compras/reportes-compras.component';
 import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
@@ -281,7 +283,11 @@ const routes: Routes = [{
     },{
       path: 'movimientos-de-almacen',
       component: MovimientoInventarioComponent
+    },{
+      path: 'checks',
+      component:ChecksListComponent
     },
+<<<<<<< HEAD
     { path: 'reportes-compras',
       component: ReportesComprasComponent },
     {path: 'consultas-ventas',
@@ -299,6 +305,21 @@ const routes: Routes = [{
       path: 'tipoincidencia',
       component: ListarTipoIncidenciaComponent
     }
+=======
+      {
+        path: 'recepcion/checks/nuevo',
+        component:CheckinCheckoutFormComponent
+      },
+      {
+        path: 'recepcion/checks/editar/:id',
+        component:CheckinCheckoutFormComponent
+      },
+      { path: 'reportes-compras',
+        component: ReportesComprasComponent },
+      {path: 'consultas-ventas',
+        component: ConsultaVentasComponent
+      }
+>>>>>>> 34ba8333c9a7df3ce1e7e82e4d05879a45ed2a74
   ]
 },
 ];

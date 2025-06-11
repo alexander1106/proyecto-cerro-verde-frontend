@@ -853,15 +853,15 @@ export class VentasComponent {
       );
       return;
     }
-
+  
     this.reservaSeleccionada = reservaSeleccionada;
     console.log(reservaSeleccionada);
-
+  
     // Solo agregamos si aún no existe esa reserva
     const yaExiste = this.venta.ventaXReserva.some(
       (vxr) => vxr.reserva.id_reserva === reservaSeleccionada.id_reserva
     );
-
+  
     if (!yaExiste) {
       this.venta.ventaXReserva.push({
         idVentaReserva: '',
@@ -872,51 +872,59 @@ export class VentasComponent {
     this.cargarReservas();
     this.reservaBusqueda = '';
     this.reservasFiltrado = [];
-
+  
     if (
       reservaSeleccionada.habitacionesXReserva &&
-      reservaSeleccionada.habitacionesXReserva?.length > 0
+      reservaSeleccionada.habitacionesXReserva.length > 0
     ) {
       this.venta.cliente = { ...reservaSeleccionada.cliente };
-      reservaSeleccionada.habitacionesXReserva.forEach((habitacion: any) => {
-        const dias = this.calcularDiasReserva(
-          reservaSeleccionada.fecha_inicio,
-          reservaSeleccionada.fecha_fin
-        );
-        this.venta.ventaHabitacion.push({
-          idVentaHabitacion: '',
-          dias: dias,
-          subTotal:
-            (habitacion.habitacion.tipo_habitacion?.precio_publico || 0) * dias,
-          habitacion: habitacion.habitacion,
+      // Filtrar solo las habitaciones con estado = 1
+      reservaSeleccionada.habitacionesXReserva
+        .filter((habitacion: any) => habitacion.estado === 1)
+        .forEach((habitacion: any) => {
+          const dias = this.calcularDiasReserva(
+            reservaSeleccionada.fecha_inicio,
+            reservaSeleccionada.fecha_fin
+          );
+          this.venta.ventaHabitacion.push({
+            idVentaHabitacion: '',
+            dias: dias,
+            subTotal:
+              (habitacion.habitacion.tipo_habitacion?.precio_publico || 0) * dias,
+            habitacion: habitacion.habitacion,
+          });
+          this.actualizarTotales();
+          this.dataHabitacion.data = this.venta.ventaHabitacion;
         });
-        this.actualizarTotales();
-        this.dataHabitacion.data = this.venta.ventaHabitacion;
-      });
     }
-
+  
     if (
       reservaSeleccionada.salonesXReserva &&
-      reservaSeleccionada.salonesXReserva?.length > 0
+      reservaSeleccionada.salonesXReserva.length > 0
     ) {
       this.venta.cliente = { ...reservaSeleccionada.cliente };
-      reservaSeleccionada.salonesXReserva.forEach((salon: any) => {
-        const dias = this.calcularDiasReserva(
-          reservaSeleccionada.fecha_inicio,
-          reservaSeleccionada.fecha_fin
-        );
-        this.venta.ventaSalon.push({
-          idVentaSalon: '',
-          horas: 0, // si tienes datos, reemplaza
-          dias: dias,
-          subTotal: (salon.salon.precio_diario || 0) * dias,
-          salon: salon.salon,
+      // Filtrar solo los salones con estado = 1
+      reservaSeleccionada.salonesXReserva
+        .filter((salon: any) => salon.estado === 1)
+        .forEach((salon: any) => {
+          const dias = this.calcularDiasReserva(
+            reservaSeleccionada.fecha_inicio,
+            reservaSeleccionada.fecha_fin
+          );
+          this.venta.ventaSalon.push({
+            idVentaSalon: '',
+            horas: 0, // si tienes datos, reemplaza
+            dias: dias,
+            subTotal: (salon.salon.precio_diario || 0) * dias,
+            salon: salon.salon,
+          });
+          this.actualizarTotales();
+          this.dataSalon.data = this.venta.ventaSalon;
         });
-        this.actualizarTotales();
-        this.dataSalon.data = this.venta.ventaSalon;
-      });
     }
   }
+  
+
   eliminarReserva(index: number) {
     const reservaEliminada: any = this.venta.ventaXReserva[index]?.reserva;
     this.venta.ventaXReserva.splice(index, 1);

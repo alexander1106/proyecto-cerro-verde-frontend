@@ -96,9 +96,9 @@ export class SalonesService {
     return this.http.put<SalonReserva>(`${this.apiUrl}/salonreservas/${id}`, salonReserva);
   }
 
-  deleteSalonReserva(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/salonreservas/eliminar/${id}`);
-  }
+  deleteSalonReserva(id_salonreserva: number) {
+    return this.http.delete(`${this.apiUrl}/salonreservas/eliminar/${id_salonreserva}`, { responseType: 'text' });
+  }  
 
   deleteSalonesByReserva(id_reserva: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/reserva/salon/${id_reserva}`);

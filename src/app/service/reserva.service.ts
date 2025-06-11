@@ -13,7 +13,7 @@ export interface HabitacionReserva {
 }
 
 export interface SalonReserva {
-  id_hab_reserv?: number;
+  id_salon_reserv?: number;
   salon: Salones;
   reserva: Reserva;
   estado: number;

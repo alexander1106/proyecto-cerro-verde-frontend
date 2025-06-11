@@ -60,6 +60,9 @@
         <div class="error-hint" *ngIf="reservaForm.get('fecha_fin')?.invalid && reservaForm.get('fecha_fin')?.touched">
           Fecha de fin es requerida
         </div>
+        <div class="error-hint" *ngIf="reservaForm.hasError('fechaFinInvalida') && (reservaForm.get('fecha_fin')?.touched || reservaForm.get('fecha_inicio')?.touched)">
+          <small class="text-danger">La fecha de fin debe ser posterior a la fecha de inicio.</small>
+        </div>
       </div>
 
       <div class="form-group">

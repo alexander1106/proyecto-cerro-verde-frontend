@@ -62,10 +62,10 @@
               <button class="btn-accion ver" (click)="viewReserva(reserva)">
                 <i class="ver fa-regular fa-eye"></i>
               </button>
-              <button class="btn-accion editar" (click)="editReserva(reserva)">
+              <button *ngIf="reserva.estado_reserva?.toLowerCase() !== 'completada'" class="btn-accion editar" (click)="editReserva(reserva)">
                 <i class="edit fa-regular fa-pen-to-square"></i>
               </button>
-              <button class="btn-accion eliminar" (click)="deleteReserva(reserva.id_reserva!)">
+              <button *ngIf="reserva.estado_reserva?.toLowerCase() !== 'completada'" class="btn-accion eliminar" (click)="deleteReserva(reserva.id_reserva!)">
                 <i class="delete fa-regular fa-trash-can"></i>
               </button>
             </td>
