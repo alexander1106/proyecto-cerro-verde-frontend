@@ -9,30 +9,30 @@ export class ProveedoresService {
   constructor(private http: HttpClient) { }
 
   listarProveedores(){
-    return this.http.get<any[]>("http://localhost:8080/api/proveedores")
+    return this.http.get<any[]>("http://localhost:8080/cerro-verde/proveedores")
   }
 
   listarProveedoresActivo(){
-    return this.http.get<any[]>("http://localhost:8080/api/proveedoresActivos")
+    return this.http.get<any[]>("http://localhost:8080/cerro-verde/proveedoresActivos")
   }
 
   buscarProveedorId(id: string){
-    return this.http.get(`http://localhost:8080/api/proveedores/${id}`)
+    return this.http.get(`http://localhost:8080/cerro-verde/proveedores/${id}`)
   }
 
   registrarProveedor(proveedor: any) {
-    return this.http.post("http://localhost:8080/api/proveedores", proveedor)
+    return this.http.post("http://localhost:8080/cerro-verde/proveedores", proveedor)
   }
 
   modificarProveedor(proveedor: any) {
-    return this.http.put("http://localhost:8080/api/proveedores", proveedor)
+    return this.http.put("http://localhost:8080/cerro-verde/proveedores", proveedor)
   }
 
   eliminarProveedor(id: string) {
-    return this.http.delete(`http://localhost:8080/api/proveedores/${id}`)
+    return this.http.delete(`http://localhost:8080/cerro-verde/proveedores/${id}`)
   }
 
   buscarRuc(numeroRuc: string, headers: HttpHeaders) {
-    return this.http.get<any>(`http://localhost:8080/api/ruc/${numeroRuc}`, {headers});
+    return this.http.get<any>(`http://localhost:8080/cerro-verde/ruc/${numeroRuc}`, {headers});
   }
 }

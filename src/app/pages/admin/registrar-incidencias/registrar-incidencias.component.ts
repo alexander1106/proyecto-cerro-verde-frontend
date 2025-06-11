@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-registrar-incidencia',
   templateUrl: './registrar-incidencias.component.html',
   styleUrls: ['./registrar-incidencias.component.css'],
-  standalone: false
+  imports: [ReactiveFormsModule, NgIf],
+  standalone: true
 })
 export class RegistrarIncidenciaComponent {
   @Output() onRegistroExitoso = new EventEmitter<void>();

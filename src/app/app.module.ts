@@ -1,41 +1,46 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  provideClientHydration,
+  withEventReplay,
+} from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatButtonModule} from '@angular/material/button';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatIconModule} from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http'; // <- IMPORTA ESTO
 import { FormsModule } from '@angular/forms';
 import { MenuComponent } from './pages/admin/menu/menu.component';
-import {MatListModule} from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 import { WelcomeComponent } from './pages/admin/welcome/welcome.component';
 import { PerfilComponent } from './pages/admin/perfil/perfil.component';
 import { authInterceptorProviders } from './service/auth.interceptor';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { ListUserComponent } from './pages/admin/usuarios/list-user/list-user.component';
 import { AddUserComponent } from './pages/admin/usuarios/add-user/add-user.component';
 import { HeaderComponent } from './pages/admin/header/header.component';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; // necesario para usar Datepicker con fechas nativas
 import { MatTableModule } from '@angular/material/table';
 import { ReactiveFormsModule } from '@angular/forms';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { ListRolesComponent } from './pages/admin/roles/list-roles/list-roles.component';
 import { ListPermisosComponent } from './pages/admin/permisos/list-permisos/list-permisos.component';
 import { AddPermisosComponent } from './pages/admin/permisos/add-permisos/add-permisos.component';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card'; // ✅ Importar MatCardModule
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatError } from '@angular/material/form-field';
 import { MatLabel } from '@angular/material/form-field';
+import { MatCard } from '@angular/material/card';
 
 import { AddRolComponent } from './pages/admin/roles/add-rol/add-rol.component';
 import { ActualizarRolComponent } from './pages/admin/roles/actualizar-rol/actualizar-rol.component';
@@ -81,6 +86,15 @@ import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventar
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 import { CheckinCheckoutFormComponent } from './pages/admin/recepcion/reservas/check-form/checkin-checkout-form.component';
 import { ChecksListComponent } from './pages/admin/recepcion/reservas/check-list/check-list.component';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDividerModule } from '@angular/material/divider';
+import { ReportesComprasComponent } from './pages/admin/reportes/reportes-compras/reportes-compras.component';
+import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
+import { NgChartsModule } from 'ng2-charts';
+import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { ReportesVentasService } from './service/reportes-ventas.service';
+import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
 
 @NgModule({
   declarations: [
@@ -136,18 +150,51 @@ import { ChecksListComponent } from './pages/admin/recepcion/reservas/check-list
     MetodoPagoComponent,
     MovimientoInventarioComponent,
     CheckinCheckoutFormComponent,
-    ChecksListComponent
+    ChecksListComponent,
+    ReportesComprasComponent,
+    ConsultaVentasComponent,
   ],
   imports: [
-    BrowserModule,MatTableModule,ReactiveFormsModule,MatFormFieldModule,MatCheckboxModule,MatAutocompleteModule,
-    MatToolbarModule,MatDatepickerModule,MatSelectModule,MatSlideToggleModule,
-    AppRoutingModule,HttpClientModule,MatDialogModule,NgSelectModule,
-    MatListModule,MatExpansionModule,MatNativeDateModule,FormsModule,MatInputModule,MatButtonModule,MatCardModule,
-    MatSnackBarModule,MatFormFieldModule,MatIconModule, MatFormFieldModule, ReplaceSpacesPipe, MatError, MatLabel
+    BrowserModule,
+    MatTableModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    MatToolbarModule,
+    MatDatepickerModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    AppRoutingModule,
+    HttpClientModule,
+    MatDialogModule,
+    NgSelectModule,
+    MatListModule,
+    MatExpansionModule,
+    MatNativeDateModule,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatFormFieldModule,
+    ReplaceSpacesPipe,
+    MatError,
+    MatLabel,
+    MatCard,
+    MatDividerModule,
+    MatPaginatorModule,
+    MatSortModule,
+    ReplaceSpacesPipe,
+    NgChartsModule,
+    MatTableModule,
+    MatTab,
+    MatTabGroup,
+    ReactiveFormsModule
   ],
-  providers: [
-    authInterceptorProviders,
-  ],
-  bootstrap: [AppComponent]
+  providers: [authInterceptorProviders],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

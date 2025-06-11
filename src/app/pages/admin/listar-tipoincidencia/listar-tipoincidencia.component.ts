@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
+import { RegistrarTipoIncidenciaComponent } from '../registrar-tipoincidencia/registrar-tipoincidencia.component';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-listar-tipo-incidencia',
   templateUrl: './listar-tipoincidencia.component.html',
   styleUrls: ['./listar-tipoincidencia.component.css'],
-  standalone: false
+  imports: [RegistrarTipoIncidenciaComponent, NgIf, NgFor],
+  standalone: true
 })
 export class ListarTipoIncidenciaComponent implements OnInit {
   tiposIncidencia: any[] = [];

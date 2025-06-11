@@ -9,26 +9,26 @@ export class CategoriasService {
   constructor(private http: HttpClient) { }
 
   listarCategoria(){
-    return this.http.get<any[]>("http://localhost:8080/api/categoriasproductos")
+    return this.http.get<any[]>("http://localhost:8080/cerro-verde/categoriasproductos")
   }
 
   listarCategoriasActivos(){
-    return this.http.get<any[]>("http://localhost:8080/api/categoriasproductosactivos")
+    return this.http.get<any[]>("http://localhost:8080/cerro-verde/categoriasproductosactivos")
   }
 
   buscarCategoriaId(id: number){
-    return this.http.get(`http://localhost:8080/api/categoriasproductos/${id}`)
+    return this.http.get(`http://localhost:8080/cerro-verde/categoriasproductos/${id}`)
   }
 
   registrarCategoria(categoria: any) {
-    return this.http.post("http://localhost:8080/api/categoriasproductos", categoria)
+    return this.http.post("http://localhost:8080/cerro-verde/categoriasproductos", categoria)
   }
 
   modificarCategoria(categoria: any) {
-    return this.http.put("http://localhost:8080/api/categoriasproductos", categoria)
+    return this.http.put("http://localhost:8080/cerro-verde/categoriasproductos", categoria)
   }
 
   eliminarCategoria(id: number) {
-    return this.http.delete(`http://localhost:8080/api/categoriasproductos/${id}`)
+    return this.http.delete(`http://localhost:8080/cerro-verde/categoriasproductos/${id}`)
   }
 }

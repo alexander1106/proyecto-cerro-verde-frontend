@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
+import { RegistrarLimpiezaComponent } from '../registrar-limpiezas/registrar-limpiezas.component';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-listar-limpiezas',
   templateUrl: './listar-limpiezas.component.html',
   styleUrls: ['./listar-limpiezas.component.css'],
-  standalone: false
+  imports: [RegistrarLimpiezaComponent, NgIf, NgFor],
+  standalone: true
 })
 export class ListarLimpiezasComponent implements OnInit {
   limpiezas: any[] = [];

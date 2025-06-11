@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import {  AuthGuard } from './guards/AuthGuard ';
+import { AuthGuard } from './guards/AuthGuard ';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 import { WelcomeComponent } from './pages/admin/welcome/welcome.component';
 import { PerfilComponent } from './pages/admin/perfil/perfil.component';
@@ -52,279 +52,310 @@ import { MovimientoInventarioComponent } from './pages/admin/movimiento-inventar
 import { AdminCajasComponent } from './pages/admin/admin-cajas/admin-cajas.component';
 import { CheckinCheckoutFormComponent } from './pages/admin/recepcion/reservas/check-form/checkin-checkout-form.component';
 import { ChecksListComponent } from './pages/admin/recepcion/reservas/check-list/check-list.component';
-import { ReportesComprasComponent }  from './pages/admin/reportes/reportes-compras/reportes-compras.component';
+import { ReportesComprasComponent } from './pages/admin/reportes/reportes-compras/reportes-compras.component';
 import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
 import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
 import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
 
-const routes: Routes = [{
-  path:'',
-  component: LoginComponent,
-  pathMatch:'full'
-},{
-  path:'login',
-  component:LoginComponent,
-  pathMatch:'full'
-},{
-  path:'enviar-correo',
-  component:EnviarCorreoComponent,
-  pathMatch:'full'
-},{
-  path:'reset-password',
-  component:ConfirmarPasswordComponent,
-  pathMatch:'full'
-},
-{
-  path:'admin',
-  component: DashboardComponent,
-  canActivate:[AuthGuard ],
-  children:[
-    {
-      path:'perfil',
-      component:PerfilComponent
-    },{
-      path:'',
-      component:WelcomeComponent
-    },{
-      path:'usuarios',
-      component:ListUserComponent
-    },{
-      path:'add-usuario',
-      component:AddUserComponent
-    },{
-      path:'permisos',
-      component:ListPermisosComponent
-    },{
-      path:'add-permiso',
-      component:AddPermisosComponent
-    },{
-      path:'roles',
-      component:ListRolesComponent
-    },{
-      path:'add-rol',
-      component:AddRolComponent
-    },{
-      path: 'edit-rol/:id',
-      component: ActualizarRolComponent
-    },{
-      path: 'edit-user/:id',
-      component: ActualizarUserComponent,
-    },{
-      path: 'proveedores',
-      component:ListProveedorComponent
-    },
-    {
-      path: 'productos',
-      component:ListProductoComponent,
-    }, {
-      path: 'categorias',
-      component:ListCategoriasComponent,
-    },
-    {
-      path: 'unidad',
-      component:ListUnidadComponent,
-    },{
-      path: 'compras',
-      component:ListCompraComponent,
-    }
-    ,{
-      path: 'add-proveedor',
-      component:AddProveedorComponent
-    },{
-      path: 'edit-proveedor/:ruc',
-      component:AddProveedorComponent
-    },{
-      path: 'categorias',
-      component:ListCategoriasComponent
-    },{
-      path: 'add-categoria',
-      component:AddCategoriasComponent
-    },{
-      path: 'edit-categoria/:id',
-      component:AddCategoriasComponent
-    },{
-      path: 'edit-producto/:id',
-      component:AddProductoComponent
-    },
-    {
-      path: 'caja',
-      component:CajaAperturaComponent
-    },{
-      path: 'detalle-caja',
-      component:CajaDetalleComponent
-    },
-    {
-      path: 'detalle-caja/:id',
-      component: CajaDetalleComponent
-    },{
-      path: 'caja/arqueo',
-      component:ArqueoCajaComponent
-    },{
-      path: 'caja/arqueo/:id',
-      component: ArqueoCajaComponent
-    },{
-      path: 'transacciones',
-      component:TransaccionesComponent
-    },{
-      path: 'transacciones/:id',
-      component: TransaccionesComponent
-    },{
-      path: 'transacciones/historial',
-      component: TransaccionesHistorialComponent
-    }, {
-      path: 'add-producto',
-      component: AddProductoComponent
-    }, {
-      path: 'cajas',
-      component: AdminCajasComponent
-    }
-    ,{
-      path: 'transacciones/historial',
-      component: TransaccionesHistorialComponent
-    }, {
-      path: 'add-producto',
-      component: AddProductoComponent
-    },{
-      path: 'perfil-user',
-      component:PerfilUserComponent
-    },
-    {
-      path: 'habitaciones',
-      component:HabitacionesListComponent
-    },{
-      path: 'recepcion/habitaciones/nuevo',
-      component: HabitacionesFormComponent
-    },{
-      path: 'recepcion/habitaciones/editar/:id',
-      component: HabitacionesFormComponent
-    },
-    {
-      path: 'tipos-habitaciones',
-      component: TipoHabitacionListComponent
-    },
-    {
-      path: 'recepcion/tipos/nuevo',
-      component: TipoHabitacionFormComponent,
-    },
-    {
-      path: 'recepcion/tipos/editar/:id',
-      component:TipoHabitacionFormComponent
-    },{
-    path: 'recepcion/reservas/habitaciones/nuevo',
-    component:HabitacionReservaFormComponent
-  },{
-    path: 'recepcion/reservas/salones/nuevo',
-    component:SalonReservaFormComponent
+const routes: Routes = [
+  {
+    path: '',
+    component: LoginComponent,
+    pathMatch: 'full',
   },
-    {
-      path: 'reservas',
-      component:ReservasListComponent
-    },
-    {
-      path: 'salones',
-      component:SalonesListComponent
-    },
-    {
-      path: 'recepcion/salones/nuevo',
-      component:SalonesFormComponent
-    }, {
-      path: 'recepcion/salones/editar/:id',
-      component:SalonesFormComponent
-    },
-    {
-      path: 'recepcion/reservas/salones/ver/:id',
-      component:ReservaSalonDetalleComponent
-    },
-    {
-      path: 'recepcion/reservas/salones/editar/:id',
-      component:SalonReservaFormComponent
-    },
-    {
-      path: 'recepcion/reservas/habitaciones/editar/:id',
-      component:HabitacionReservaFormComponent
-    },{
-      path: 'recepcion/reservas/habitaciones/ver/:id',
-      component:ReservaHabitacionDetalleComponent
-    },
-    {
-      path: 'recepcion/conductores/nuevo',
-      component:ConductoresFormComponent
-    },
-    {
-      path: 'conductores',
-      component:ConductoresListComponent
-    },
-    {
-      path: 'recepcion/conductores/editar/:id',
-      component:ConductoresFormComponent
-    },
-    {
-      path: 'recepcion/recojos/nuevo',
-      component:RecojosFormComponent
-    },
-    {
-      path: 'programar-recojo',
-      component:RecojosListComponent
-    },
-    {
-      path: 'recepcion/recojos/editar/:id',
-      component:RecojosFormComponent
-    },{
-      path: 'clientes',
-      component: ClientesComponent
-    },{
-      path: 'venta',
-      component: VentasComponent
-    },{
-      path: 'metodo-de-pago',
-      component: MetodoPagoComponent
-    },{
-      path: 'movimientos-de-almacen',
-      component: MovimientoInventarioComponent
-    },{
-      path: 'checks',
-      component:ChecksListComponent
-    },
-<<<<<<< HEAD
-    { path: 'reportes-compras',
-      component: ReportesComprasComponent },
-    {path: 'consultas-ventas',
-      component: ConsultaVentasComponent
-    }, {
-      path: 'areashotel',
-      component: ListarAreasHotelComponent
-    }, {
-      path: 'incidencias',
-      component: ListarIncidenciasComponent
-    }, {
-      path: 'limpiezas',
-      component: ListarLimpiezasComponent
-    }, {
-      path: 'tipoincidencia',
-      component: ListarTipoIncidenciaComponent
-    }
-=======
+  {
+    path: 'login',
+    component: LoginComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'enviar-correo',
+    component: EnviarCorreoComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'reset-password',
+    component: ConfirmarPasswordComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'admin',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'perfil',
+        component: PerfilComponent,
+      },
+      {
+        path: '',
+        component: WelcomeComponent,
+      },
+      {
+        path: 'usuarios',
+        component: ListUserComponent,
+      },
+      {
+        path: 'add-usuario',
+        component: AddUserComponent,
+      },
+      {
+        path: 'permisos',
+        component: ListPermisosComponent,
+      },
+      {
+        path: 'add-permiso',
+        component: AddPermisosComponent,
+      },
+      {
+        path: 'roles',
+        component: ListRolesComponent,
+      },
+      {
+        path: 'add-rol',
+        component: AddRolComponent,
+      },
+      {
+        path: 'edit-rol/:id',
+        component: ActualizarRolComponent,
+      },
+      {
+        path: 'edit-user/:id',
+        component: ActualizarUserComponent,
+      },
+      {
+        path: 'proveedores',
+        component: ListProveedorComponent,
+      },
+      {
+        path: 'productos',
+        component: ListProductoComponent,
+      },
+      {
+        path: 'categorias',
+        component: ListCategoriasComponent,
+      },
+      {
+        path: 'unidad',
+        component: ListUnidadComponent,
+      },
+      {
+        path: 'compras',
+        component: ListCompraComponent,
+      },
+      {
+        path: 'add-proveedor',
+        component: AddProveedorComponent,
+      },
+      {
+        path: 'edit-proveedor/:ruc',
+        component: AddProveedorComponent,
+      },
+      {
+        path: 'categorias',
+        component: ListCategoriasComponent,
+      },
+      {
+        path: 'add-categoria',
+        component: AddCategoriasComponent,
+      },
+      {
+        path: 'edit-categoria/:id',
+        component: AddCategoriasComponent,
+      },
+      {
+        path: 'edit-producto/:id',
+        component: AddProductoComponent,
+      },
+      {
+        path: 'caja',
+        component: CajaAperturaComponent,
+      },
+      {
+        path: 'detalle-caja',
+        component: CajaDetalleComponent,
+      },
+      {
+        path: 'detalle-caja/:id',
+        component: CajaDetalleComponent,
+      },
+      {
+        path: 'caja/arqueo',
+        component: ArqueoCajaComponent,
+      },
+      {
+        path: 'caja/arqueo/:id',
+        component: ArqueoCajaComponent,
+      },
+      {
+        path: 'transacciones',
+        component: TransaccionesComponent,
+      },
+      {
+        path: 'transacciones/:id',
+        component: TransaccionesComponent,
+      },
+      {
+        path: 'transacciones/historial',
+        component: TransaccionesHistorialComponent,
+      },
+      {
+        path: 'add-producto',
+        component: AddProductoComponent,
+      },
+      {
+        path: 'cajas',
+        component: AdminCajasComponent,
+      },
+      {
+        path: 'transacciones/historial',
+        component: TransaccionesHistorialComponent,
+      },
+      {
+        path: 'add-producto',
+        component: AddProductoComponent,
+      },
+      {
+        path: 'perfil-user',
+        component: PerfilUserComponent,
+      },
+      {
+        path: 'habitaciones',
+        component: HabitacionesListComponent,
+      },
+      {
+        path: 'recepcion/habitaciones/nuevo',
+        component: HabitacionesFormComponent,
+      },
+      {
+        path: 'recepcion/habitaciones/editar/:id',
+        component: HabitacionesFormComponent,
+      },
+      {
+        path: 'tipos-habitaciones',
+        component: TipoHabitacionListComponent,
+      },
+      {
+        path: 'recepcion/tipos/nuevo',
+        component: TipoHabitacionFormComponent,
+      },
+      {
+        path: 'recepcion/tipos/editar/:id',
+        component: TipoHabitacionFormComponent,
+      },
+      {
+        path: 'recepcion/reservas/habitaciones/nuevo',
+        component: HabitacionReservaFormComponent,
+      },
+      {
+        path: 'recepcion/reservas/salones/nuevo',
+        component: SalonReservaFormComponent,
+      },
+      {
+        path: 'reservas',
+        component: ReservasListComponent,
+      },
+      {
+        path: 'salones',
+        component: SalonesListComponent,
+      },
+      {
+        path: 'recepcion/salones/nuevo',
+        component: SalonesFormComponent,
+      },
+      {
+        path: 'recepcion/salones/editar/:id',
+        component: SalonesFormComponent,
+      },
+      {
+        path: 'recepcion/reservas/salones/ver/:id',
+        component: ReservaSalonDetalleComponent,
+      },
+      {
+        path: 'recepcion/reservas/salones/editar/:id',
+        component: SalonReservaFormComponent,
+      },
+      {
+        path: 'recepcion/reservas/habitaciones/editar/:id',
+        component: HabitacionReservaFormComponent,
+      },
+      {
+        path: 'recepcion/reservas/habitaciones/ver/:id',
+        component: ReservaHabitacionDetalleComponent,
+      },
+      {
+        path: 'recepcion/conductores/nuevo',
+        component: ConductoresFormComponent,
+      },
+      {
+        path: 'conductores',
+        component: ConductoresListComponent,
+      },
+      {
+        path: 'recepcion/conductores/editar/:id',
+        component: ConductoresFormComponent,
+      },
+      {
+        path: 'recepcion/recojos/nuevo',
+        component: RecojosFormComponent,
+      },
+      {
+        path: 'programar-recojo',
+        component: RecojosListComponent,
+      },
+      {
+        path: 'recepcion/recojos/editar/:id',
+        component: RecojosFormComponent,
+      },
+      {
+        path: 'clientes',
+        component: ClientesComponent,
+      },
+      {
+        path: 'venta',
+        component: VentasComponent,
+      },
+      {
+        path: 'metodo-de-pago',
+        component: MetodoPagoComponent,
+      },
+      {
+        path: 'movimientos-de-almacen',
+        component: MovimientoInventarioComponent,
+      },
+      {
+        path: 'checks',
+        component: ChecksListComponent,
+      },
       {
         path: 'recepcion/checks/nuevo',
-        component:CheckinCheckoutFormComponent
+        component: CheckinCheckoutFormComponent,
       },
       {
         path: 'recepcion/checks/editar/:id',
-        component:CheckinCheckoutFormComponent
+        component: CheckinCheckoutFormComponent,
       },
-      { path: 'reportes-compras',
-        component: ReportesComprasComponent },
-      {path: 'consultas-ventas',
-        component: ConsultaVentasComponent
+      { path: 'reportes-compras', component: ReportesComprasComponent },
+      { path: 'reportes-ventas', component: ConsultaVentasComponent },
+      {
+        path: 'areas-del-hotel', component: ListarAreasHotelComponent
+      },
+      {
+        path: 'limpieza', component: ListarLimpiezasComponent
+      },
+      {
+        path: 'incidencias', component: ListarIncidenciasComponent
+      },
+      {
+        path: 'tipo-de-incidencia', component: ListarTipoIncidenciaComponent
       }
->>>>>>> 34ba8333c9a7df3ce1e7e82e4d05879a45ed2a74
-  ]
-},
+    ],
+  },
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -9,6 +9,6 @@ export class DetalleComprasService {
   constructor(private http: HttpClient) { }
 
   eliminarCategoria(id: number) {
-    return this.http.delete(`http://localhost:8080/api/detallescompra/${id}`)
+    return this.http.delete(`http://localhost:8080/cerro-verde/detallescompra/${id}`)
   }
 }

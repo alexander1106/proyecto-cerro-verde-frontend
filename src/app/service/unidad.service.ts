@@ -9,26 +9,26 @@ export class UnidadService {
   constructor(private http: HttpClient) { }
 
   listarUnidad(){
-    return this.http.get<any[]>("http://localhost:8080/api/unidadmedida")
+    return this.http.get<any[]>("http://localhost:8080/cerro-verde/unidadmedida")
   }
 
   listarUnidadActivos(){
-    return this.http.get<any[]>("http://localhost:8080/api/unidadmedidaactivo")
+    return this.http.get<any[]>("http://localhost:8080/cerro-verde/unidadmedidaactivo")
   }
 
   buscarUnidadId(id: number){
-    return this.http.get(`http://localhost:8080/api/unidadmedida/${id}`)
+    return this.http.get(`http://localhost:8080/cerro-verde/unidadmedida/${id}`)
   }
 
   registrarUnidad(Unidad: any) {
-    return this.http.post("http://localhost:8080/api/unidadmedida", Unidad)
+    return this.http.post("http://localhost:8080/cerro-verde/unidadmedida", Unidad)
   }
 
   modificarUnidad(Unidad: any) {
-    return this.http.put("http://localhost:8080/api/unidadmedida", Unidad)
+    return this.http.put("http://localhost:8080/cerro-verde/unidadmedida", Unidad)
   }
 
   eliminarUnidad(id: number) {
-    return this.http.delete(`http://localhost:8080/api/unidadmedida/${id}`)
+    return this.http.delete(`http://localhost:8080/cerro-verde/unidadmedida/${id}`)
   }
 }

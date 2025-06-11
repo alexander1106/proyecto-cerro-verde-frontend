@@ -9,26 +9,26 @@ export class ComprasService {
   constructor(private http: HttpClient) {}
 
   listarCompra() {
-    return this.http.get<any[]>('http://localhost:8080/api/compras');
+    return this.http.get<any[]>('http://localhost:8080/cerro-verde/compras');
   }
 
   buscarCompraId(id: number) {
-    return this.http.get(`http://localhost:8080/api/compras/${id}`);
+    return this.http.get(`http://localhost:8080/cerro-verde/compras/${id}`);
   }
 
   registrarCompra(compra: any) {
-    return this.http.post('http://localhost:8080/api/compras', compra);
+    return this.http.post('http://localhost:8080/cerro-verde/compras', compra);
   }
 
   modificarCompra(compra: any) {
-    return this.http.put('http://localhost:8080/api/compras', compra);
+    return this.http.put('http://localhost:8080/cerro-verde/compras', compra);
   }
 
   eliminarCompra(id: number) {
-    return this.http.delete(`http://localhost:8080/api/compras/${id}`);
+    return this.http.delete(`http://localhost:8080/cerro-verde/compras/${id}`);
   }
 
   obtenerDatosNuevaCompra(): Observable<any> {
-    return this.http.get<any>(`http://localhost:8080/api/datos-nuevacompra`);
+    return this.http.get<any>(`http://localhost:8080/cerro-verde/datos-nuevacompra`);
   }
 }

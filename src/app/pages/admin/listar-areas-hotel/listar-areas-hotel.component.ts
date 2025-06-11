@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
+import { RegistrarAreaHotelComponent } from '../registrar-areas-hotel/registrar-areas-hotel.component';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-listar-areas-hotel',
   templateUrl: './listar-areas-hotel.component.html',
   styleUrls: ['./listar-areas-hotel.component.css'],
-  standalone: false
+  imports: [RegistrarAreaHotelComponent, NgIf, NgFor],
+  standalone: true
 })
 export class ListarAreasHotelComponent implements OnInit {
   areasHotel: any[] = [];
