@@ -2,75 +2,91 @@
 
 <div class="consulta-container">
   <mat-card class="consulta-card">
-  <mat-card-title>Reportes de Ventas</mat-card-title>
-  <mat-divider></mat-divider>
+    <mat-card-title>Reportes de Ventas</mat-card-title>
+    <mat-divider></mat-divider>
 
-  <form [formGroup]="filtroForm" class="filtro-form">
-    <div class="row">
-      <!-- Fecha Desde -->
-      <mat-form-field appearance="fill" class="form-field fecha-field">
-        <mat-label>Fecha Desde</mat-label>
-        <input matInput [matDatepicker]="pickerDesde" formControlName="fechaDesde" placeholder="Selecciona fecha" />
-        <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
-        <mat-datepicker #pickerDesde></mat-datepicker>
-      </mat-form-field>
+    <form [formGroup]="filtroForm" class="filtro-form">
+      <div class="row">
+        <!-- Fecha Desde -->
+        <mat-form-field appearance="fill" class="form-field fecha-field">
+          <mat-label>Fecha Desde</mat-label>
+          <input matInput [matDatepicker]="pickerDesde" formControlName="fechaDesde" placeholder="Selecciona fecha" />
+          <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDesde></mat-datepicker>
+        </mat-form-field>
 
-      <!-- Fecha Hasta -->
-      <mat-form-field appearance="fill" class="form-field fecha-field">
-        <mat-label>Fecha Hasta</mat-label>
-        <input matInput [matDatepicker]="pickerHasta" formControlName="fechaHasta" placeholder="Selecciona fecha" />
-        <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
-        <mat-datepicker #pickerHasta></mat-datepicker>
-      </mat-form-field>
+        <!-- Fecha Hasta -->
+        <mat-form-field appearance="fill" class="form-field fecha-field">
+          <mat-label>Fecha Hasta</mat-label>
+          <input matInput [matDatepicker]="pickerHasta" formControlName="fechaHasta" placeholder="Selecciona fecha" />
+          <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+          <mat-datepicker #pickerHasta></mat-datepicker>
+        </mat-form-field>
 
-      <!-- Tipo de Reporte -->
-      <mat-form-field appearance="fill" class="form-field tipo-field">
-        <mat-label>Tipo de Reporte</mat-label>
-        <mat-select formControlName="tipoReporte" required>
-          <mat-option *ngFor="let opt of tiposReporte" [value]="opt.value">
-            {{ opt.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+        <!-- Tipo de Reporte -->
+        <mat-form-field appearance="fill" class="form-field tipo-field">
+          <mat-label>Tipo de Reporte</mat-label>
+          <mat-select formControlName="tipoReporte" required>
+            <mat-option *ngFor="let opt of tiposReporte" [value]="opt.value">
+              {{ opt.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <!-- 🔥 BOTONES DE ACCIÓN (¡aquí dentro del row!) -->
-      <div class="form-field acciones-field">
-      <button mat-raised-button color="primary" (click)="generarReporte()" [disabled]="filtroForm.invalid">
-        Generar
-      </button>
-      <button mat-stroked-button color="accent" (click)="descargarPDF()" [disabled]="!ventasReporte.length">
-        Descargar PDF
-      </button>
-      <button mat-stroked-button color="accent" (click)="descargarExcel()" [disabled]="!ventasReporte.length">
-        Descargar Excel
-      </button>
-    </div>
-    </div>
-  </form>
-</mat-card>
+        <!-- Botones de acción -->
+        <div class="form-field acciones-field">
+          <button mat-raised-button color="primary" (click)="generarReporte()" [disabled]="filtroForm.invalid">
+            Generar
+          </button>
 
+          <!-- Resumen PDF/Excel -->
+          <button mat-stroked-button color="accent" (click)="descargarPDFResumen()" [disabled]="!ventasReporte.length">
+            Descargar PDF Resumen
+          </button>
+          <button mat-stroked-button color="accent" (click)="descargarExcelResumen()" [disabled]="!ventasReporte.length">
+            Descargar Excel Resumen
+          </button>
 
-  <!-- ———– SI HAY DATOS, MUESTRA GRÁFICA + TABLA ———– -->
+          <!-- Detallado sólo para salones, habitaciones y métodos -->
+          <ng-container *ngIf="['salones','habitaciones','metodos-pago'].includes(currentTipo)">
+            <button mat-stroked-button color="warn" (click)="descargarPDFDetallado()" [disabled]="!ventasReporte.length">
+              Descargar PDF Detallado
+            </button>
+            <button mat-stroked-button color="warn" (click)="descargarExcelDetallado()" [disabled]="!ventasReporte.length">
+              Descargar Excel Detallado
+            </button>
+          </ng-container>
+
+        </div>
+      </div>
+    </form>
+  </mat-card>
+
+  <!-- Resultados -->
   <div *ngIf="ventasReporte.length > 0" class="reporte-resultados">
-    <!-- KPIs (Total general, Top 1, etc.) -->
-    <div class="kpi-container">
-      <mat-card class="kpi-card">
-        <mat-card-title>Total Registros</mat-card-title>
-        <mat-card-content><h3>{{ ventasReporte.length }}</h3></mat-card-content>
-      </mat-card>
+    <!-- KPIs -->
+    <!-- NUEVA SECCIÓN: Total + Top 5 -->
+<div class="kpi-container">
+  <mat-card class="kpi-card">
+    <mat-card-title>Total Registros</mat-card-title>
+    <mat-card-content><h3>{{ ventasReporte.length }}</h3></mat-card-content>
+  </mat-card>
 
-      <mat-card class="kpi-card">
-        <mat-card-title>Top 1</mat-card-title>
-        <mat-card-content>
-          <h3>
-            {{ top1()?.nombre || '—' }}
-            ({{ top1()?.cantidad || 0 }})
-          </h3>
-        </mat-card-content>
-      </mat-card>
-    </div>
+  <mat-card class="kpi-card top5-card" *ngIf="ventasReporte.length">
+    <mat-card-title>Top 5</mat-card-title>
+    <mat-card-content>
+      <div class="top5-list">
+        <div *ngFor="let item of ventasReporte | slice:0:5" class="top5-item">
+          <span class="top5-nombre">{{ item.nombre }}</span>
+          <span class="top5-cantidad">({{ item.cantidad }})</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
 
-    <!-- Gráfica de barras: Top 5 según “tipoReporte” -->
+
+    <!-- Gráfica de barras -->
     <div class="grafica-container">
       <canvas
         baseChart
@@ -78,11 +94,11 @@
         [labels]="barChartLabels"
         [options]="barChartOptions"
         [type]="'bar'"
-      >
-      </canvas>
+      ></canvas>
     </div>
+    
 
-    <!-- Tabla con paginador y filtro -->
+    <!-- Tabla -->
     <div class="tabla-container">
       <mat-form-field appearance="fill" class="filter-field">
         <mat-label>Buscar en tabla</mat-label>
@@ -90,34 +106,28 @@
       </mat-form-field>
 
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-        <!-- Definición de columnas dinámicas -->
         <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{ columnaNombreEtiqueta }}
-          </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnaNombreEtiqueta }}</th>
           <td mat-cell *matCellDef="let row">{{ row.nombre }}</td>
         </ng-container>
-
         <ng-container matColumnDef="cantidad">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
           <td mat-cell *matCellDef="let row">{{ row.cantidad }}</td>
         </ng-container>
-
         <ng-container matColumnDef="total">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
           <td mat-cell *matCellDef="let row">{{ row.total | number:'1.2-2' }}</td>
         </ng-container>
 
-        <!-- Filas -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5,10,25]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
 
-  <!-- Mensaje “No hay datos” -->
+  <!-- Sin datos -->
   <div *ngIf="filtroEjecutado && ventasReporte.length === 0" class="no-data">
     <p>No se encontraron registros para los criterios seleccionados.</p>
   </div>
