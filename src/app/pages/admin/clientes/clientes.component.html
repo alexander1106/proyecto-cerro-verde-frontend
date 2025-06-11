@@ -118,15 +118,15 @@
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="w-50 ms-4" appearance="outline">
+                <mat-form-field class="w-50 ms-4 mb-4" appearance="outline">
                     <mat-label>País</mat-label>
                     <input [(ngModel)]="cliente.pais" name="pais" minlength="1" required matInput placeholder="Digite País" />
                 </mat-form-field>
 
-                <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x">
+                <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
                     <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
                         class="btn-primary">
-                        Guardar
+                        {{esEditar === true ? "Editar" : "Registrar"}}
                     </button>
                 </div>
             </form>

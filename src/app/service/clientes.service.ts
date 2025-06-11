@@ -24,10 +24,6 @@ export class ClientesService {
     return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
   }
 
-  getClientesActivos(): Observable<Cliente[]> {
-    return this.http.get<Cliente[]>(`${this.apiUrl}/clientesactivos`);
-  }
-
   getClienteById(id: number): Observable<Cliente> {
     return this.http.get<Cliente>(`${this.apiUrl}/clientes/${id}`);
   }

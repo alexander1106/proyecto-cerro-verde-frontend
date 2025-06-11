@@ -957,7 +957,7 @@ export class VentasComponent {
 
   //METODO DE PAGO
   cargarMetodos() {
-    this.metodosService.listarMetodosPagoActivo().subscribe((data) => {
+    this.metodosService.listarMetodosPago().subscribe((data) => {
       this.metodos = data;
       this.metodosFiltrado = [...this.metodos];
     });

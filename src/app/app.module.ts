@@ -145,7 +145,6 @@ import { NgChartsModule } from 'ng2-charts';
     ConsultaVentasComponent
   ],
   imports: [
-
     BrowserModule,
     MatTableModule,
     ReactiveFormsModule,

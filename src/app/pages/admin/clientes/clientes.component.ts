@@ -79,7 +79,7 @@ export class ClientesComponent {
 
   //MOSTRAR LOS CLIENTES
   listarClientes() {
-    this.clientesService.getClientesActivos().subscribe(
+    this.clientesService.getClientes().subscribe(
       (data: any) => {
         this.clientes = data;
         this.clientesFiltrados = [...this.clientes];
@@ -93,9 +93,13 @@ export class ClientesComponent {
 
   //REGISTRAR CLIENTE
   formSubmit() {
+    let aux = 'registrado'
+    if(this.esEditar){
+      aux = 'editado'
+    }
     this.clientesService.createCliente(this.cliente).subscribe(
       (data) => {
-        Swal.fire("Excelente", "El cliente fue registrado con éxito", "success");
+        Swal.fire("Excelente", `El cliente fue ${aux} con éxito`, "success");
         this.listarClientes();
         this.cerrarModal();
       }, (error) => {
@@ -149,11 +153,10 @@ export class ClientesComponent {
           },
           error: (error) => {
             Swal.fire({
-              title: "Error",
-              text: error.error.error,
-              icon: "error"
+              title: "Aviso",
+              text: error.error.mensaje,
+              icon: "warning"
             });
-            console.log(error);
           }
         });
       }

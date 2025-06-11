@@ -12,10 +12,6 @@ export class MetodoPagoService {
     return this.http.get<any[]>("http://localhost:8080/cerro-verde/metodopago")
   }
 
-  listarMetodosPagoActivo(){
-    return this.http.get<any[]>("http://localhost:8080/cerro-verde/metodopagoactivo")
-  }
-
   buscarMetodoPagoId(id: number){
     return this.http.get(`http://localhost:8080/cerro-verde/metodopago/${id}`)
   }
@@ -30,9 +26,5 @@ export class MetodoPagoService {
 
   eliminarMetodoPago(id: number) {
     return this.http.delete(`http://localhost:8080/cerro-verde/metodopago/${id}`)
-  }
-
-  verificarRelacion(id: number){
-    return this.http.get(`http://localhost:8080/cerro-verde/metodopagorelacion/${id}`)
   }
 }

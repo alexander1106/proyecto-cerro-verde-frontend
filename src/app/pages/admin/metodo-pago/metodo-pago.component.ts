@@ -18,12 +18,11 @@ export class MetodoPagoComponent {
     idMetodoPago: '',
     nombre: '',
     estado: 1,
+    estadoMetodo: 1
   };
   paginaActual = 1;
   elementosPorPagina = 5;
-  habilitado: boolean = true;
   esEditar: boolean = false;
-  relacion: boolean = false;
 
   constructor(
     private metodosService: MetodoPagoService,
@@ -43,12 +42,11 @@ export class MetodoPagoComponent {
     this.metodo.nombre = '';
     this.mostrarModal = false;
     this.esEditar = false;
-    this.relacion = false;
   }
 
   //MOSTRAR LOS METODOS DE PAGO
   listarMetodos() {
-    this.metodosService.listarMetodosPagoActivo().subscribe(
+    this.metodosService.listarMetodosPago().subscribe(
       (data: any) => {
         this.metodos = data;
         this.metodosFiltrados = [...this.metodos];
@@ -125,29 +123,14 @@ export class MetodoPagoComponent {
           },
           error: (error) => {
             Swal.fire({
-              title: 'Error',
+              title: 'Aviso',
               text: error.error.mensaje,
-              icon: 'error',
+              icon: 'warning',
             });
           },
         });
       }
     });
-  }
-
-  //VERIFICAR RELACION
-  verificarRelacion(id: number) {
-    this.metodosService.verificarRelacion(id).subscribe({
-      next: (data: any) => {
-        console.log(data)
-        if(data === true) {
-          this.relacion = true;
-        }
-      },  
-      error: (error: any) => {
-        console.log("xd")
-      }
-    })
   }
 
   //BUSCADOR

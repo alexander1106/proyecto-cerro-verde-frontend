@@ -33,7 +33,11 @@
             <tbody>
                 <tr *ngFor="let metodo of (metodosFiltrados.length ? metodosFiltrados : metodos)">
                     <td>{{ metodo.nombre }}</td>
-                    <td>{{metodo.estado === 1 ? "Habilitado": "Deshabilitado"}}</td>
+                    <td>
+                        <span class="badge" [ngClass]="'badge-' + metodo.estadoMetodo">
+                            {{metodo.estadoMetodo === 1 ? "Habilitado": "Deshabilitado"}}
+                        </span>
+                    </td>
                     <td class="acciones">
                         <button class="btn-accion editar" (click)="editarMetodoPago(metodo.idMetodoPago)">
                             <mat-icon class="edit" color="primary">edit</mat-icon>
@@ -66,12 +70,12 @@
                 <mat-form-field class="w-100" appearance="outline">
                     <mat-label>Nombre</mat-label>
                     <input [(ngModel)]="metodo.nombre" name="nombre" minlength="1" required matInput
-                        placeholder="Digite Nombre" [disabled]="relacion"/>
+                        placeholder="Digite Nombre" />
                 </mat-form-field>
 
                 <mat-label class="me-3">Estado</mat-label>
-                <mat-slide-toggle name="estado" [(ngModel)]="metodo.estado" [ngModel]="metodo.estado === 1"
-                    (change)="metodo.estado = $event.checked ? 1 : 0">
+                <mat-slide-toggle name="estado" [(ngModel)]="metodo.estadoMetodo" [ngModel]="metodo.estadoMetodo === 1"
+                    (change)="metodo.estadoMetodo = $event.checked ? 1 : 0">
                 </mat-slide-toggle>
 
                 <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">
