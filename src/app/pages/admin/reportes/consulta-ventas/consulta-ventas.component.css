@@ -1,162 +1,155 @@
-/* consulta-ventas.component.css */
-
-/* Contenedor principal */
+/* ============ Contenedor General ============ */
 .consulta-container {
   margin: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 24px;
 }
 
-/* Título */
-.titulo {
-  text-align: center;
+/* ============ Título ============ */
+.consulta-card mat-card-title {
   font-size: 24px;
-  margin-bottom: 16px;
-  font-weight: 500;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
 }
 
-/* Tarjeta de filtros */
-.filtro-formul {
+/* ============ Filtros ============ */
+.filtro-form {
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  gap: 12px;
 }
 
-/* Grid para distribuir campos */
-/* Dos columnas en pantallas grandes, una columna en pantallas < 800px */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-/* Para campos que deben ocupar TODO el ancho de la columna */
-.full-width {
-  width: 100%;
-}
-
-/* Para campos numéricos (montoMin, montoMax) que ocuparán mitad de pantalla */
-.half-width {
-  width: 100%;
-  min-width: 120px;
-}
-
-/* Contenedor del botón “Buscar” */
-.btn-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-/* Espaciado de la tabla */
-.tabla-container {
-  margin-top: 24px;
-  padding: 16px;
-}
-
-/* Caja de búsqueda interna de la tabla */
-.search-filtro {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
-
-/* El campo de búsqueda */
-.search-field {
-  width: 250px;
-}
-
-/* Mensaje de “No results” */
-.no-results {
-  margin-top: 24px;
-  text-align: center;
-}
-/* Organiza la fila de filtros en horizontal */
 .row {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-end;
   gap: 16px;
-  justify-content: space-between;
   margin-top: 16px;
 }
 
-/* Aplica ancho fijo y consistente para cada campo */
+/* Campos de fecha y tipo */
 .fecha-field,
 .tipo-field {
-  flex: 1;
-  min-width: 220px;
-  max-width: 320px;
+  flex: 1 1 200px;
+  min-width: 200px;
+  max-width: 280px;
 }
 
-/* Estilo reducido para el gráfico */
-.grafica-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px 0;
-}
-.actions {
-  display: flex;
-  gap: 12px;
-  align-items: flex-end;
-  margin-top: auto;
-}
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: flex-end;
-}
-
-/* Asegura que los botones se comporten como campos */
-.actions button {
-  height: 56px;
-}
+/* Campo de acciones (botones) */
 .acciones-field {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  flex: 1;
-  min-width: 220px;
-  max-width: 360px;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 200px;
 }
 
-/* Contenedor en fila */
+/* Botón principal */
+.acciones-field button[color="primary"] {
+  background-color: #5d62fb;
+  color: #fff;
+  height: 40px;
+  font-size: 14px;
+  padding: 0 18px;
+}
+
+.acciones-field button[color="primary"]:hover {
+  background-color: #4a4de0;
+}
+
+/* Botones secundarios (PDF/Excel) */
+.acciones-field button[color="accent"],
+.acciones-field button[color="warn"] {
+  height: 36px;
+  font-size: 13px;
+  padding: 0 14px;
+  border-radius: 6px;
+}
+
+/* ============ Tarjetas KPI ============ */
+/* Actualiza este contenedor si ya lo tienes */
 .kpi-container {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  justify-content: flex-start;
-  margin-top: 16px;
+  margin-top: 24px;
+  align-items: stretch;
 }
 
-/* Tarjetas más pequeñas y alineadas */
-.kpi-card {
-  flex: 1 1 200px;
-  max-width: 250px;
-  padding: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* Tarjeta de Top 5 más ancha */
+.top5-card {
+  flex: 1 1 400px;
 }
 
-.kpi-card mat-card-title {
+/* Lista interna de top 5 */
+.top5-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.top5-item {
+  background-color: #eef1fb;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
   font-size: 14px;
+}
+
+.top5-nombre {
   font-weight: 500;
-  margin-bottom: 8px;
 }
 
-.kpi-card mat-card-content h3 {
-  font-size: 20px;
-  margin: 0;
+.top5-cantidad {
+  color: #666;
+}
+
+/* ============ Gráfica ============ */
+.grafica-container {
+  max-width: 640px;
+  margin: 24px auto;
+  padding: 16px 0;
+}
+
+/* ============ Tabla ============ */
+.tabla-container {
+  margin-top: 32px;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-field {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 16px;
+}
+
+/* ============ Mensaje sin datos ============ */
+.no-data {
+  margin-top: 32px;
+  text-align: center;
+  font-style: italic;
+  color: #888;
 }
 
 
-@media (max-width: 600px) {
-  .grid-container {
-    grid-template-columns: 1fr;
-  }
-  .half-width {
-    min-width: unset;
-  }
-  .search-field {
-    width: 100%;
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
   }
 
+  .acciones-field {
+    justify-content: center;
+  }
 }
+
