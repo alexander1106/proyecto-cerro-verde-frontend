@@ -7,8 +7,7 @@ import { NgFor, NgIf } from '@angular/common';
   selector: 'app-listar-tipo-incidencia',
   templateUrl: './listar-tipoincidencia.component.html',
   styleUrls: ['./listar-tipoincidencia.component.css'],
-  imports: [RegistrarTipoIncidenciaComponent, NgIf, NgFor],
-  standalone: true
+  standalone: false
 })
 export class ListarTipoIncidenciaComponent implements OnInit {
   tiposIncidencia: any[] = [];

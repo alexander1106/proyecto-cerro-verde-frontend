@@ -1,44 +1,104 @@
-<div class="container mt-4">
-  <h2 class="mb-3">Lista de Incidencias</h2>
-<button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Nueva Incidencia</button>
+<div class="container">
+  <app-header></app-header>
+  <div class="card p-3">
+    <h4 class="mb-3">Listado de Incidencias</h4>
+    <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Nueva Incidencia</button>
 
-  <div *ngIf="loading" class="alert alert-info">Cargando incidencias...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="loading" class="text-center text-muted">
+      <i class="bi bi-arrow-repeat spinner-border"></i> Cargando incidencias...
+    </div>
+  
+    <div *ngIf="!loading && incidencias.length === 0" class="text-muted text-center">
+      <i class="bi bi-inbox fs-1"></i>
+      <p>No hay incidencias registradas</p>
+    </div>
+  
+    <div *ngIf="!loading && incidencias.length > 0">
+      <table class="tabla-trabajadores">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Registro</th>
+            <th>Solución</th>
+            <th>Estado</th>
+            <th>Lugar</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let incidencia of incidencias">
+            <td>{{ incidencia.id_incidencia }}</td>
+            <td>{{ incidencia.fecha_registro }}</td>
+            <td>{{ incidencia.fecha_solucion || '—' }}</td>
+            <td>
+              <span class="badge"
+                [ngClass]="{
+                  'badge-ocupado': incidencia.estado_incidencia === 'pendiente',
+                  'badge-disponible': incidencia.estado_incidencia === 'resuelta'
+                }">
+                {{ incidencia.estado_incidencia?.toUpperCase() }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="incidencia.habitacion">
+                Habitación {{ incidencia.habitacion.numero }}
+              </span>
+              <span *ngIf="!incidencia.habitacion && incidencia.area">
+                Área {{ incidencia.area.nombre }}
+              </span>
+              <span *ngIf="!incidencia.habitacion && !incidencia.area">
+                —
+              </span>
+            </td>            
+            <td>{{ incidencia.tipoIncidencia?.nombre || '—' }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm ms-2" (click)="verDetalle(incidencia)">
+                <i class="bi bi-eye-fill me-1"></i>
+              </button>
+              <button *ngIf="incidencia.estado_incidencia === 'pendiente'"
+              class="btn btn-sm btn-success ms-2"
+              (click)="finalizarIncidencia(incidencia)">
+                <i class="bi bi-check-circle-fill me-1"></i>
+              </button>
+              <button *ngIf="incidencia.estado_incidencia === 'pendiente'"
+              class="btn btn-danger btn-sm ms-2"
+              (click)="eliminarIncidencia(incidencia)">
+                <i class="bi bi-trash-fill me-1"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-  <table *ngIf="!loading && !error" class="table table-bordered table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Fecha Registro</th>
-        <th>Fecha Solución</th>
-        <th>Estado</th>
-        <th>Descripción</th>
-        <th>Habitación</th>
-        <th>Tipo</th>
-        <th>Usuario</th>
-        <th>Área</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let incidencia of incidencias">
-        <td>{{ incidencia.id_incidencia }}</td>
-        <td>{{ incidencia.fecha_registro }}</td>
-        <td>{{ incidencia.fecha_solucion || 'Pendiente' }}</td>
-        <td>{{ incidencia.estado_incidencia }}</td>
-        <td>{{ incidencia.descripcion }}</td>
-        <td>{{ incidencia.habitacion?.numero || 'N/A' }}</td>
-        <td>{{ incidencia.tipoIncidencia?.nombre || 'N/A' }}</td>
-        <td>{{ incidencia.usuario?.nombre || 'N/A' }}</td>
-        <td>{{ incidencia.area?.nombre || 'N/A' }}</td>
-      </tr>
-    </tbody>
-  </table>
+    </div>
+  </div>
+  
+  <!-- Modal Detalle de Incidencia -->
+<div class="modal fade show" tabindex="-1" role="dialog" [ngStyle]="{ display: mostrarModalDetalle ? 'block' : 'none' }">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-card-text me-2"></i> Detalle de Incidencia</h5>
+        <button type="button" class="btn-close" (click)="cerrarDetalle()"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Descripción completa:</strong></p>
+        <p class="text-justify">{{ incidenciaSeleccionada?.descripcion }}</p>
+      </div>
+    </div>
+  </div>
 </div>
 
-<p *ngIf="mostrarModal">✅ Modal Activo</p>
-<app-registrar-incidencia
-  *ngIf="mostrarModal"
-  (onRegistroExitoso)="registroExitoso()"
-  (onCancelar)="cerrarModal()">
-</app-registrar-incidencia>
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="mostrarModalDetalle"></div>
 
+  
+  <p *ngIf="mostrarModal">✅ Modal Activo</p>
+
+</div>
+<app-registrar-incidencia
+*ngIf="mostrarModal"
+(onRegistroExitoso)="registroExitoso()"
+(onCancelar)="cerrarModal()">
+</app-registrar-incidencia>  

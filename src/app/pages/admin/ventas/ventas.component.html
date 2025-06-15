@@ -34,10 +34,10 @@
             </thead>
             <tbody>
                 <tr *ngFor="let venta of ventasFiltrados">
-                    <td>{{ venta.comprobantePago.numComprobante }} - {{venta.comprobantePago.numComprobante == 'B001' ?
-                        venta.comprobantePago.numSerieBoleta : venta.comprobantePago.numSerieFactura}}</td>
+                    <td>{{ venta.numComprobante }} - {{venta.numComprobante == 'B001' ?
+                        venta.numSerieBoleta : venta.numSerieFactura}}</td>
                     <td>{{ venta.fecha | date: 'dd/MM/yyyy'}}</td>
-                    <td>{{ venta.cliente.nombre }}</td>
+                    <td>{{ venta.cliente }}</td>
                     <td>S/. {{ venta.total }}</td>
                     <td class="acciones">
                         <button class="btn-accion ver" (click)="verModal(venta.idVenta)">

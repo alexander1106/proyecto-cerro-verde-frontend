@@ -12,10 +12,6 @@ export class ProductosService {
     return this.http.get<any[]>("http://localhost:8080/cerro-verde/productos")
   }
 
-  listarProductosActivos(){
-    return this.http.get<any[]>("http://localhost:8080/cerro-verde/productosactivos")
-  }
-
   buscarProductoId(id: number){
     return this.http.get(`http://localhost:8080/cerro-verde/productos/${id}`)
   }

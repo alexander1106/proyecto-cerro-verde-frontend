@@ -45,11 +45,11 @@ export class MantenimientoService {
   }
 
   actualizarIncidencia(id: number, data: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/incidencias/actualizar/${id}`, data);
+    return this.http.put(`${this.baseUrl}/incidencias/actualizar/${id}`, data);
   }
 
   eliminarIncidencia(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/incidencias/eliminar/${id}`);
+    return this.http.delete(`${this.baseUrl}/incidencias/eliminar/${id}`);
   }
 
   // ---------- Limpiezas ----------

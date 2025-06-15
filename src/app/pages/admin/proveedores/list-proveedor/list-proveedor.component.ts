@@ -50,7 +50,7 @@ export class ListProveedorComponent {
 
   //MOSTRAR LOS PROVEEDORES
   listarProveedor() {
-    this.proveedoresService.listarProveedoresActivo().subscribe(
+    this.proveedoresService.listarProveedores().subscribe(
       (data: any) => {
         this.proveedores = data;
         this.proveedoresFiltrados = [...this.proveedores];

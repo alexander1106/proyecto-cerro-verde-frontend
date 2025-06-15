@@ -12,10 +12,6 @@ export class CategoriasService {
     return this.http.get<any[]>("http://localhost:8080/cerro-verde/categoriasproductos")
   }
 
-  listarCategoriasActivos(){
-    return this.http.get<any[]>("http://localhost:8080/cerro-verde/categoriasproductosactivos")
-  }
-
   buscarCategoriaId(id: number){
     return this.http.get(`http://localhost:8080/cerro-verde/categoriasproductos/${id}`)
   }

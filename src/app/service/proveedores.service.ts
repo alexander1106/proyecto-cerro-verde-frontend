@@ -12,10 +12,6 @@ export class ProveedoresService {
     return this.http.get<any[]>("http://localhost:8080/cerro-verde/proveedores")
   }
 
-  listarProveedoresActivo(){
-    return this.http.get<any[]>("http://localhost:8080/cerro-verde/proveedoresActivos")
-  }
-
   buscarProveedorId(id: string){
     return this.http.get(`http://localhost:8080/cerro-verde/proveedores/${id}`)
   }

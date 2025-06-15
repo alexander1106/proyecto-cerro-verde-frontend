@@ -329,7 +329,7 @@ export class ListCompraComponent {
 
   //CARGAR PROVEEDORES
   cargarProveedores() {
-    this.proveedoresService.listarProveedoresActivo().subscribe((data) => {
+    this.proveedoresService.listarProveedores().subscribe((data) => {
       this.proveedores = data;
       this.proveedorFiltrado = [...this.proveedores];
     });
@@ -367,7 +367,7 @@ export class ListCompraComponent {
 
   //CARGAR PRODUCTOS
   cargarProductos() {
-    this.productosService.listarProductosActivos().subscribe((data) => {
+    this.productosService.listarProductos().subscribe((data) => {
       this.productos = data;
       this.productosFiltrados = [...this.productos];
     });

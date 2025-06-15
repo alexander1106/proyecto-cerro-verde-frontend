@@ -115,7 +115,7 @@ export class MovimientoInventarioComponent {
 
   //CARGAR PRODUCTOS
   cargarProductos() {
-    this.productosService.listarProductosActivos().subscribe((data) => {
+    this.productosService.listarProductos().subscribe((data) => {
       this.productos = data.filter((p) => p.precioVenta != null);
       this.productosFiltrados = [...this.productos];
     });
