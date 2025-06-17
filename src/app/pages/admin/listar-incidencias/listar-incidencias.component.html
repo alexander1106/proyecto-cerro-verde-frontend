@@ -4,16 +4,36 @@
     <h4 class="mb-3">Listado de Incidencias</h4>
     <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Nueva Incidencia</button>
 
+    <!-- Filtro -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Filtrar por Estado</label>
+        <select class="form-select" [(ngModel)]="filtroEstado">
+          <option value="">-- Todos --</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="resuelta">Resuelta</option>
+        </select>
+      </div>
+      <div class="col-md-2 align-self-end">
+        <button class="btn btn-outline-secondary w-100" (click)="limpiarFiltroEstado()">
+          <i class="bi bi-x-circle me-1"></i> Limpiar Filtro
+        </button>
+      </div>
+    </div>
+
+    <!-- Cargando -->
     <div *ngIf="loading" class="text-center text-muted">
       <i class="bi bi-arrow-repeat spinner-border"></i> Cargando incidencias...
     </div>
-  
-    <div *ngIf="!loading && incidencias.length === 0" class="text-muted text-center">
+
+    <!-- Sin resultados -->
+    <div *ngIf="!loading && incidenciasFiltradas.length === 0" class="text-muted text-center">
       <i class="bi bi-inbox fs-1"></i>
       <p>No hay incidencias registradas</p>
     </div>
-  
-    <div *ngIf="!loading && incidencias.length > 0">
+
+    <!-- Tabla -->
+    <div *ngIf="!loading && incidenciasFiltradas.length > 0">
       <table class="tabla-trabajadores">
         <thead class="table-light">
           <tr>
@@ -27,7 +47,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let incidencia of incidencias">
+          <tr *ngFor="let incidencia of incidenciasFiltradas">
             <td>{{ incidencia.id_incidencia }}</td>
             <td>{{ incidencia.fecha_registro }}</td>
             <td>{{ incidencia.fecha_solucion || '—' }}</td>
@@ -41,64 +61,53 @@
               </span>
             </td>
             <td>
-              <span *ngIf="incidencia.habitacion">
-                Habitación {{ incidencia.habitacion.numero }}
-              </span>
-              <span *ngIf="!incidencia.habitacion && incidencia.area">
-                Área {{ incidencia.area.nombre }}
-              </span>
-              <span *ngIf="!incidencia.habitacion && !incidencia.area">
-                —
-              </span>
-            </td>            
+              <span *ngIf="incidencia.habitacion">Habitación {{ incidencia.habitacion.numero }}</span>
+              <span *ngIf="!incidencia.habitacion && incidencia.area">Área {{ incidencia.area.nombre }}</span>
+              <span *ngIf="!incidencia.habitacion && !incidencia.area">—</span>
+            </td>
             <td>{{ incidencia.tipoIncidencia?.nombre || '—' }}</td>
             <td>
               <button class="btn btn-primary btn-sm ms-2" (click)="verDetalle(incidencia)">
                 <i class="bi bi-eye-fill me-1"></i>
               </button>
               <button *ngIf="incidencia.estado_incidencia === 'pendiente'"
-              class="btn btn-sm btn-success ms-2"
-              (click)="finalizarIncidencia(incidencia)">
+                class="btn btn-sm btn-success ms-2"
+                (click)="finalizarIncidencia(incidencia)">
                 <i class="bi bi-check-circle-fill me-1"></i>
               </button>
               <button *ngIf="incidencia.estado_incidencia === 'pendiente'"
-              class="btn btn-danger btn-sm ms-2"
-              (click)="eliminarIncidencia(incidencia)">
+                class="btn btn-danger btn-sm ms-2"
+                (click)="eliminarIncidencia(incidencia)">
                 <i class="bi bi-trash-fill me-1"></i>
               </button>
             </td>
           </tr>
         </tbody>
       </table>
-
     </div>
   </div>
-  
-  <!-- Modal Detalle de Incidencia -->
-<div class="modal fade show" tabindex="-1" role="dialog" [ngStyle]="{ display: mostrarModalDetalle ? 'block' : 'none' }">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><i class="bi bi-card-text me-2"></i> Detalle de Incidencia</h5>
-        <button type="button" class="btn-close" (click)="cerrarDetalle()"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Descripción completa:</strong></p>
-        <p class="text-justify">{{ incidenciaSeleccionada?.descripcion }}</p>
+
+  <!-- Modal Detalle -->
+  <div class="modal fade show" tabindex="-1" role="dialog" [ngStyle]="{ display: mostrarModalDetalle ? 'block' : 'none' }">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-card-text me-2"></i> Detalle de Incidencia</h5>
+          <button type="button" class="btn-close" (click)="cerrarDetalle()"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Descripción completa:</strong></p>
+          <p class="text-justify">{{ incidenciaSeleccionada?.descripcion }}</p>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="modal-backdrop fade show" *ngIf="mostrarModalDetalle"></div>
+
+  <app-registrar-incidencia
+    *ngIf="mostrarModal"
+    (onRegistroExitoso)="registroExitoso()"
+    (onCancelar)="cerrarModal()">
+  </app-registrar-incidencia>
 </div>
-
-<!-- Backdrop -->
-<div class="modal-backdrop fade show" *ngIf="mostrarModalDetalle"></div>
-
-  
-  <p *ngIf="mostrarModal">✅ Modal Activo</p>
-
-</div>
-<app-registrar-incidencia
-*ngIf="mostrarModal"
-(onRegistroExitoso)="registroExitoso()"
-(onCancelar)="cerrarModal()">
-</app-registrar-incidencia>  

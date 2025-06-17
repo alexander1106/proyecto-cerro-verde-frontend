@@ -1,36 +1,60 @@
-<div class="container mt-4">
-  <h2 class="mb-3">Historial de Limpiezas</h2>
-  <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Limpieza</button>
+<div class="container">
+  <app-header></app-header>
 
-  <div *ngIf="loading" class="alert alert-info">Cargando limpiezas...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div class="card p-3">
+    <h4 class="mb-3">Historial de Limpiezas</h4>
 
-  <table *ngIf="!loading && !error" class="table table-bordered table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Fecha y Hora</th>
-        <th>Observaciones</th>
-        <th>Habitación</th>
-        <th>Usuario</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let limpieza of limpiezas">
-        <td>{{ limpieza.id_limpieza }}</td>
-        <td>{{ limpieza.fecha_hora_limpieza }}</td>
-        <td>{{ limpieza.observaciones }}</td>
-        <td>{{ limpieza.habitacion?.numero || 'N/A' }}</td>
-        <td>{{ limpieza.usuario?.nombre || 'N/A' }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <button class="btn btn-primary mb-3" (click)="abrirModal()">
+      Registrar Limpieza
+    </button>
 
-<app-registrar-limpieza
+    <!-- Cargando -->
+    <div *ngIf="loading" class="text-center text-muted">
+      <i class="bi bi-arrow-repeat spinner-border"></i> Cargando limpiezas...
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!loading && limpiezas.length === 0" class="text-muted text-center">
+      <i class="bi bi-inbox fs-1"></i>
+      <p>No hay limpiezas registradas</p>
+    </div>
+
+    <!-- Tabla -->
+    <div *ngIf="!loading && limpiezas.length > 0">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Fecha y Hora</th>
+            <th>Observaciones</th>
+            <th>Habitación</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let limpieza of limpiezas">
+            <td>{{ limpieza.id_limpieza }}</td>
+            <td>{{ limpieza.fecha_hora_limpieza }}</td>
+            <td>{{ limpieza.observaciones }}</td>
+            <td>{{ limpieza.habitacion?.numero || '—' }}</td>
+            <td>{{ limpieza.usuario?.nombre || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de registro -->
+  <app-registrar-limpieza
     *ngIf="mostrarModal"
     (onRegistroExitoso)="registroExitoso()"
     (onCancelar)="cerrarModal()">
   </app-registrar-limpieza>
+
+  <!-- Depuración opcional -->
+  <p *ngIf="mostrarModal">✅ Modal Activo</p>
+</div>
+
+
 
 

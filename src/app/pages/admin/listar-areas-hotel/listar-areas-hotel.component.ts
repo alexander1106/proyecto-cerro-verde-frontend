@@ -7,8 +7,7 @@ import { NgFor, NgIf } from '@angular/common';
   selector: 'app-listar-areas-hotel',
   templateUrl: './listar-areas-hotel.component.html',
   styleUrls: ['./listar-areas-hotel.component.css'],
-  imports: [RegistrarAreaHotelComponent, NgIf, NgFor],
-  standalone: true
+  standalone: false
 })
 export class ListarAreasHotelComponent implements OnInit {
   areasHotel: any[] = [];

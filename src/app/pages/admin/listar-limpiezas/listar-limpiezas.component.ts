@@ -7,8 +7,7 @@ import { NgFor, NgIf } from '@angular/common';
   selector: 'app-listar-limpiezas',
   templateUrl: './listar-limpiezas.component.html',
   styleUrls: ['./listar-limpiezas.component.css'],
-  imports: [RegistrarLimpiezaComponent, NgIf, NgFor],
-  standalone: true
+  standalone: false
 })
 export class ListarLimpiezasComponent implements OnInit {
   limpiezas: any[] = [];

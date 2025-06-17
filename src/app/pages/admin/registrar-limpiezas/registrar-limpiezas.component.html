@@ -1,33 +1,41 @@
-<div class="custom-modal-backdrop">
-  <div class="custom-modal">
-    <div class="modal-header">
-      <h5 class="modal-title">Registrar Limpieza</h5>
-      <button type="button" class="btn-close" (click)="cancelar()"></button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="limpiezaForm">
-        <div class="mb-2">
-          <label>Fecha y Hora</label>
-          <input type="datetime-local" class="form-control" formControlName="fecha_hora_limpieza" />
-        </div>
-        <div class="mb-2">
-          <label>Observaciones</label>
-          <textarea class="form-control" formControlName="observaciones"></textarea>
-        </div>
-        <div class="mb-2">
-          <label>ID Usuario</label>
-          <input type="number" class="form-control" formControlName="id_usuario" />
-        </div>
-        <div class="mb-2">
-          <label>ID Habitación</label>
-          <input type="number" class="form-control" formControlName="id_habitacion" />
-        </div>
-      </form>
-      <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-      <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar Limpieza</h5>
+        <button type="button" class="btn-close" (click)="cancelar()"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="limpiezaForm">
+          <div class="mb-2">
+            <label>Fecha y Hora</label>
+            <input type="datetime-local" class="form-control" formControlName="fecha_hora_limpieza" />
+          </div>
+
+          <div class="mb-2">
+            <label>Observaciones</label>
+            <textarea class="form-control" formControlName="observaciones"></textarea>
+          </div>
+
+          <div class="mb-2">
+            <label>ID Usuario</label>
+            <input type="number" class="form-control" formControlName="idUsuario" />
+          </div>
+
+          <div class="mb-2">
+            <label>ID Habitación</label>
+            <input type="number" class="form-control" formControlName="idHabitacion" />
+          </div>
+        </form>
+
+        <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+      </div>
     </div>
   </div>
 </div>

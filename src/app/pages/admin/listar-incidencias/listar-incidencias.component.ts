@@ -16,6 +16,8 @@ export class ListarIncidenciasComponent implements OnInit {
   incidenciaSeleccionada: any = null;
   mostrarModalDetalle: boolean = false;
 
+  filtroEstado: string = '';
+
   constructor(private mantenimientoService: MantenimientoService) {}
 
   ngOnInit(): void {
@@ -35,6 +37,16 @@ export class ListarIncidenciasComponent implements OnInit {
       }
     });
   }
+
+  get incidenciasFiltradas(): any[] {
+    if (!this.filtroEstado) return this.incidencias;
+    return this.incidencias.filter(i => i.estado_incidencia === this.filtroEstado);
+  }
+
+  limpiarFiltroEstado(): void {
+    this.filtroEstado = '';
+  }
+
   abrirModal(): void {
     this.mostrarModal = true;
   }
@@ -50,28 +62,41 @@ export class ListarIncidenciasComponent implements OnInit {
 
   finalizarIncidencia(incidencia: any): void {
     const fechaHoraActual = new Date();
-    const fechaSolucionStr = fechaHoraActual.toISOString().slice(0, 16).replace('T', ' '); // formato bonito
-  
+    const fechaSolucionStr = fechaHoraActual.toISOString().slice(0, 16).replace('T', ' ');
+
     Swal.fire({
-      title: '¿Estás seguro de finalizar la incidencia?',
-      html: `<p>Se marcará como <strong>resuelta</strong> con fecha:</p>
-             <p><i class="bi bi-calendar-check"></i> ${fechaSolucionStr}</p>`,
+      title: 'Finalizar incidencia',
+      html: `
+        <p>Se marcará como <strong>resuelta</strong> con fecha:</p>
+        <p><i class="bi bi-calendar-check"></i> ${fechaSolucionStr}</p>
+        <textarea id="observacionInput" class="swal2-textarea" placeholder="Observaciones de solución..."></textarea>
+      `,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, finalizar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const input = (document.getElementById('observacionInput') as HTMLTextAreaElement).value;
+        if (!input || input.trim().length < 5) {
+          Swal.showValidationMessage('La observación debe tener al menos 5 caracteres.');
+        }
+        return input;
+      }
     }).then((result) => {
       if (result.isConfirmed) {
+        const observacionesSolucion = result.value;
+
         const incidenciaActualizada = {
           ...incidencia,
           estado_incidencia: 'resuelta',
-          fecha_solucion: new Date().toISOString()  // fecha real en UTC o la que use tu backend
+          fecha_solucion: new Date().toISOString(),
+          observaciones_solucion: observacionesSolucion
         };
-  
+
         this.mantenimientoService.actualizarIncidencia(incidencia.id_incidencia, incidenciaActualizada).subscribe({
           next: () => {
             Swal.fire('¡Listo!', 'La incidencia fue finalizada.', 'success');
-            this.obtenerIncidencias(); // recargar lista
+            this.obtenerIncidencias();
           },
           error: (err) => {
             console.error(err);
@@ -86,7 +111,7 @@ export class ListarIncidenciasComponent implements OnInit {
     this.incidenciaSeleccionada = incidencia;
     this.mostrarModalDetalle = true;
   }
-  
+
   cerrarDetalle(): void {
     this.mostrarModalDetalle = false;
     this.incidenciaSeleccionada = null;
@@ -115,6 +140,5 @@ export class ListarIncidenciasComponent implements OnInit {
       }
     });
   }
-  
-  
 }
+

@@ -1,14 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-registrar-limpieza',
   templateUrl: './registrar-limpiezas.component.html',
   styleUrls: ['./registrar-limpiezas.component.css'],
-  imports: [ReactiveFormsModule, NgIf],
-  standalone: true
+  standalone: false
 })
 export class RegistrarLimpiezaComponent {
   @Output() onRegistroExitoso = new EventEmitter<void>();
@@ -22,8 +20,8 @@ export class RegistrarLimpiezaComponent {
     this.limpiezaForm = this.fb.group({
       fecha_hora_limpieza: ['', Validators.required],
       observaciones: ['', Validators.required],
-      id_usuario: [null, Validators.required],
-      id_habitacion: [null, Validators.required]
+      idUsuario: [null, Validators.required],     // ← cambiados a camelCase
+      idHabitacion: [null, Validators.required]
     });
   }
 
@@ -33,8 +31,12 @@ export class RegistrarLimpiezaComponent {
     const data = {
       fecha_hora_limpieza: this.limpiezaForm.value.fecha_hora_limpieza,
       observaciones: this.limpiezaForm.value.observaciones,
-      usuario: { id_usuario: this.limpiezaForm.value.id_usuario },
-      habitacion: { id_habitacion: this.limpiezaForm.value.id_habitacion }
+      usuario: {
+        idUsuario: this.limpiezaForm.value.idUsuario     // ← importante
+      },
+      habitacion: {
+        idHabitacion: this.limpiezaForm.value.idHabitacion
+      }
     };
 
     this.loading = true;

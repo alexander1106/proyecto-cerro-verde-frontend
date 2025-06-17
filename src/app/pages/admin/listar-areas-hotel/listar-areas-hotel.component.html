@@ -1,33 +1,50 @@
-<div class="container mt-4">
-  <h2 class="mb-3">Áreas del Hotel</h2>
+<div class="container">
+  <app-header></app-header>
+  <div class="card p-3">
+    <h4 class="mb-3">Áreas del Hotel</h4>
 
-  <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Nueva Área</button>
+    <button class="btn btn-primary mb-3" (click)="abrirModal()">
+      Registrar Nueva Área
+    </button>
 
-  <div *ngIf="loading" class="alert alert-info">Cargando áreas...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="loading" class="text-center text-muted">
+      <i class="bi bi-arrow-repeat spinner-border"></i> Cargando áreas...
+    </div>
 
-  <table *ngIf="!loading && !error" class="table table-striped table-bordered">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Estado</th>
-        <th>Sucursal</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let area of areasHotel">
-        <td>{{ area.id_area }}</td>
-        <td>{{ area.nombre }}</td>
-        <td>{{ area.estado === 1 ? 'Activo' : 'Inactivo' }}</td>
-        <td>{{ area.sucursal?.nombre || 'No asignada' }}</td>
-      </tr>
-    </tbody>
-  </table>
+    <div
+      *ngIf="!loading && areasHotel.length === 0"
+      class="text-muted text-center"
+    >
+      <i class="bi bi-inbox fs-1"></i>
+      <p>No hay áreas registradas</p>
+    </div>
+
+    <div *ngIf="!loading && areasHotel.length > 0">
+      <table class="tabla-trabajadores">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let area of areasHotel">
+            <td>{{ area.id_area }}</td>
+            <td>{{ area.nombre }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal registro -->
+  <app-registrar-area-hotel
+    *ngIf="mostrarModal"
+    (onRegistroExitoso)="registroExitoso()"
+    (onCancelar)="cerrarModal()"
+  >
+  </app-registrar-area-hotel>
+
+  <!-- Mensaje debug -->
+  <p *ngIf="mostrarModal">✅ Modal Activo</p>
 </div>
-
-<app-registrar-area-hotel
-  *ngIf="mostrarModal"
-  (onRegistroExitoso)="registroExitoso()"
-  (onCancelar)="cerrarModal()">
-</app-registrar-area-hotel>

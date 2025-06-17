@@ -99,6 +99,9 @@ import { ReportesVentasService } from './service/reportes-ventas.service';
 import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
 import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
 import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
+import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
+import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
 
 @NgModule({
   declarations: [
@@ -160,7 +163,11 @@ import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoin
     RegistrarIncidenciaComponent,
     ListarIncidenciasComponent,
     ListarTipoIncidenciaComponent,
-    RegistrarTipoIncidenciaComponent
+    RegistrarTipoIncidenciaComponent,
+    ListarAreasHotelComponent,
+    RegistrarAreaHotelComponent,
+    ListarLimpiezasComponent,
+    RegistrarLimpiezaComponent
   ],
   imports: [
     BrowserModule,
