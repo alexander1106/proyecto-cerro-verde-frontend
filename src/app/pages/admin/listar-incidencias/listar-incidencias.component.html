@@ -63,6 +63,7 @@
             <td>
               <span *ngIf="incidencia.habitacion">Habitación {{ incidencia.habitacion.numero }}</span>
               <span *ngIf="!incidencia.habitacion && incidencia.area">Área {{ incidencia.area.nombre }}</span>
+              <span *ngIf="!incidencia.habitacion && !incidencia.area && incidencia.salon">Salón {{ incidencia.salon.nombre }}</span>
               <span *ngIf="!incidencia.habitacion && !incidencia.area">—</span>
             </td>
             <td>{{ incidencia.tipoIncidencia?.nombre || '—' }}</td>

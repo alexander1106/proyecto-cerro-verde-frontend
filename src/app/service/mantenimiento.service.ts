@@ -66,7 +66,7 @@ export class MantenimientoService {
   }
 
   actualizarLimpieza(id: number, data: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/limpiezas/actualizar/${id}`, data);
+    return this.http.put(`${this.baseUrl}/limpiezas/actualizar/${id}`, data);
   }
 
   eliminarLimpieza(id: number): Observable<any> {

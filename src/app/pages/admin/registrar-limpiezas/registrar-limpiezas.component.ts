@@ -29,7 +29,7 @@ export class RegistrarLimpiezaComponent implements OnInit {
     private salonesService: SalonesService
   ) {
     this.limpiezaForm = this.fb.group({
-      fecha_hora_limpieza: [this.getCurrentDateTime(), Validators.required],
+      fecha_limpieza: [this.getCurrentDateTime(), Validators.required],
       observaciones: [''],
       id_personal_limpieza: [null, Validators.required],
       id_habitacion: [null],
@@ -77,8 +77,10 @@ export class RegistrarLimpiezaComponent implements OnInit {
     if (this.limpiezaForm.invalid) return;
 
     const data = {
-      fecha_hora_limpieza: this.limpiezaForm.value.fecha_hora_limpieza,
+      fecha_registro: this.limpiezaForm.value.fecha_limpieza, // CORREGIDO
+      fecha_solucion: null, // siempre null al crear
       observaciones: this.limpiezaForm.value.observaciones,
+      estado_limpieza: 'Pendiente',
       personal: { id_personal_limpieza: this.limpiezaForm.value.id_personal_limpieza },
       habitacion: this.limpiezaForm.value.id_habitacion ? { id_habitacion: this.limpiezaForm.value.id_habitacion } : null,
       salon: this.limpiezaForm.value.id_salon ? { id_salon: this.limpiezaForm.value.id_salon } : null
