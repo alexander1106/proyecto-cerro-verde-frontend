@@ -100,8 +100,10 @@ import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel
 import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
 import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
 import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
-import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
+import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
+import { RegistrarPersonalLimpiezaComponent } from './pages/admin/registrar-personal-limpieza/registrar-personal-limpieza.component';
 
 @NgModule({
   declarations: [
@@ -166,8 +168,10 @@ import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/re
     RegistrarTipoIncidenciaComponent,
     ListarAreasHotelComponent,
     RegistrarAreaHotelComponent,
-    ListarLimpiezasComponent,
-    RegistrarLimpiezaComponent
+    ListarLimpiezaComponent,
+    RegistrarLimpiezaComponent,
+    ListarPersonalLimpiezaComponent,
+    RegistrarPersonalLimpiezaComponent
   ],
   imports: [
     BrowserModule,

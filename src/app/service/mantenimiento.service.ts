@@ -93,4 +93,25 @@ export class MantenimientoService {
   eliminarTipoIncidencia(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/tipoincidencia/eliminar/${id}`);
   }
+
+    // ---------- Personal Limpieza ----------
+    getPersonalLimpieza(): Observable<any> {
+      return this.http.get(`${this.baseUrl}/personallimpieza/ver`);
+    }
+  
+    getPersonalLimpiezaById(id: number): Observable<any> {
+      return this.http.get(`${this.baseUrl}/personallimpieza/personallimpieza/${id}`);
+    }
+  
+    registrarPersonalLimpieza(data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/personallimpieza/registrar`, data);
+    }
+  
+    actualizarPersonalLimpieza(id: number, data: any): Observable<any> {
+      return this.http.get(`${this.baseUrl}/personallimpieza/actualizar/${id}`, data);
+    }
+  
+    eliminarPersonalLimpieza(id: number): Observable<any> {
+      return this.http.get(`${this.baseUrl}/personallimpieza/eliminar/${id}`);
+    }
 }

@@ -1,60 +1,59 @@
 <div class="container">
   <app-header></app-header>
-
   <div class="card p-3">
-    <h4 class="mb-3">Historial de Limpiezas</h4>
+    <h4 class="mb-3">Listado de Limpiezas</h4>
 
     <button class="btn btn-primary mb-3" (click)="abrirModal()">
-      Registrar Limpieza
+      Registrar Nueva Limpieza
     </button>
 
-    <!-- Cargando -->
     <div *ngIf="loading" class="text-center text-muted">
       <i class="bi bi-arrow-repeat spinner-border"></i> Cargando limpiezas...
     </div>
 
-    <!-- Sin resultados -->
     <div *ngIf="!loading && limpiezas.length === 0" class="text-muted text-center">
       <i class="bi bi-inbox fs-1"></i>
       <p>No hay limpiezas registradas</p>
     </div>
 
-    <!-- Tabla -->
     <div *ngIf="!loading && limpiezas.length > 0">
-      <table class="table table-bordered table-striped">
-        <thead class="table-dark">
+      <table class="tabla-trabajadores">
+        <thead class="table-light">
           <tr>
             <th>ID</th>
-            <th>Fecha y Hora</th>
-            <th>Observaciones</th>
+            <th>Fecha / Hora</th>
+            <th>Personal</th>
             <th>Habitación</th>
-            <th>Usuario</th>
+            <th>Salón</th>
+            <th>Observaciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let limpieza of limpiezas">
             <td>{{ limpieza.id_limpieza }}</td>
             <td>{{ limpieza.fecha_hora_limpieza }}</td>
+            <td>{{ limpieza.personal?.nombres }}</td>
+            <td>
+              {{ limpieza.habitacion ? 'Hab. ' + limpieza.habitacion.numero + ' - Piso ' + limpieza.habitacion.piso : '-' }}
+            </td>
+            <td>
+              {{ limpieza.salon ? limpieza.salon.nombre : '-' }}
+            </td>
             <td>{{ limpieza.observaciones }}</td>
-            <td>{{ limpieza.habitacion?.numero || '—' }}</td>
-            <td>{{ limpieza.usuario?.nombre || '—' }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Modal de registro -->
+  <!-- Modal registro -->
   <app-registrar-limpieza
     *ngIf="mostrarModal"
     (onRegistroExitoso)="registroExitoso()"
-    (onCancelar)="cerrarModal()">
+    (onCancelar)="cerrarModal()"
+  >
   </app-registrar-limpieza>
 
-  <!-- Depuración opcional -->
+  <!-- Mensaje debug -->
   <p *ngIf="mostrarModal">✅ Modal Activo</p>
 </div>
-
-
-
-

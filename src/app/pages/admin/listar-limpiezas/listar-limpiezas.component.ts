@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
-import { RegistrarLimpiezaComponent } from '../registrar-limpiezas/registrar-limpiezas.component';
-import { NgFor, NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-listar-limpiezas',
+  selector: 'app-listar-limpieza',
   templateUrl: './listar-limpiezas.component.html',
   styleUrls: ['./listar-limpiezas.component.css'],
   standalone: false
 })
-export class ListarLimpiezasComponent implements OnInit {
+export class ListarLimpiezaComponent implements OnInit {
   limpiezas: any[] = [];
   loading = true;
   error = '';
@@ -28,12 +26,13 @@ export class ListarLimpiezasComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Error al cargar las limpiezas.';
+        this.error = 'Error al cargar las limpiezas';
         console.error(err);
         this.loading = false;
       }
     });
   }
+
   abrirModal(): void {
     this.mostrarModal = true;
   }
@@ -47,4 +46,3 @@ export class ListarLimpiezasComponent implements OnInit {
     this.obtenerLimpiezas();
   }
 }
-

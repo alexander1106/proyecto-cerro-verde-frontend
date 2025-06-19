@@ -56,8 +56,9 @@ import { ReportesComprasComponent } from './pages/admin/reportes/reportes-compra
 import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
 import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
-import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
+import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
+import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 
 const routes: Routes = [
   {
@@ -343,13 +344,16 @@ const routes: Routes = [
         path: 'areas-del-hotel', component: ListarAreasHotelComponent
       },
       {
-        path: 'limpieza', component: ListarLimpiezasComponent
+        path: 'limpieza', component: ListarLimpiezaComponent
       },
       {
         path: 'incidencias', component: ListarIncidenciasComponent
       },
       {
         path: 'tipo-de-incidencia', component: ListarTipoIncidenciaComponent
+      },
+      {
+        path: 'personal-limpieza', component: ListarPersonalLimpiezaComponent
       }
     ],
   },
