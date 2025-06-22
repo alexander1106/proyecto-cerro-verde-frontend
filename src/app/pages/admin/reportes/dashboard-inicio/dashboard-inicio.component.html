@@ -1,0 +1,63 @@
+<!-- src/app/modules/dashboard-inicio/dashboard-inicio.component.html -->
+
+<app-header></app-header>
+
+<!-- Mostrar dashboard cuando los datos estén listos -->
+<div *ngIf="kpis" class="dashboard-grid">
+
+  <!-- KPIs -->
+  <mat-card class="kpi-card">
+  <mat-card-title>Ingresos Hoy</mat-card-title>
+  <mat-card-content class="kpi-value">
+    {{ kpis.ingresosHoy | currency:'S/ ':'symbol':'1.2-2' }}
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="kpi-card">
+  <mat-card-title>Egresos Hoy</mat-card-title>
+  <mat-card-content class="kpi-value">
+    {{ kpis.egresosHoy | currency:'S/ ':'symbol':'1.2-2' }}
+  </mat-card-content>
+</mat-card>
+
+
+  <!-- Reservas de Habitaciones por Mes -->
+  <mat-card class="chart-card">
+    <mat-card-title>Habitaciones Reservadas por Mes</mat-card-title>
+    <div class="chart-container">
+      <canvas baseChart
+              [data]="habChartData"
+              [options]="chartOptions"
+              chartType="bar">
+      </canvas>
+    </div>
+  </mat-card>
+
+  <!-- Reservas de Salones por Mes -->
+  <mat-card class="chart-card">
+    <mat-card-title>Salones Reservados por Mes</mat-card-title>
+    <div class="chart-container">
+      <canvas baseChart
+              [data]="salonChartData"
+              [options]="chartOptions"
+              chartType="bar">
+      </canvas>
+    </div>
+  </mat-card>
+
+  <!-- Top 5 Productos Más Vendidos -->
+  <mat-card class="list-card span-2">
+  <mat-card-title>Top 5 Productos Más Vendidos</mat-card-title>
+  <mat-list>
+    <mat-list-item *ngFor="let p of topProductos">
+      {{ p.producto }}<span class="spacer"></span>{{ p.cantidad }}
+    </mat-list-item>
+  </mat-list>
+</mat-card>
+
+</div>
+
+<!-- Mensaje de carga mientras llegan los datos -->
+<div *ngIf="!kpis" class="loading-container">
+  <p>Cargando datos...</p>
+</div>

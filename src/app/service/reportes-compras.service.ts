@@ -1,8 +1,6 @@
-// src/app/service/reportes-compras.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface ProductoReporte {
   productoNombre: string;
@@ -14,6 +12,7 @@ export interface ProveedorReporte {
   proveedorNombre: string;
   cantidadFacturas: number;
   totalGastado: number;
+  productosComprados?: string; // Si deseas mostrar la lista de productos
 }
 
 @Injectable({
@@ -25,73 +24,93 @@ export class ReportesComprasService {
 
   constructor(private http: HttpClient) { }
 
-
-  getProductosMasComprados(desde: string, hasta: string): Observable<ProductoReporte[]> {
-    const params = new HttpParams()
+  /**
+   * Productos más comprados con filtro de stock opcional
+   */
+  getProductosMasComprados(
+    desde: string,
+    hasta: string,
+    stockFilter: string | null
+  ): Observable<ProductoReporte[]> {
+    let params = new HttpParams()
       .set('desde', desde)
       .set('hasta', hasta);
-
+    if (stockFilter) {
+      params = params.set('stockFilter', stockFilter);
+    }
     return this.http.get<ProductoReporte[]>(`${this.baseUrl}/productos`, { params });
   }
 
   /**
-   * Llama a GET /cerro-verde/reportes/proveedores?desde=...&hasta=...
-   * Devuelve un arreglo de ProveedorReporte en JSON
+   * Proveedores más comprados
    */
-  getProveedoresMasComprados(desde: string, hasta: string): Observable<ProveedorReporte[]> {
+  getProveedoresMasComprados(
+    desde: string,
+    hasta: string
+  ): Observable<ProveedorReporte[]> {
     const params = new HttpParams()
       .set('desde', desde)
       .set('hasta', hasta);
-
     return this.http.get<ProveedorReporte[]>(`${this.baseUrl}/proveedores`, { params });
   }
 
-  getProductosPdf(desde: string, hasta: string): Observable<Blob> {
-    const params = new HttpParams()
+  /**
+   * Descargar PDF Productos
+   */
+  getProductosPdf(
+    desde: string,
+    hasta: string,
+    stockFilter: string | null
+  ): Observable<Blob> {
+    let params = new HttpParams()
       .set('desde', desde)
       .set('hasta', hasta);
-
-    return this.http.get(`${this.baseUrl}/productos/pdf`, {
-      params,
-      responseType: 'blob' // Muy importante para recibir binario
-    });
-  }
-
-
-  getProductosExcel(desde: string, hasta: string): Observable<Blob> {
-    const params = new HttpParams()
-      .set('desde', desde)
-      .set('hasta', hasta);
-
-    return this.http.get(`${this.baseUrl}/productos/excel`, {
-      params,
-      responseType: 'blob'
-    });
-  }
-
-  getProveedoresPdf(desde: string, hasta: string): Observable<Blob> {
-    const params = new HttpParams()
-      .set('desde', desde)
-      .set('hasta', hasta);
-
-    return this.http.get(`${this.baseUrl}/proveedores/pdf`, {
-      params,
-      responseType: 'blob'
-    });
+    if (stockFilter) {
+      params = params.set('stockFilter', stockFilter);
+    }
+    return this.http.get(`${this.baseUrl}/productos/pdf`, { params, responseType: 'blob' });
   }
 
   /**
-   * Llama a GET /cerro-verde/reportes/proveedores/excel?desde=...&hasta=...
-   * Devuelve un Observable<Blob> con el Excel (.xlsx) de Proveedores
+   * Descargar Excel Productos
    */
-  getProveedoresExcel(desde: string, hasta: string): Observable<Blob> {
+  getProductosExcel(
+    desde: string,
+    hasta: string,
+    stockFilter: string | null
+  ): Observable<Blob> {
+    let params = new HttpParams()
+      .set('desde', desde)
+      .set('hasta', hasta);
+    if (stockFilter) {
+      params = params.set('stockFilter', stockFilter);
+    }
+    return this.http.get(`${this.baseUrl}/productos/excel`, { params, responseType: 'blob' });
+  }
+
+  /**
+   * Descargar PDF Proveedores
+   */
+  getProveedoresPdf(
+    desde: string,
+    hasta: string
+  ): Observable<Blob> {
     const params = new HttpParams()
       .set('desde', desde)
       .set('hasta', hasta);
+    return this.http.get(`${this.baseUrl}/proveedores/pdf`, { params, responseType: 'blob' });
+  }
 
-    return this.http.get(`${this.baseUrl}/proveedores/excel`, {
-      params,
-      responseType: 'blob'
-    });
+  /**
+   * Descargar Excel Proveedores
+   */
+  getProveedoresExcel(
+    desde: string,
+    hasta: string
+  ): Observable<Blob> {
+    const params = new HttpParams()
+      .set('desde', desde)
+      .set('hasta', hasta);
+    return this.http.get(`${this.baseUrl}/proveedores/excel`, { params, responseType: 'blob' });
   }
 }

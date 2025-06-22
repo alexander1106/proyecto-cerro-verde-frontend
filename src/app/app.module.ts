@@ -95,6 +95,9 @@ import { NgChartsModule } from 'ng2-charts';
 import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { ReportesVentasService } from './service/reportes-ventas.service';
 import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
+import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
+import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
+
 
 @NgModule({
   declarations: [
@@ -130,6 +133,7 @@ import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel
     ListCompraComponent,
     AdminCajasComponent,
     ArqueoCajaComponent,
+    CajaReporteComponent,
     HabitacionesFormComponent,
     HabitacionesListComponent,
     TipoHabitacionListComponent,
@@ -153,7 +157,10 @@ import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel
     ChecksListComponent,
     ReportesComprasComponent,
     ConsultaVentasComponent,
+    CajaReporteComponent,
+    DashboardInicioComponent,
   ],
+
   imports: [
     BrowserModule,
     MatTableModule,
