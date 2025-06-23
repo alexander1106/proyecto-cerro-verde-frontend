@@ -295,7 +295,9 @@
 }
 
 
-.badge {
+.completada{
+  background-color: #4caf50;
+  color: white;
   padding: 6px 10px;
   border-radius: 20px;
   font-size: 14px;
@@ -303,29 +305,44 @@
   text-transform: capitalize;
 }
 
-.badge-disponible {
-  background-color: #4caf50;
+.check-in{
+  background-color: #04b7db;
   color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
-.badge-ocupado {
-  background-color: #b22016;
+.pagada{
+  background-color: #db3a04;
   color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
-.badge-reservado {
-  background-color: #e53935;
+.cancelada{
+  background-color: #0a0200;
   color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
-.badge-mantenimiento {
-  background-color: #ff9800;
+.pendiente{
+  background-color: #ea9b07;
   color: white;
-}
-
-.badge-limpieza {
-  background-color: #2196f3;
-  color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 
@@ -355,3 +372,12 @@
     font-weight: 500;
     text-transform: capitalize;
 }
+
+.tabla-trabajadores td.cliente,
+.tabla-trabajadores th.cliente {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

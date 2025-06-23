@@ -5,8 +5,7 @@ import { Observable } from 'rxjs';
 export interface TipoHabitacion {
   id_tipo_habitacion?: number;
   nombre: string;
-  precio_publico: number;
-  precio_corporativo: number;
+  precio: number;
   estado: number;
 }
 

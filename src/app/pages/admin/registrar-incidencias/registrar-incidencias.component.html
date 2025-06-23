@@ -1,50 +1,52 @@
-<div class="custom-modal-backdrop">
-  <div class="custom-modal">
-    <div class="modal-header">
-      <h5 class="modal-title">Registrar Nueva Incidencia</h5>
-      <button type="button" class="btn-close" (click)="cancelar()"></button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="incidenciaForm">
-        <div class="mb-2">
-          <label>Fecha Registro</label>
-          <input type="date" class="form-control" formControlName="fecha_registro" />
-        </div>
-        <div class="mb-2">
-          <label>Fecha Solución</label>
-          <input type="date" class="form-control" formControlName="fecha_solucion" />
-        </div>
-        <div class="mb-2">
-          <label>Estado de Incidencia</label>
-          <input type="text" class="form-control" formControlName="estado_incidencia" />
-        </div>
-        <div class="mb-2">
-          <label>Descripción</label>
-          <textarea class="form-control" formControlName="descripcion"></textarea>
-        </div>
-        <div class="mb-2">
-          <label>ID Habitación</label>
-          <input type="number" class="form-control" formControlName="id_habitacion" />
-        </div>
-        <div class="mb-2">
-          <label>ID Tipo Incidencia</label>
-          <input type="number" class="form-control" formControlName="id_tipo_incidencia" />
-        </div>
-        <div class="mb-2">
-          <label>ID Usuario</label>
-          <input type="number" class="form-control" formControlName="id_usuario" />
-        </div>
-        <div class="mb-2">
-          <label>ID Área</label>
-          <input type="number" class="form-control" formControlName="id_area" />
-        </div>
-      </form>
-      <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-      <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+<<!--div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar Nueva Incidencia</h5>
+        <button type="button" class="btn-close" (click)="cancelar()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="incidenciaForm">
+          <div class="mb-2">
+            <label>Fecha y Hora de Registro</label>
+            <input type="datetime-local" class="form-control" formControlName="fecha_registro" readonly />
+          </div>
+          <div class="mb-2">
+            <label>Tipo Incidencia</label>
+            <select class="form-control" formControlName="id_tipo_incidencia">
+              <option [ngValue]="null">Seleccione un tipo</option>
+              <option *ngFor="let t of tiposIncidencia" [value]="t.id_tipo_incidencia">{{ t.nombre }}</option>
+            </select>
+          </div>          
+          <div class="mb-2">
+            <label>Descripción</label>
+            <textarea class="form-control" formControlName="descripcion"></textarea>
+          </div>
+          <div class="mb-2">
+            <label>Habitación</label>
+            <select class="form-control" formControlName="id_habitacion">
+              <option [ngValue]="null">Seleccione una habitación</option>
+              <option *ngFor="let h of habitaciones" [value]="h.id_habitacion">
+                Habitación {{ h.numero }} - Piso {{ h.piso.numero }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label>Área</label>
+            <select class="form-control" formControlName="id_area">
+              <option [ngValue]="null">Seleccione un área</option>
+              <option *ngFor="let a of areas" [value]="a.id_area">
+                {{ a.nombre }}
+              </option>
+            </select>
+          </div>
+        </form>
+        <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+      </div>
     </div>
   </div>
-</div>
-
+</div>-->

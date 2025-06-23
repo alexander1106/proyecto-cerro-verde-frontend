@@ -97,7 +97,12 @@ import { ReportesVentasService } from './service/reportes-ventas.service';
 import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
 import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
 import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
-
+import { PisosFormComponent } from './pages/admin/recepcion/habitaciones/pisos-form/pisos-form.component';
+import { PisosListComponent } from './pages/admin/recepcion/habitaciones/pisos-list/pisos-list.component';
+import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
+import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
+import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
 
 @NgModule({
   declarations: [
@@ -157,6 +162,12 @@ import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inici
     ChecksListComponent,
     ReportesComprasComponent,
     ConsultaVentasComponent,
+    RegistrarIncidenciaComponent,
+    ListarIncidenciasComponent,
+    ListarTipoIncidenciaComponent,
+    RegistrarTipoIncidenciaComponent,
+    PisosFormComponent,
+    PisosListComponent,
     CajaReporteComponent,
     DashboardInicioComponent,
   ],

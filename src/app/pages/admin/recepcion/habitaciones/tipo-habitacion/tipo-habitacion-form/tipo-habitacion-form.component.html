@@ -25,30 +25,18 @@
       </div>
 
       <div class="form-group">
-        <label for="precio_publico">Precio Público</label>
+        <label for="precio">Precio</label>
         <div class="input-group">
           <span class="input-group-text">S/.</span>
-          <input type="number" id="precio_publico" formControlName="precio_publico" class="form-control"
-                [ngClass]="{'is-invalid': submitted && f['precio_publico'].errors}" step="0.01">
+          <input type="number" id="precio" formControlName="precio" class="form-control"
+                [ngClass]="{'is-invalid': submitted && f['precio'].errors}" step="0.01">
         </div>
-        <div *ngIf="submitted && f['precio_publico'].errors" class="invalid-feedback">
-          <div *ngIf="f['precio_publico'].errors['required']">Precio público es requerido</div>
-          <div *ngIf="f['precio_publico'].errors['min']">Precio debe ser mayor a 0</div>
+        <div *ngIf="submitted && f['precio'].errors" class="invalid-feedback">
+          <div *ngIf="f['precio'].errors['required']">Precio público es requerido</div>
+          <div *ngIf="f['precio'].errors['min']">Precio debe ser mayor a 0</div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="precio_corporativo">Precio Corporativo</label>
-        <div class="input-group">
-          <span class="input-group-text">S/.</span>
-          <input type="number" id="precio_corporativo" formControlName="precio_corporativo" class="form-control"
-                [ngClass]="{'is-invalid': submitted && f['precio_corporativo'].errors}" step="0.01">
-        </div>
-        <div *ngIf="submitted && f['precio_corporativo'].errors" class="invalid-feedback">
-          <div *ngIf="f['precio_corporativo'].errors['required']">Precio corporativo es requerido</div>
-          <div *ngIf="f['precio_corporativo'].errors['min']">Precio debe ser mayor a 0</div>
-        </div>
-      </div>
 
       <div class="form-actions">
         <button type="submit" class="btn btn-success">

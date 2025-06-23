@@ -7,8 +7,7 @@ import { NgFor, NgIf } from '@angular/common';
   selector: 'app-listar-incidencias',
   templateUrl: './listar-incidencias.component.html',
   styleUrls: ['./listar-incidencias.component.css'],
-  imports: [RegistrarIncidenciaComponent, NgIf, NgFor],
-  standalone: true
+  standalone: false
 })
 export class ListarIncidenciasComponent implements OnInit {
   incidencias: any[] = [];

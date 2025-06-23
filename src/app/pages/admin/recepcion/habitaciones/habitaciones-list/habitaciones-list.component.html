@@ -34,33 +34,33 @@
             <th>#</th>
             <th>Piso</th>
             <th>Número hab.</th>
-            <th>Estado</th>
             <th>Tipo</th>
-            <th>Precio Público</th>
-            <th>Precio Corporativo</th>
+            <th>Precio</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let habitacion of habitacionesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ habitacion.piso }}</td>
+            <td>{{ habitacion.piso.numero }}</td>
             <td>{{ habitacion.numero }}</td>
+            <td>
+              <span [ngClass]="{
+                'doble': habitacion.tipo_habitacion.id_tipo_habitacion === 1,
+                'simple': habitacion.tipo_habitacion.id_tipo_habitacion === 2,
+                'triple': habitacion.tipo_habitacion.id_tipo_habitacion === 3,
+                'matrimonial': habitacion.tipo_habitacion.id_tipo_habitacion === 4,
+              }">
+              {{ habitacion.tipo_habitacion.nombre }}
+              </span>
+            </td>
+            <td>S/. {{ habitacion.tipo_habitacion.precio }}</td>
             <td>
               <span class="badge" [ngClass]="'badge-' + habitacion.estado_habitacion.toLowerCase()">
                 {{ habitacion.estado_habitacion }}
               </span>
             </td>
-            <td>
-              <span [ngClass]="{
-                'doble': habitacion.tipo_habitacion.nombre === 'Doble',
-                'simple': habitacion.tipo_habitacion.nombre === 'Simple'
-              }">
-              {{ habitacion.tipo_habitacion.nombre }}
-              </span>
-            </td>
-            <td>S/. {{ habitacion.tipo_habitacion.precio_publico }}</td>
-            <td>S/. {{ habitacion.tipo_habitacion.precio_corporativo }}</td>
             <td class="acciones">
               <button class="btn-accion editar">
                 <a [routerLink]="['/admin/recepcion/habitaciones/editar', habitacion.id_habitacion]">

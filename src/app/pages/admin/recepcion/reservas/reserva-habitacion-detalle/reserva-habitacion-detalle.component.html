@@ -13,7 +13,7 @@
         <ul>
           <li *ngFor="let hr of r.habitacionesXReserva">
             Habitación #{{ hr.habitacion.numero }} - Tipo: {{ hr.habitacion.tipo_habitacion.nombre }}
-            (Piso: {{ hr.habitacion.piso }})
+            (Piso: {{ hr.habitacion.piso.numero }})
           </li>
         </ul>
       </div>

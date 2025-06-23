@@ -7,8 +7,7 @@ import { NgIf } from '@angular/common';
   selector: 'app-registrar-incidencia',
   templateUrl: './registrar-incidencias.component.html',
   styleUrls: ['./registrar-incidencias.component.css'],
-  imports: [ReactiveFormsModule, NgIf],
-  standalone: true
+  standalone: false,
 })
 export class RegistrarIncidenciaComponent {
   @Output() onRegistroExitoso = new EventEmitter<void>();
