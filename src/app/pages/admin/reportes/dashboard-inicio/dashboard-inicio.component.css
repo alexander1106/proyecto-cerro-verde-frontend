@@ -72,21 +72,29 @@
   color: #333;
 }
 
-/* Lista de productos alineada y estilizada */
 .list-card mat-list {
-  width: 100%;
-}
-
-.list-card mat-list-item {
   display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  align-items: center; 
 }
 
-.list-card mat-list-item:last-child {
-  border-bottom: none;
+/* Centrar texto dentro de cada ítem */
+.list-card mat-list-item {
+  justify-content: center; 
+  text-align: center;      
 }
+
+/* Asegura que el span de producto y de cantidad no se estiren */
+.list-card mat-list-item .producto,
+.list-card mat-list-item .cantidad {
+  flex: none; 
+}
+
+/* Opcional: un poco de separación vertical más generosa */
+.list-card mat-list-item {
+  padding: 0.75rem 0;
+}
+
 
 /* Responsive: una sola columna en pantallas pequeñas */
 @media (max-width: 768px) {

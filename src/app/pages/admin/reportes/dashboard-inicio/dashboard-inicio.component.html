@@ -50,7 +50,8 @@
   <mat-card-title>Top 5 Productos Más Vendidos</mat-card-title>
   <mat-list>
     <mat-list-item *ngFor="let p of topProductos">
-      {{ p.producto }}<span class="spacer"></span>{{ p.cantidad }}
+      <span class="producto">{{ p.producto }}</span>
+      <span class="cantidad">({{ p.cantidad }})</span>
     </mat-list-item>
   </mat-list>
 </mat-card>
