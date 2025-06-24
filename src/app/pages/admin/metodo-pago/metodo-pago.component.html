@@ -47,6 +47,11 @@
                         </button>
                     </td>
                 </tr>
+                <tr *ngIf="metodosFiltrados.length === 0">
+                    <td colspan="7" class="text-center text-muted">
+                        No hay métodos de pago que coincidan con el filtro.
+                    </td>
+                </tr>
             </tbody>
         </table>
 

@@ -4,14 +4,9 @@ import { ProductosService } from '../../../service/productos.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2';
-import { ClientesService } from '../../../service/clientes.service';
 import { CajaService } from '../../../service/caja.service';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReservasService } from '../../../service/reserva.service';
-import { HttpHeaders } from '@angular/common/http';
-import { ProveedoresService } from '../../../service/proveedores.service';
-import { HabitacionesService } from '../../../service/habitaciones.service';
-import { SalonesService } from '../../../service/salones.service';
 import { MetodoPagoService } from '../../../service/metodo-pago.service';
 import { ComprobantePagoService } from '../../../service/comprobante-pago.service';
 
