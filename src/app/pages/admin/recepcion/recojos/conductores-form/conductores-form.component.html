@@ -18,6 +18,7 @@
         <input
           type="text"
           id="dni"
+          placeholder="Buscar DNI..."
           formControlName="dni"
           class="form-control"
           [ngClass]="{ 'is-invalid': submitted && f['dni'].errors }"
@@ -52,11 +53,28 @@
     </div>
 
     <div class="mb-3">
+      <label for="telefono" class="form-label">Teléfono</label>
+      <input
+        type="text"
+        id="telefono"
+        formControlName="telefono"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['telefono'].errors }"
+      />
+      <div *ngIf="submitted && f['telefono'].errors" class="invalid-feedback d-block">
+        <div *ngIf="f['telefono'].errors['required']">Teléfono es requerido</div>
+        <div *ngIf="f['telefono'].errors['pattern']">Teléfono inválido (solo 9 caracteres)</div>
+      </div>
+    </div>
+    
+
+    <div class="mb-3">
       <label for="placa" class="form-label">Placa</label>
       <div class="d-flex gap-2">
         <input
           type="text"
           id="placa"
+          placeholder="Buscar placa..."
           formControlName="placa"
           class="form-control"
           [ngClass]="{ 'is-invalid': submitted && f['placa'].errors }"

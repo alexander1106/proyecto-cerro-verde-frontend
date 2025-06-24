@@ -134,9 +134,9 @@
                         <tr *ngFor="let h of ventaSeleccionada.ventaHabitacion">
                             <td>{{ h.habitacion?.numero }}</td>
                             <td>{{ h.habitacion?.tipo_habitacion.nombre }}</td>
-                            <td>Piso {{ h.habitacion?.piso }}</td>
+                            <td>Piso {{ h.habitacion?.piso.numero }}</td>
                             <td>{{ h.dias }}</td>
-                            <td>S/. {{ h.habitacion?.tipo_habitacion.precio_publico }}</td>
+                            <td>S/. {{ h.habitacion?.tipo_habitacion.precio }}</td>
                             <td>S/. {{ h.subTotal }}</td>
                         </tr>
                     </tbody>
@@ -315,7 +315,7 @@
                     <!-- Piso -->
                     <ng-container matColumnDef="piso">
                         <th mat-header-cell *matHeaderCellDef>Piso</th>
-                        <td mat-cell *matCellDef="let element">Piso {{ element.habitacion.piso }}</td>
+                        <td mat-cell *matCellDef="let element">Piso {{ element.habitacion.piso.numero }}</td>
                     </ng-container>
 
                     <!-- Días -->
@@ -327,7 +327,7 @@
                     <!-- Precio -->
                     <ng-container matColumnDef="precio">
                         <th mat-header-cell *matHeaderCellDef>Precio</th>
-                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio_publico
+                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio
                             }}</td>
                     </ng-container>
 
@@ -335,7 +335,7 @@
                     <ng-container matColumnDef="subtotal">
                         <th mat-header-cell *matHeaderCellDef>Sub Total</th>
                         <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
-                            element.habitacion.tipo_habitacion?.precio_publico * element.dias }}</td>
+                            element.habitacion.tipo_habitacion?.precio * element.dias }}</td>
                     </ng-container>
 
                     <!-- Encabezados y filas -->

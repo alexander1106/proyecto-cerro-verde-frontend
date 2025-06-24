@@ -174,7 +174,7 @@ export class VentasComponent {
         tipo_habitacion: {
           id_tipo_habitacion: any;
           nombre: any;
-          precio_publico: any;
+          precio: any;
           precio_corporativo: any;
           estado: 1;
         };
@@ -885,7 +885,7 @@ export class VentasComponent {
             idVentaHabitacion: '',
             dias: dias,
             subTotal:
-              (habitacion.habitacion.tipo_habitacion?.precio_publico || 0) * dias,
+              (habitacion.habitacion.tipo_habitacion?.precio || 0) * dias,
             habitacion: habitacion.habitacion,
           });
           this.actualizarTotales();

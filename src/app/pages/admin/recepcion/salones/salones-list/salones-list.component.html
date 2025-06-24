@@ -33,9 +33,10 @@
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Estado</th>
+            <th>Capacidad</th>
             <th>Precio Hora</th>
             <th>Precio Diario</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -43,13 +44,14 @@
           <tr *ngFor="let salon of salonesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ salon.nombre }}</td>
+            <td>{{ salon.capacidad }}</td>
+            <td>S/. {{ salon.precio_hora }}</td>
+            <td>S/. {{ salon.precio_diario }}</td>
             <td>
               <span class="badge" [ngClass]="'badge-' + salon.estado_salon.toLowerCase()">
                 {{ salon.estado_salon }}
               </span>
             </td>
-            <td>S/. {{ salon.precio_hora }}</td>
-            <td>S/. {{ salon.precio_diario }}</td>
             <td class="acciones">
               <button class="btn-accion editar">
                 <a [routerLink]="['/admin/recepcion/salones/editar', salon.id_salon]">

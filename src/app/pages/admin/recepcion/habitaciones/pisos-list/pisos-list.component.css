@@ -30,7 +30,7 @@
 }
 
 .mover{
-  width: 34vw !important;
+  width: 31vw !important;
   float: right;
   display: flex;
   }
@@ -354,14 +354,4 @@
     font-size: 14px;
     font-weight: 500;
     text-transform: capitalize;
-}
-
-.triple{
-  background-color: #4da9d3;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: capitalize;
 }

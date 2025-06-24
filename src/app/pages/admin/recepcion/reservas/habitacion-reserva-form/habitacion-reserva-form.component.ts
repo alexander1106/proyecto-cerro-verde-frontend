@@ -6,6 +6,7 @@ import { HabitacionesService, Habitacion, HabitacionReserva } from '../../../../
 import { ClientesService, Cliente } from '../../../../../service/clientes.service';
 import Swal from 'sweetalert2';
 import { forkJoin } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-habitacion-reserva-form',
@@ -15,6 +16,7 @@ import { forkJoin } from 'rxjs';
 })
 export class HabitacionReservaFormComponent implements OnInit {
   reservaForm!: FormGroup;
+  nuevoClienteForm!: FormGroup;
   habitaciones: Habitacion[] = [];
   clientes: Cliente[] = [];
   habitacionesOriginales: { id_habitacion: number, id_habitacionreserva: number }[] = [];
@@ -24,6 +26,9 @@ export class HabitacionReservaFormComponent implements OnInit {
   isEditing = false;
   id: number | null = null;
   error = '';
+  paso: number = 1;
+  mostrarModalCliente = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -37,6 +42,14 @@ export class HabitacionReservaFormComponent implements OnInit {
   ngOnInit(): void {
     this.createForm();
     this.loadClientes();
+
+    this.nuevoClienteForm = this.fb.group({
+      dniRuc: ['', [Validators.required, Validators.pattern(/^\d{8}$|^\d{11}$/)]],
+      nombre: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required],
+      pais: ['', Validators.required]
+    });
 
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     if (this.id) {
@@ -52,6 +65,7 @@ export class HabitacionReservaFormComponent implements OnInit {
       cliente: [null, Validators.required],
       fecha_inicio: ['', [Validators.required, fechaNoPasada()]],
       fecha_fin: ['', Validators.required],
+      nro_persona: [1, [Validators.required, Validators.min(1)]],
       estado_reserva: ['Pendiente', Validators.required],
       comentarios: [''],
       habitaciones: this.fb.array([])
@@ -61,6 +75,60 @@ export class HabitacionReservaFormComponent implements OnInit {
 
     this.reservaForm.get('fecha_inicio')?.valueChanges.subscribe(() => {
       this.reservaForm.get('fecha_fin')?.updateValueAndValidity();
+    });
+  }
+
+  
+  abrirModalCliente(): void {
+    this.mostrarModalCliente = true;
+    this.nuevoClienteForm.reset();
+  }
+
+  buscarDni(): void {
+      const dni = this.nuevoClienteForm.get('dniRuc')?.value;
+      if (!dni || !/^\d{8}$/.test(dni)) {
+        Swal.fire('Advertencia', 'Ingrese un DNI válido de 8 dígitos', 'warning');
+        return;
+      }
+  
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      });
+  
+      this.clientesService.buscarDni(dni, headers).subscribe({
+        next: (data) => {
+          const clienteData = JSON.parse(data.datos);
+          this.nuevoClienteForm.get('nombre')?.setValue(`${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`);
+        },
+        error: (error) => {
+          console.error(error);
+          Swal.fire('Error', 'No se pudo obtener los datos del DNI', 'error');
+        }
+      });
+    }
+
+  cerrarModalCliente(): void {
+    this.mostrarModalCliente = false;
+  }
+
+  guardarCliente(): void {
+    if (this.nuevoClienteForm.invalid) {
+      this.nuevoClienteForm.markAllAsTouched();
+      return;
+    }
+
+    const nuevoCliente = this.nuevoClienteForm.value;
+
+    this.clientesService.createCliente(nuevoCliente).subscribe({
+      next: (clienteCreado) => {
+        this.clientes.push(clienteCreado);
+        this.reservaForm.get('cliente')?.setValue(clienteCreado.idCliente);
+        this.cerrarModalCliente();
+        Swal.fire('Cliente agregado', 'Se agregó correctamente el cliente.', 'success');
+      },
+      error: err => {
+        Swal.fire('Error', 'No se pudo registrar el cliente: ' + err.message, 'error');
+      }
     });
   }
 
@@ -173,6 +241,7 @@ export class HabitacionReservaFormComponent implements OnInit {
       estado_reserva: formValue.estado_reserva,
       comentarios: formValue.comentarios,
       estado: 1,
+      nro_persona: formValue.nro_persona,
       tipo: 'Habitación',
       cliente
     };
@@ -313,8 +382,14 @@ if (control instanceof FormGroup || control instanceof FormArray) {
 
   habitacionesFiltradas(): Habitacion[] {
     const filtro = this.filtroHabitaciones?.toLowerCase() || '';
-    return this.habitaciones.filter(s => s.numero?.toString().includes(filtro));
+    return this.habitaciones.filter(h =>
+      h.numero?.toString().toLowerCase().includes(filtro) ||
+      h.tipo_habitacion.nombre?.toLowerCase().includes(filtro) ||
+      h.piso?.toString().toLowerCase().includes(filtro) ||
+      h.tipo_habitacion.precio?.toString().includes(filtro)   );
   }
+  
+  
 
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
@@ -339,6 +414,26 @@ if (control instanceof FormGroup || control instanceof FormArray) {
       }
     });
   }
+
+  irPasoDos(): void {
+    const controles = ['cliente', 'fecha_inicio', 'fecha_fin', 'nro_persona'];
+    let valido = true;
+  
+    controles.forEach(control => {
+      const c = this.reservaForm.get(control);
+      if (c?.invalid) {
+        c.markAsTouched();
+        valido = false;
+      }
+    });
+  
+    if (valido) {
+      this.paso = 2;
+    } else {
+      this.error = 'Completa los campos obligatorios antes de continuar.';
+    }
+  }
+  
 }
 
 function fechaNoPasada(): ValidatorFn {

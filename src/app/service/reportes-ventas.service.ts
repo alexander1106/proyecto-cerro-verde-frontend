@@ -57,6 +57,13 @@ export interface PagoVentasDetalladoDTO {
   productos: string;
 }
 
+// DTO para reservas por mes
+export interface ReservasPorMesDTO {
+  mes: string;
+  cantidad: number;
+  total: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -105,6 +112,51 @@ export class ReportesVentasService {
   getMetodosPagoDetallado(desde: string, hasta: string): Observable<PagoVentasDetalladoDTO[]> {
     const params = new HttpParams().set('desde', desde).set('hasta', hasta);
     return this.http.get<PagoVentasDetalladoDTO[]>(`${this.baseUrl}/metodos-pago/detallado`, { params });
+  }
+
+  // ----- Reservas por mes JSON -----
+  getReservasPorMes(
+    tipo: 'habitaciones' | 'salones',
+    desde: string,
+    hasta: string
+  ): Observable<ReservasPorMesDTO[]> {
+    const params = new HttpParams()
+      .set('tipo', tipo)
+      .set('desde', desde)
+      .set('hasta', hasta);
+    return this.http.get<ReservasPorMesDTO[]>(`${this.baseUrl}/reservas-por-mes`, { params });
+  }
+
+  // ----- Descarga PDF Reservas por mes -----
+  descargarPdfReservasPorMes(
+    tipo: 'habitaciones' | 'salones',
+    desde: string,
+    hasta: string
+  ): Observable<Blob> {
+    const params = new HttpParams()
+      .set('tipo', tipo)
+      .set('desde', desde)
+      .set('hasta', hasta);
+    return this.http.get(
+      `${this.baseUrl}/reservas-por-mes/pdf`,
+      { params, responseType: 'blob' }
+    );
+  }
+
+  // ----- Descarga Excel Reservas por mes -----
+  descargarExcelReservasPorMes(
+    tipo: 'habitaciones' | 'salones',
+    desde: string,
+    hasta: string
+  ): Observable<Blob> {
+    const params = new HttpParams()
+      .set('tipo', tipo)
+      .set('desde', desde)
+      .set('hasta', hasta);
+    return this.http.get(
+      `${this.baseUrl}/reservas-por-mes/excel`,
+      { params, responseType: 'blob' }
+    );
   }
 
   // ----- Descarga de archivos Resumen -----
