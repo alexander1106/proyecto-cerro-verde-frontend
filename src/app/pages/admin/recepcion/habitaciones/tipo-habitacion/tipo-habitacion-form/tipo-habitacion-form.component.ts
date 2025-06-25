@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TipoHabitacionService } from '../../../../../../service/tipo-habitacion.service';
-import { TipoHabitacion } from '../../../../../../service/habitaciones.service';
+import { TipoHabitacionService, TipoHabitacion } from '../../../../../../service/tipo-habitacion.service';
 
 @Component({
   selector: 'app-tipo-habitacion-form',
@@ -53,8 +52,7 @@ export class TipoHabitacionFormComponent implements OnInit {
           this.nombreDuplicadoValidator()
         ]
       ],
-      precio_publico: [null, [Validators.required, Validators.min(0)]],
-      precio_corporativo: [null, [Validators.required, Validators.min(0)]],
+      precio: [null, [Validators.required, Validators.min(0)]],
       estado: [1]
     });
   }
@@ -68,8 +66,7 @@ export class TipoHabitacionFormComponent implements OnInit {
         if (tipo) {
           this.tipoForm.patchValue({
             nombre: tipo.nombre,
-            precio_publico: tipo.precio_publico,
-            precio_corporativo: tipo.precio_corporativo
+            precio: tipo.precio,
           });
         } else {
           this.error = 'No se encontró el tipo de habitación';

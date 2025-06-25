@@ -1,4 +1,4 @@
-<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+<!--div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -11,7 +11,6 @@
             <label>Fecha y Hora de Registro</label>
             <input type="datetime-local" class="form-control" formControlName="fecha_registro" readonly />
           </div>
-
           <div class="mb-2">
             <label>Tipo Incidencia</label>
             <select class="form-control" formControlName="id_tipo_incidencia">
@@ -37,17 +36,11 @@
             <label>Descripción</label>
             <textarea class="form-control" formControlName="descripcion"></textarea>
           </div>
-
           <div class="mb-2">
-            <label>Habitación</label>
-            <select class="form-control" formControlName="id_habitacion">
-              <option [ngValue]="null">Seleccione una habitación</option>
-              <option *ngFor="let h of habitaciones" [value]="h.id_habitacion">
-                Habitación {{ h.numero }} - Piso {{ h.piso }}
+                Habitación {{ h.numero }} - Piso {{ h.piso.numero }}
               </option>
             </select>
           </div>
-
           <div class="mb-2">
             <label>Área</label>
             <select class="form-control" formControlName="id_area">
@@ -57,25 +50,13 @@
               </option>
             </select>
           </div>
-
-          <div class="mb-2">
-            <label>Salón</label>
-            <select class="form-control" formControlName="id_salon">
-              <option [ngValue]="null">Seleccione un salón</option>
-              <option *ngFor="let s of salones" [value]="s.id_salon">
-                {{ s.nombre }}
-              </option>
-            </select>
-          </div>
         </form>
-
         <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
       </div>
-
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
         <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
       </div>
     </div>
   </div>
-</div>
+</div>-->

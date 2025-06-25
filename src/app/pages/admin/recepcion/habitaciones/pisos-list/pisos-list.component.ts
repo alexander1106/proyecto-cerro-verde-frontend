@@ -1,35 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TipoHabitacionService, TipoHabitacion } from '../../../../../../service/tipo-habitacion.service';
+import { Pisos, PisosService } from '../../../../../service/pisos.service';
 import Swal from 'sweetalert2';
 
 
 @Component({
-  selector: 'app-tipo-habitacion-list',
+  selector: 'app-pisos-list',
   standalone: false,
-  templateUrl: './tipo-habitacion-list.component.html',
-  styleUrls: ['./tipo-habitacion-list.component.css']
+  templateUrl: './pisos-list.component.html',
+  styleUrls: ['./pisos-list.component.css']
 })
-export class TipoHabitacionListComponent implements OnInit {
-  tipos: TipoHabitacion[] = [];
+export class PisosListComponent implements OnInit {
+  pisos: Pisos[] = [];
   loading = true;
   error = '';
 
-
-  constructor(private tipoHabitacionService: TipoHabitacionService) {}
+  constructor(private pisoService: PisosService) {}
 
   ngOnInit(): void {
-    this.cargarTipos();
+    this.cargarPisos();
   }
 
-  cargarTipos(): void {
+  cargarPisos(): void {
     this.loading = true;
     this.error = '';
 
-    this.tipoHabitacionService.getTiposHabitacion().subscribe({
+    this.pisoService.getPisos().subscribe({
       next: (data) => {
-        this.tipos = data;
+        this.pisos = data;
         this.loading = false;
       },
       error: (err) => {
@@ -40,7 +39,7 @@ export class TipoHabitacionListComponent implements OnInit {
     });
   }
 
-  eliminarTipo(id: number): void {
+  eliminarPiso(id: number): void {
     if (!id) {
       console.error('ID inválido para eliminar');
       return;
@@ -48,7 +47,7 @@ export class TipoHabitacionListComponent implements OnInit {
 
     Swal.fire({
       title: '¿Estás seguro?',
-      text: 'Esta acción eliminará el tipo.',
+      text: 'Esta acción eliminará el piso.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -57,20 +56,20 @@ export class TipoHabitacionListComponent implements OnInit {
       cancelButtonColor: '#6c757d'
     }).then((result: { isConfirmed: any; }) => {
       if (result.isConfirmed) {
-        this.tipoHabitacionService.deleteTipoHabitacion(id).subscribe({
+        this.pisoService.deletePiso(id).subscribe({
           next: () => {
-            this.tipos = this.tipos.filter(h => h.id_tipo_habitacion !== id);
+            this.pisos = this.pisos.filter(h => h.id_piso !== id);
             Swal.fire({
               icon: 'success',
               title: 'Eliminado',
-              text: 'El tipo fue eliminado correctamente',
+              text: 'El piso fue eliminado correctamente',
               timer: 1500,
               showConfirmButton: false
             });
           },
           error: (err) => {
             console.error('Error al eliminar:', err);
-            Swal.fire('Error', 'No se pudo eliminar el tipo, está relacionada a una Habitación', 'error');
+            Swal.fire('Error', 'No se pudo eliminar el piso, está relacionado a una Habitación', 'error');
           }
         });
       }
@@ -80,33 +79,31 @@ export class TipoHabitacionListComponent implements OnInit {
 
   filtroGeneral: string = '';
 
-  get tipohabitacionesActivasFiltradas() {
+  get pisosActivasFiltradas() {
     const filtro = this.filtroGeneral.toLowerCase();
-    return this.tipohabitacionesActivas.filter(h => {
-      const tipo = h.nombre?.toLowerCase() || '';
-      const precio = h.precio?.toString() || '';
+    return this.pisosActivos.filter(h => {
+      const piso = h.numero?.toString() || '';
       return (
-        tipo.includes(filtro) ||
-        precio.includes(filtro)
+        piso.includes(filtro)
       );
     });
   }
 
 
-  get tipohabitacionesActivas() {
-    return this.tipos?.filter(h => h.estado === 1) || [];
+  get pisosActivos() {
+    return this.pisos?.filter(h => h.estado === 1) || [];
   }
 
-    currentPage: number = 1;
+  currentPage: number = 1;
   itemsPerPage: number = 10;
 
   get totalPages(): number {
-    return Math.ceil(this.tipohabitacionesActivasFiltradas.length / this.itemsPerPage);
+    return Math.ceil(this.pisosActivasFiltradas.length / this.itemsPerPage);
   }
 
-  get tipohabitacionesPaginadas() {
+  get pisosPaginadas() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.tipohabitacionesActivasFiltradas.slice(start, start + this.itemsPerPage);
+    return this.pisosActivasFiltradas.slice(start, start + this.itemsPerPage);
   }
 
   changePage(delta: number) {

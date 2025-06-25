@@ -8,6 +8,8 @@ export interface Conductores {
   dni: string;
   placa: string;
   modelo_vehiculo: string;
+  estado_conductor: string;
+  telefono: string;
   estado: number;
 }
 

@@ -218,6 +218,8 @@ buscarCliente() {
       c.correo.toLowerCase().includes(filtro) ||
       c.pais.toLowerCase().includes(filtro)
     );
+    this.paginaActual = 1;
+    this.actualizarPaginacion();
   }
 }
 

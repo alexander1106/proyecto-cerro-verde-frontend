@@ -6,6 +6,7 @@ import { SalonesService, Salones, SalonReserva } from '../../../../../service/sa
 import { ClientesService, Cliente } from '../../../../../service/clientes.service';
 import Swal from 'sweetalert2';
 import { forkJoin } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-salon-reserva-form',
@@ -15,6 +16,7 @@ import { forkJoin } from 'rxjs';
 })
 export class SalonReservaFormComponent implements OnInit {
   reservaForm!: FormGroup;
+  nuevoClienteForm!: FormGroup;
   salones: Salones[] = [];
   clientes: Cliente[] = [];
   salonesOriginales: { id_salon: number, id_salonreserva: number }[] = [];
@@ -22,6 +24,7 @@ export class SalonReservaFormComponent implements OnInit {
   loading = false;
   submitting = false;
   isEditing = false;
+  mostrarModalCliente = false;
   id: number | null = null;
   error = '';
 
@@ -52,6 +55,7 @@ export class SalonReservaFormComponent implements OnInit {
       cliente: [null, Validators.required],
       fecha_inicio: ['', [Validators.required, fechaNoPasada()]],
       fecha_fin: ['', Validators.required],
+      nro_persona: [1, [Validators.required, Validators.min(1)]],
       estado_reserva: ['Pendiente', Validators.required],
       comentarios: [''],
       salones: this.fb.array([])
@@ -67,6 +71,59 @@ export class SalonReservaFormComponent implements OnInit {
   get salonesArray(): FormArray {
     return this.reservaForm.get('salones') as FormArray;
   }
+
+    abrirModalCliente(): void {
+      this.mostrarModalCliente = true;
+      this.nuevoClienteForm.reset();
+    }
+  
+    buscarDni(): void {
+          const dni = this.nuevoClienteForm.get('dniRuc')?.value;
+          if (!dni || !/^\d{8}$/.test(dni)) {
+            Swal.fire('Advertencia', 'Ingrese un DNI válido de 8 dígitos', 'warning');
+            return;
+          }
+      
+          const headers = new HttpHeaders({
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          });
+      
+          this.clientesService.buscarDni(dni, headers).subscribe({
+            next: (data) => {
+              const clienteData = JSON.parse(data.datos);
+              this.nuevoClienteForm.get('nombre')?.setValue(`${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`);
+            },
+            error: (error) => {
+              console.error(error);
+              Swal.fire('Error', 'No se pudo obtener los datos del DNI', 'error');
+            }
+          });
+    }
+  
+    cerrarModalCliente(): void {
+      this.mostrarModalCliente = false;
+    }
+  
+    guardarCliente(): void {
+      if (this.nuevoClienteForm.invalid) {
+        this.nuevoClienteForm.markAllAsTouched();
+        return;
+      }
+  
+      const nuevoCliente = this.nuevoClienteForm.value;
+  
+      this.clientesService.createCliente(nuevoCliente).subscribe({
+        next: (clienteCreado) => {
+          this.clientes.push(clienteCreado);
+          this.reservaForm.get('cliente')?.setValue(clienteCreado.idCliente);
+          this.cerrarModalCliente();
+          Swal.fire('Cliente agregado', 'Se agregó correctamente el cliente.', 'success');
+        },
+        error: err => {
+          Swal.fire('Error', 'No se pudo registrar el cliente: ' + err.message, 'error');
+        }
+      });
+    }
 
   toggleSalon(salon: Salones): void {
     const index = this.salonesArray.controls.findIndex(ctrl => ctrl.value.id_salon === salon.id_salon);
@@ -173,6 +230,7 @@ export class SalonReservaFormComponent implements OnInit {
         estado_reserva: formValue.estado_reserva,
         comentarios: formValue.comentarios,
         estado: 1,
+        nro_persona: formValue.nro_persona,
         tipo: 'Salón',
         cliente
     };
@@ -351,7 +409,12 @@ private mostrarError(mensaje: string): void {
 
   salonesFiltrados(): Salones[] {
     const filtro = this.filtroSalones?.toLowerCase() || '';
-    return this.salones.filter(s => s.nombre?.toLowerCase().includes(filtro));
+
+    return this.salones.filter(h =>
+          h.nombre?.toLowerCase().includes(filtro) ||
+          h.precio_hora?.toString().toLowerCase().includes(filtro) ||
+          h.precio_diario?.toString().toLowerCase().includes(filtro) ||
+          h.capacidad?.toString().toLowerCase().includes(filtro) );
   }
 
   customSearch(term: string, item: any): boolean {

@@ -42,8 +42,9 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Cliente</th>
+            <th class="cliente">Cliente</th>
             <th>Tipo</th>
+            <th>Nro. huéspedes</th>
             <th>Inicio</th>
             <th>Fin</th>
             <th>Estado</th>
@@ -53,14 +54,29 @@
         <tbody>
           <tr *ngFor="let reserva of filteredReservas; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ reserva.cliente.nombre }}</td>
+            <td class="cliente">{{ reserva.cliente.nombre }}</td>
             <td>{{ reserva.tipo }}</td>
+            <td>{{ reserva.nro_persona }}</td>
             <td>{{ formatDate(reserva.fecha_inicio) }}</td>
             <td>{{ formatDate(reserva.fecha_fin) }}</td>
-            <td>{{ reserva.estado_reserva }}</td>
+            <td>
+              <span [ngClass]="{
+                'pendiente': reserva.estado_reserva === 'Pendiente',
+                'check-in': reserva.estado_reserva === 'Check-in',
+                'completada': reserva.estado_reserva === 'Completada',
+                'pagada': reserva.estado_reserva === 'Pagada',
+                'cancelada': reserva.estado_reserva === 'Cancelada'
+
+              }">
+              {{ reserva.estado_reserva }}
+              </span>
+            </td>
             <td class="acciones">
               <button class="btn-accion ver" (click)="viewReserva(reserva)">
                 <i class="ver fa-regular fa-eye"></i>
+              </button>
+              <button *ngIf="reserva.estado_reserva?.toLowerCase() === 'pagada'" class="btn-accion block" (click)="cancelarReserva(reserva.id_reserva!)">
+                <i class="ver fa-solid fa-ban"></i>
               </button>
               <button *ngIf="reserva.estado_reserva?.toLowerCase() !== 'completada'" class="btn-accion editar" (click)="editReserva(reserva)">
                 <i class="edit fa-regular fa-pen-to-square"></i>

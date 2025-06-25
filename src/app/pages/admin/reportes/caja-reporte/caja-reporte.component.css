@@ -1,0 +1,84 @@
+/* ============================= */
+/*  Grid principal del host      */
+/* ============================= */
+:host {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto /* header */
+                     auto /* form + descargas */
+                     auto /* charts */
+                     auto /* table */;
+  grid-template-areas:
+    "header   header"
+    "form     downloads"
+    "charts   charts"
+    "table    table";
+  gap: 1rem 1.5rem;
+  padding: 1rem;
+}
+
+/* ============================= */
+/*  1) Header (tu barra Dashboard) */
+/* ============================= */
+app-header {
+  grid-area: header;
+}
+
+/* ================================== */
+/*  2) Formulario de filtros (izq)    */
+/* ================================== */
+.filtro-form {
+  grid-area: form;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Asegura que el botón Generar no crezca */
+.filtro-form button[type="submit"] {
+  flex: 0 0 auto;
+}
+
+/* ================================== */
+/*  3) Botones de descarga (der)      */
+/* ================================== */
+.descargas {
+  grid-area: downloads;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ================================== */
+/*  4) Gráficas                       */
+/* ================================== */
+.charts {
+  grid-area: charts;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  max-height: 300px;       /* limita la altura total */
+  overflow: hidden;
+}
+
+.charts canvas {
+  flex: 1 1 300px;
+  max-width: 500px;
+  width: 100% !important;  /* forzar ancho completo */
+  height: 200px !important;/* altura fija */
+}
+
+/* ================================== */
+/*  5) Tabla                          */
+/* ================================== */
+.tabla-report {
+  grid-area: table;
+  overflow: auto;
+}
+
+/* Paginador un pelín de margen */
+.mat-paginator {
+  margin-top: 0.5rem;
+}
