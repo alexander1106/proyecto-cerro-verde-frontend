@@ -108,6 +108,8 @@ import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoin
 import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
 import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
+import { RegistrarPersonalLimpiezaComponent } from './pages/admin/registrar-personal-limpieza/registrar-personal-limpieza.component';
+import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
 
 @NgModule({
   declarations: [
@@ -178,7 +180,9 @@ import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/re
     ListarAreasHotelComponent,
     RegistrarAreaHotelComponent,
     ListarLimpiezaComponent,
-    RegistrarLimpiezaComponent
+    RegistrarLimpiezaComponent,
+    RegistrarPersonalLimpiezaComponent,
+    ListarPersonalLimpiezaComponent
   ],
 
   imports: [

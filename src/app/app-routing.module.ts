@@ -62,6 +62,7 @@ import { PisosListComponent } from './pages/admin/recepcion/habitaciones/pisos-l
 import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
 import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
 import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
 
 const routes: Routes = [
   {
@@ -349,6 +350,9 @@ const routes: Routes = [
       },
       {
         path: 'limpieza', component: ListarLimpiezaComponent
+      },
+      {
+        path: 'personal-limpieza', component: ListarPersonalLimpiezaComponent
       },
       {
         path: 'incidencias', component: ListarIncidenciasComponent
