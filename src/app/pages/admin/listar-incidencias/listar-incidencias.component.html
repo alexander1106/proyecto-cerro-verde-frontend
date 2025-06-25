@@ -14,12 +14,38 @@
           <option value="resuelta">Resuelta</option>
         </select>
       </div>
+    
+      <div class="col-md-3">
+        <label class="form-label">Filtrar por Gravedad</label>
+        <select class="form-select" [(ngModel)]="filtroGravedad">
+          <option value="">-- Todas --</option>
+          <option value="baja">Baja</option>
+          <option value="media">Media</option>
+          <option value="alta">Alta</option>
+        </select>
+      </div>
+    
+      <div class="col-md-3">
+        <label class="form-label">Ordenar por</label>
+        <select class="form-select" [(ngModel)]="ordenCampo">
+          <option value="fecha_registro">Fecha de Registro</option>
+          <option value="gravedad">Gravedad</option>
+        </select>
+      </div>
+    
+      <div class="col-md-1 d-flex align-items-end">
+        <button class="btn btn-outline-secondary" (click)="ordenAscendente = !ordenAscendente">
+          <i class="bi" [ngClass]="ordenAscendente ? 'bi-sort-up' : 'bi-sort-down'"></i>
+        </button>
+      </div>
+    
       <div class="col-md-2 align-self-end">
-        <button class="btn btn-outline-secondary w-100" (click)="limpiarFiltroEstado()">
-          <i class="bi bi-x-circle me-1"></i> Limpiar Filtro
+        <button class="btn btn-outline-secondary w-100" (click)="limpiarFiltros()">
+          <i class="bi bi-x-circle me-1"></i> Limpiar Filtros
         </button>
       </div>
     </div>
+    
 
     <!-- Cargando -->
     <div *ngIf="loading" class="text-center text-muted">
@@ -43,11 +69,12 @@
             <th>Estado</th>
             <th>Lugar</th>
             <th>Tipo</th>
+            <th>Urgencia</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let incidencia of incidenciasFiltradas">
+          <tr *ngFor="let incidencia of incidenciasPaginadas">
             <td>{{ incidencia.id_incidencia }}</td>
             <td>{{ incidencia.fecha_registro }}</td>
             <td>{{ incidencia.fecha_solucion || '—' }}</td>
@@ -68,6 +95,15 @@
             </td>
             <td>{{ incidencia.tipoIncidencia?.nombre || '—' }}</td>
             <td>
+              <span [ngClass]="{
+                'text-danger': incidencia.gravedad === 'alta',
+                'text-warning': incidencia.gravedad === 'media',
+                'text-success': incidencia.gravedad === 'baja'
+              }">
+                {{ incidencia.gravedad?.toUpperCase() || '—' }}
+              </span>
+            </td>
+            <td>
               <button class="btn btn-primary btn-sm ms-2" (click)="verDetalle(incidencia)">
                 <i class="bi bi-eye-fill me-1"></i>
               </button>
@@ -85,6 +121,13 @@
           </tr>
         </tbody>
       </table>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <button class="btn btn-outline-primary" (click)="cambiarPagina(-1)" [disabled]="paginaActual === 1">Anterior</button>
+        <span>Página {{ paginaActual }} de {{ Math.ceil(incidenciasFiltradas.length / elementosPorPagina) || 1 }}</span>
+        <button class="btn btn-outline-primary" (click)="cambiarPagina(1)" [disabled]="paginaActual >= Math.ceil(incidenciasFiltradas.length / elementosPorPagina)">
+          Siguiente
+        </button>
+      </div>      
     </div>
   </div>
 

@@ -36,14 +36,15 @@ export class RegistrarIncidenciaComponent implements OnInit {
       id_habitacion: [null],
       id_area: [null],
       id_salon: [null],
-      id_tipo_incidencia: [null]
+      id_tipo_incidencia: [null],
+      gravedad: ['', Validators.required] // <-- Nuevo campo aquí
     });
   }
 
   ngOnInit(): void {
     this.cargarListas();
 
-    // Unificar la lógica mutual exclusiva
+    // Lógica de campos mutuamente exclusivos
     this.incidenciaForm.get('id_habitacion')?.valueChanges.subscribe(() => {
       this.actualizarCamposMutualmenteExclusivos();
     });
@@ -72,7 +73,6 @@ export class RegistrarIncidenciaComponent implements OnInit {
       this.incidenciaForm.get('id_habitacion')?.disable({ emitEvent: false });
       this.incidenciaForm.get('id_area')?.disable({ emitEvent: false });
     } else {
-      // Si nada seleccionado → habilitar todo
       this.incidenciaForm.get('id_habitacion')?.enable({ emitEvent: false });
       this.incidenciaForm.get('id_area')?.enable({ emitEvent: false });
       this.incidenciaForm.get('id_salon')?.enable({ emitEvent: false });
@@ -105,6 +105,7 @@ export class RegistrarIncidenciaComponent implements OnInit {
       fecha_registro: fecha_registro,
       fecha_solucion: this.incidenciaForm.value.fecha_solucion,
       descripcion: this.incidenciaForm.value.descripcion,
+      gravedad: this.incidenciaForm.value.gravedad, // <-- Campo agregado al payload
       tipoIncidencia: this.incidenciaForm.value.id_tipo_incidencia ? { id_tipo_incidencia: this.incidenciaForm.value.id_tipo_incidencia } : null,
       habitacion: this.incidenciaForm.value.id_habitacion ? { id_habitacion: this.incidenciaForm.value.id_habitacion } : null,
       area: this.incidenciaForm.value.id_area ? { id_area: this.incidenciaForm.value.id_area } : null,

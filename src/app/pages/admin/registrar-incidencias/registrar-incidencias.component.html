@@ -19,7 +19,20 @@
               <option *ngFor="let t of tiposIncidencia" [value]="t.id_tipo_incidencia">{{ t.nombre }}</option>
             </select>
           </div>
-
+          
+          <div class="mb-2">
+            <label for="gravedad">Urgencia de la incidencia</label>
+            <select id="gravedad" class="form-control" formControlName="gravedad">
+              <option value="">Seleccione la urgencia</option>
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+            </select>
+            <div *ngIf="incidenciaForm.get('gravedad')?.invalid && incidenciaForm.get('gravedad')?.touched" class="text-danger">
+              La gravedad es obligatoria.
+            </div>
+          </div>
+          
           <div class="mb-2">
             <label>Descripción</label>
             <textarea class="form-control" formControlName="descripcion"></textarea>
