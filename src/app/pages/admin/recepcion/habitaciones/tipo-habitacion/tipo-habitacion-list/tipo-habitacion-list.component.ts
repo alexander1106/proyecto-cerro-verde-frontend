@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TipoHabitacionService } from '../../../../../../service/tipo-habitacion.service';
-import { TipoHabitacion } from '../../../../../../service/habitaciones.service';
+import { TipoHabitacionService, TipoHabitacion } from '../../../../../../service/tipo-habitacion.service';
 import Swal from 'sweetalert2';
 
 
@@ -85,12 +84,10 @@ export class TipoHabitacionListComponent implements OnInit {
     const filtro = this.filtroGeneral.toLowerCase();
     return this.tipohabitacionesActivas.filter(h => {
       const tipo = h.nombre?.toLowerCase() || '';
-      const preciop = h.precio_publico?.toString() || '';
-      const precioc = h.precio_corporativo?.toString() || '';
+      const precio = h.precio?.toString() || '';
       return (
         tipo.includes(filtro) ||
-        precioc.includes(filtro) ||
-        preciop.includes(filtro)
+        precio.includes(filtro)
       );
     });
   }

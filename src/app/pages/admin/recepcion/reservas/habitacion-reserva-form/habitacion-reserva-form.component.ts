@@ -6,6 +6,9 @@ import { HabitacionesService, Habitacion, HabitacionReserva } from '../../../../
 import { ClientesService, Cliente } from '../../../../../service/clientes.service';
 import Swal from 'sweetalert2';
 import { forkJoin } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
+import { formatDate } from '@angular/common';
+import { IaService } from '../../../../../service/ia.service';
 
 @Component({
   selector: 'app-habitacion-reserva-form',
@@ -15,6 +18,7 @@ import { forkJoin } from 'rxjs';
 })
 export class HabitacionReservaFormComponent implements OnInit {
   reservaForm!: FormGroup;
+  nuevoClienteForm!: FormGroup;
   habitaciones: Habitacion[] = [];
   clientes: Cliente[] = [];
   habitacionesOriginales: { id_habitacion: number, id_habitacionreserva: number }[] = [];
@@ -24,6 +28,9 @@ export class HabitacionReservaFormComponent implements OnInit {
   isEditing = false;
   id: number | null = null;
   error = '';
+  paso: number = 1;
+  mostrarModalCliente = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -31,12 +38,22 @@ export class HabitacionReservaFormComponent implements OnInit {
     private habitacionesService: HabitacionesService,
     private clientesService: ClientesService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private iaService:IaService
   ) {}
+mostrarAlertaTemporada = false;
 
   ngOnInit(): void {
     this.createForm();
     this.loadClientes();
+
+    this.nuevoClienteForm = this.fb.group({
+      dniRuc: ['', [Validators.required, Validators.pattern(/^\d{8}$|^\d{11}$/)]],
+      nombre: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required],
+      pais: ['', Validators.required]
+    });
 
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     if (this.id) {
@@ -52,6 +69,7 @@ export class HabitacionReservaFormComponent implements OnInit {
       cliente: [null, Validators.required],
       fecha_inicio: ['', [Validators.required, fechaNoPasada()]],
       fecha_fin: ['', Validators.required],
+      nro_persona: [1, [Validators.required, Validators.min(1)]],
       estado_reserva: ['Pendiente', Validators.required],
       comentarios: [''],
       habitaciones: this.fb.array([])
@@ -61,6 +79,60 @@ export class HabitacionReservaFormComponent implements OnInit {
 
     this.reservaForm.get('fecha_inicio')?.valueChanges.subscribe(() => {
       this.reservaForm.get('fecha_fin')?.updateValueAndValidity();
+    });
+  }
+
+
+  abrirModalCliente(): void {
+    this.mostrarModalCliente = true;
+    this.nuevoClienteForm.reset();
+  }
+
+  buscarDni(): void {
+      const dni = this.nuevoClienteForm.get('dniRuc')?.value;
+      if (!dni || !/^\d{8}$/.test(dni)) {
+        Swal.fire('Advertencia', 'Ingrese un DNI válido de 8 dígitos', 'warning');
+        return;
+      }
+
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      });
+
+      this.clientesService.buscarDni(dni, headers).subscribe({
+        next: (data) => {
+          const clienteData = JSON.parse(data.datos);
+          this.nuevoClienteForm.get('nombre')?.setValue(`${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`);
+        },
+        error: (error) => {
+          console.error(error);
+          Swal.fire('Error', 'No se pudo obtener los datos del DNI', 'error');
+        }
+      });
+    }
+
+  cerrarModalCliente(): void {
+    this.mostrarModalCliente = false;
+  }
+
+  guardarCliente(): void {
+    if (this.nuevoClienteForm.invalid) {
+      this.nuevoClienteForm.markAllAsTouched();
+      return;
+    }
+
+    const nuevoCliente = this.nuevoClienteForm.value;
+
+    this.clientesService.createCliente(nuevoCliente).subscribe({
+      next: (clienteCreado) => {
+        this.clientes.push(clienteCreado);
+        this.reservaForm.get('cliente')?.setValue(clienteCreado.idCliente);
+        this.cerrarModalCliente();
+        Swal.fire('Cliente agregado', 'Se agregó correctamente el cliente.', 'success');
+      },
+      error: err => {
+        Swal.fire('Error', 'No se pudo registrar el cliente: ' + err.message, 'error');
+      }
     });
   }
 
@@ -82,7 +154,7 @@ export class HabitacionReservaFormComponent implements OnInit {
     } else {
       // Quitar habitación
       this.habitacionesArray.removeAt(index);
-      
+
       // Si estamos editando y quitamos una habitación original, marcarla como disponible
       if (this.isEditing && this.habitacionesOriginales.some(h => h.id_habitacion === habitacion.id_habitacion)) {
         habitacion.estado_habitacion = 'Disponible';
@@ -130,7 +202,7 @@ export class HabitacionReservaFormComponent implements OnInit {
               id_habitacionreserva: hr.id_hab_reserv
             });
           }
-          
+
         });
 
         this.reservaForm.patchValue({
@@ -173,6 +245,7 @@ export class HabitacionReservaFormComponent implements OnInit {
       estado_reserva: formValue.estado_reserva,
       comentarios: formValue.comentarios,
       estado: 1,
+      nro_persona: formValue.nro_persona,
       tipo: 'Habitación',
       cliente
     };
@@ -198,7 +271,7 @@ export class HabitacionReservaFormComponent implements OnInit {
       return habitacion;
     });
 
-    const habitacionesParaLiberar = this.isEditing 
+    const habitacionesParaLiberar = this.isEditing
       ? this.habitacionesOriginales
           .filter(original => !idsSeleccionados.includes(original.id_habitacion))
           .map(original => {
@@ -233,14 +306,14 @@ export class HabitacionReservaFormComponent implements OnInit {
       });
     } else {
       const relacionesAEliminar = this.habitacionesOriginales
-        .filter(original => 
+        .filter(original =>
           !idsSeleccionados.includes(original.id_habitacion) &&
           original.id_habitacionreserva !== null &&
           original.id_habitacionreserva !== undefined
         );
 
       const relacionesACrear = this.habitacionesArray.value
-        .filter((habitacion: Habitacion) => habitacion.id_habitacion !== undefined && 
+        .filter((habitacion: Habitacion) => habitacion.id_habitacion !== undefined &&
               !this.habitacionesOriginales.some(o => o.id_habitacion === habitacion.id_habitacion))
         .map((habitacion: Habitacion) => ({
           habitacion,
@@ -252,7 +325,7 @@ export class HabitacionReservaFormComponent implements OnInit {
         this.crearNuevasRelaciones(relacionesACrear);
       } else {
         forkJoin(
-          relacionesAEliminar.map(rel => 
+          relacionesAEliminar.map(rel =>
             this.habitacionesService.deleteHabitacionReserva(rel.id_habitacionreserva)
           )
         ).subscribe({
@@ -264,7 +337,7 @@ export class HabitacionReservaFormComponent implements OnInit {
   }
 
   private crearNuevasRelaciones(relaciones: HabitacionReserva[]): void {
-    if (relaciones.length === 0) { 
+    if (relaciones.length === 0) {
         this.finalizarGuardado();
         return;
         }
@@ -313,8 +386,14 @@ if (control instanceof FormGroup || control instanceof FormArray) {
 
   habitacionesFiltradas(): Habitacion[] {
     const filtro = this.filtroHabitaciones?.toLowerCase() || '';
-    return this.habitaciones.filter(s => s.numero?.toString().includes(filtro));
+    return this.habitaciones.filter(h =>
+      h.numero?.toString().toLowerCase().includes(filtro) ||
+      h.tipo_habitacion.nombre?.toLowerCase().includes(filtro) ||
+      h.piso?.toString().toLowerCase().includes(filtro) ||
+      h.tipo_habitacion.precio?.toString().includes(filtro)   );
   }
+
+
 
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
@@ -339,6 +418,76 @@ if (control instanceof FormGroup || control instanceof FormArray) {
       }
     });
   }
+irPasoDosFecha() {
+  const fechaInicio = this.reservaForm.get('fecha_inicio')?.value;
+
+  if (!fechaInicio) {
+    alert("Debe seleccionar una fecha de inicio.");
+    return;
+  }
+    this.mostrarAlertaTemporada = true;
+
+  // Formatear la fecha a 'dd/MM/yyyy'
+  const fechaFormateada = formatDate(fechaInicio, 'dd/MM/yyyy', 'en-US');
+
+  const payload = {
+    fecha: fechaFormateada
+  };
+
+ this.iaService.consultarPrecio(payload).subscribe({
+  next: (respuesta) => {
+    console.log("Respuesta IA:", respuesta);
+
+    // Mapear precios por tipo
+    const preciosMap = new Map<string, number>();
+    for (const item of respuesta.precios) {
+      preciosMap.set(item.tipo_habitacion, item.precio_predicho);
+    }
+
+    // Actualizar precios de habitaciones locales
+    this.habitaciones = this.habitaciones.map(habitacion => {
+      const nuevoPrecio = preciosMap.get(habitacion.tipo_habitacion.nombre);
+      if (nuevoPrecio !== undefined) {
+        return {
+          ...habitacion,
+          tipo_habitacion: {
+            ...habitacion.tipo_habitacion,
+            precio: nuevoPrecio // Aquí se actualiza el precio
+          }
+        };
+      }
+      return habitacion;
+    });
+
+    this.paso = 2; // avanzar al siguiente paso
+  },
+  error: (err) => {
+    console.error("Error al consultar precio:", err);
+    alert("Error al consultar el precio. Intenta de nuevo.");
+  }
+});
+}
+
+
+  irPasoDos(): void {
+    const controles = ['cliente', 'fecha_inicio', 'fecha_fin', 'nro_persona'];
+    let valido = true;
+
+    controles.forEach(control => {
+      const c = this.reservaForm.get(control);
+      if (c?.invalid) {
+        c.markAsTouched();
+        valido = false;
+      }
+    });
+
+    if (valido) {
+      this.paso = 2;
+    } else {
+      this.error = 'Completa los campos obligatorios antes de continuar.';
+    }
+  }
+
 }
 
 function fechaNoPasada(): ValidatorFn {

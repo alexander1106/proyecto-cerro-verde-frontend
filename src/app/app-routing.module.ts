@@ -58,6 +58,10 @@ import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/list
 import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
 import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
+import { PisosFormComponent } from './pages/admin/recepcion/habitaciones/pisos-form/pisos-form.component';
+import { PisosListComponent } from './pages/admin/recepcion/habitaciones/pisos-list/pisos-list.component';
+import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
+import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
 
 const routes: Routes = [
   {
@@ -338,6 +342,7 @@ const routes: Routes = [
         component: CheckinCheckoutFormComponent,
       },
       { path: 'reportes-compras', component: ReportesComprasComponent },
+      
       { path: 'reportes-ventas', component: ConsultaVentasComponent },
       {
         path: 'areas-del-hotel', component: ListarAreasHotelComponent
@@ -350,7 +355,23 @@ const routes: Routes = [
       },
       {
         path: 'tipo-de-incidencia', component: ListarTipoIncidenciaComponent
-      }
+      },
+
+      { path: 'caja-reportes', component: CajaReporteComponent },
+      
+      { path: 'dashboard-inicio', component: DashboardInicioComponent },
+      {
+        path: 'pisos',
+        component: PisosListComponent,
+      },
+      {
+        path: 'recepcion/pisos/nuevo',
+        component: PisosFormComponent,
+      },
+      {
+        path: 'recepcion/pisos/editar/:id',
+        component: PisosFormComponent,
+      },
     ],
   },
 ];

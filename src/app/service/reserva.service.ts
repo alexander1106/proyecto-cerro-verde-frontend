@@ -25,6 +25,7 @@ export interface Reserva {
   fecha_fin: Date | string;
   estado_reserva: string;
   comentarios: string;
+  nro_persona: number;
   estado: number;
   cliente: Cliente;
   tipo: string;
@@ -56,6 +57,10 @@ export class ReservasService {
   updateReserva(id: number, reserva: Reserva): Observable<Reserva> {
     return this.http.put<Reserva>(`${this.apiUrl}/reservas/${id}`, reserva);
   }
+
+  cancelarReserva(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/cancelar/${id}`, null);
+  }  
 
   deleteReserva(id: number): Observable<string> {
     return this.http.delete<string>(`${this.apiUrl}/reservas/eliminar/${id}`, { responseType: 'text' as 'json' })

@@ -8,7 +8,7 @@
             [ngClass]="{'is-invalid': submitted && f['piso'].invalid}">
       <option *ngIf="!isEditing" [ngValue]="null">Seleccione un piso</option>
       <option *ngFor="let piso of pisos" [ngValue]="piso">
-        {{ piso }}
+        {{ piso.numero }}
       </option>
     </select>
     <div *ngIf="submitted && f['piso'].invalid" class="invalid-feedback">
@@ -34,7 +34,7 @@
             [ngClass]="{'is-invalid': submitted && f['tipo_habitacion'].invalid}">
       <option *ngIf="!isEditing" [ngValue]="null">Seleccione un tipo</option>
       <option *ngFor="let tipo of tiposHabitacion" [ngValue]="tipo">
-        {{ tipo.nombre }} - Precio Público: {{ tipo.precio_publico }} - Precio Corporativo: {{ tipo.precio_corporativo }}
+        {{ tipo.nombre }} - Precio: {{ tipo.precio }}
       </option>
     </select>
     <div *ngIf="submitted && f['tipo_habitacion'].invalid" class="invalid-feedback">

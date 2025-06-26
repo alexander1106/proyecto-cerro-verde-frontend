@@ -1,0 +1,78 @@
+<div class="container">
+  <app-header></app-header>
+
+  <div class="card">
+    <div class="info-trabajadores-linea">
+      <h4>Gestión de Pisos</h4>
+
+      <div class="mover">
+        <div class="buscador">
+          <div class="input-wrapper">
+            <input type="text" placeholder="Buscar piso..." [(ngModel)]="filtroGeneral" />
+            <button type="button" class="btn-icono">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/pisos/nuevo">+ Nuevo Piso</a>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">Cargando pisos..</div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && pisos.length === 0" class="alert alert-info">
+      No hay pisos registrados. Cree uno nuevo.
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="tabla-trabajadores">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Número</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let piso of pisosPaginadas; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ piso.numero}}</td>
+            <td class="acciones">
+              <button class="btn-accion eliminar" (click)="eliminarPiso(piso.id_piso!)">
+                <i class="delete fa-regular fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="pisosActivasFiltradas.length === 0">
+            <td colspan="5" class="text-center text-muted">
+              No hay pisos que coincidan con el filtro.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls mt-4 text-center">
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === 1"
+              (click)="changePage(-1)">
+        ← Anterior
+      </button>
+
+      <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+
+      <button class="btn btn-outline-secondary"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(1)">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+</div>

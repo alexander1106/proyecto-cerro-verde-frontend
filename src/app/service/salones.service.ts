@@ -20,13 +20,8 @@ export interface Salones {
   estado: number;
   precio_hora: number;
   precio_diario: number;
+  capacidad:number;
   sucursal?: Sucursal;
-}
-
-export interface SalonImagen {
-  id_sal_img?: number;
-  salon: Salones;
-  imagen: Imagen;
 }
 
 export interface SalonReserva {
@@ -68,19 +63,6 @@ export class SalonesService {
   // Estados disponibles
   getEstadosSalon(): string[] {
     return ['Disponible', 'Ocupado', 'Reservado', 'Limpieza'];
-  }
-
-  // Imágenes
-  getSalonImagenes(): Observable<SalonImagen[]> {
-    return this.http.get<SalonImagen[]>(`${this.apiUrl}/salones/imagenes`);
-  }
-
-  createSalonImagen(salonImagen: SalonImagen): Observable<SalonImagen> {
-    return this.http.post<SalonImagen>(`${this.apiUrl}/salones/imagenes`, salonImagen);
-  }
-
-  deleteSalonImagen(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/salones/imagenes/${id}`);
   }
 
   // Salones X Reserva

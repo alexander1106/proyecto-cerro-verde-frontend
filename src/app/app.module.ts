@@ -97,11 +97,15 @@ import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/lis
 import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
 import { ReportesVentasService } from './service/reportes-ventas.service';
 import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
-import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
-import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
 import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
 import { ListarLimpiezasComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
+import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
+import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
+import { PisosFormComponent } from './pages/admin/recepcion/habitaciones/pisos-form/pisos-form.component';
+import { PisosListComponent } from './pages/admin/recepcion/habitaciones/pisos-list/pisos-list.component';
+import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
+import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
 
 @NgModule({
   declarations: [
@@ -137,6 +141,7 @@ import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/re
     ListCompraComponent,
     AdminCajasComponent,
     ArqueoCajaComponent,
+    CajaReporteComponent,
     HabitacionesFormComponent,
     HabitacionesListComponent,
     TipoHabitacionListComponent,
@@ -167,8 +172,14 @@ import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/re
     ListarAreasHotelComponent,
     RegistrarAreaHotelComponent,
     ListarLimpiezasComponent,
-    RegistrarLimpiezaComponent
+    RegistrarLimpiezaComponent,
+
+    PisosFormComponent,
+    PisosListComponent,
+    CajaReporteComponent,
+    DashboardInicioComponent,
   ],
+
   imports: [
     BrowserModule,
     MatTableModule,

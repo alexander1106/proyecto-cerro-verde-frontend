@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConductoresService, Conductores } from '../../../../../service/conductores.service';
-import { HttpHeaders } from '@angular/common/http';
 import { ClientesService } from '../../../../../service/clientes.service';
+import { HttpHeaders } from '@angular/common/http';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -36,16 +35,8 @@ export class ConductoresFormComponent implements OnInit {
     this.id = +this.route.snapshot.params['id'];
     this.isEditing = !!this.id;
 
-    // Paso 1: crea el form sin validadores personalizados aún
-    this.conductorForm = this.formBuilder.group({
-      nombre: [null, Validators.required],
-      placa: [null, Validators.required],
-      modelo_vehiculo: [null, Validators.required],
-      dni: [null, [Validators.required, Validators.pattern(/^\d{8}$/)]],
-      estado: [1]
-    });
+    this.initForm();
 
-    // Paso 2: carga lista completa de conductores
     this.conductorService.getConductores().subscribe((conductores) => {
       this.conductores = conductores;
 
@@ -53,97 +44,44 @@ export class ConductoresFormComponent implements OnInit {
         this.conductorService.getConductor(this.id!).subscribe({
           next: (conductor) => {
             this.conductor = conductor;
-
             this.conductorForm.patchValue({
               nombre: conductor.nombre,
               dni: conductor.dni,
               placa: conductor.placa,
-              modelo_vehiculo: conductor.modelo_vehiculo
+              modelo_vehiculo: conductor.modelo_vehiculo,
+              telefono: conductor.telefono,
+              estado_conductor: conductor.estado_conductor
             });
-
-            // Paso 3: aplicar validadores personalizados con contexto ya disponible
             this.setCustomValidators();
           },
-          error: (err) => {
-            this.error = 'Error al cargar el conductor';
-          }
+          error: () => this.error = 'Error al cargar el conductor'
         });
       } else {
-        // Para nuevo conductor: aplicar validadores también
         this.setCustomValidators();
       }
     });
   }
 
-
-  setCustomValidators(): void {
-    this.f['nombre'].setValidators([
-      Validators.required,
-    ]);
-    this.f['placa'].setValidators([
-      Validators.required,
-      this.placaDuplicadaValidator()
-    ]);
-    this.f['dni'].setValidators([
-      Validators.required,
-      Validators.pattern(/^\d{8}$/),
-      this.dniDuplicadoValidator()
-    ]);
-
-    this.f['nombre'].updateValueAndValidity();
-    this.f['placa'].updateValueAndValidity();
-    this.f['dni'].updateValueAndValidity();
-  }
-
-
-  get f() { return this.conductorForm.controls; }
-
   initForm(): void {
     this.conductorForm = this.formBuilder.group({
-      nombre: [
-        null,
-        [Validators.required]
-      ],
-      placa: [
-        null,
-        [Validators.required, this.placaDuplicadaValidator()]
-      ],
-      modelo_vehiculo: [null, [Validators.required]],
-      dni: [
-        null,
-        [Validators.required, Validators.pattern(/^\d{8}$/), this.dniDuplicadoValidator()]
-      ],
+      nombre: [null, Validators.required],
+      placa: [null, Validators.required],
+      modelo_vehiculo: [null, Validators.required],
+      dni: [null, [Validators.required, Validators.pattern(/^\d{8}$/)]],
+      telefono: [null, [Validators.required, Validators.pattern(/^\d{7,9}$/)]],
+      estado_conductor: ['Disponible'],
       estado: [1]
     });
   }
 
-
-  loadConductor(): void {
-    if (!this.id) return;
-
-    this.loading = true;
-    this.conductorService.getConductor(this.id).subscribe({
-      next: (conductor) => {
-        if (conductor) {
-          this.conductorForm.patchValue({
-            nombre: conductor.nombre,
-            dni: conductor.dni,
-            placa: conductor.placa,
-            modelo_vehiculo: conductor.modelo_vehiculo
-          });
-        } else {
-          this.error = 'No se encontró el conductor';
-        }
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Error al cargar el conductor';
-        this.loading = false;
-        console.error('Error:', err);
-      }
-    });
+  setCustomValidators(): void {
+    this.f['placa'].setValidators([Validators.required, this.placaDuplicadaValidator()]);
+    this.f['dni'].setValidators([Validators.required, Validators.pattern(/^\d{8}$/), this.dniDuplicadoValidator()]);
+    this.f['placa'].updateValueAndValidity();
+    this.f['dni'].updateValueAndValidity();
   }
 
+  get f() { return this.conductorForm.controls; }
 
   onSubmit(): void {
     this.submitted = true;
@@ -156,9 +94,8 @@ export class ConductoresFormComponent implements OnInit {
 
     const guardar = () => {
       this.loading = true;
-
       const saveConductor = this.isEditing
-        ? this.conductorService.updateConductor({ ...conductor, id_conductor: this.id })
+        ? this.conductorService.updateConductor(conductor)
         : this.conductorService.createConductor(conductor);
 
       saveConductor.subscribe({
@@ -188,113 +125,81 @@ export class ConductoresFormComponent implements OnInit {
         showCancelButton: true,
         confirmButtonText: 'Sí, actualizar',
         cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          guardar();
-        }else{
-          this.router.navigate(['/admin/conductores']);
-        }
-      });
+      }).then(result => result.isConfirmed && guardar());
     } else {
       guardar();
     }
   }
-
 
   volver(): void {
     this.router.navigate(['/admin/conductores']);
   }
 
   buscarDni(): void {
-    const dni = this.conductorForm.get('dni')?.value;
-
+    const dni = this.f['dni'].value;
     if (!dni || !/^\d{8}$/.test(dni)) {
-      Swal.fire("Advertencia", "Ingrese un DNI válido de 8 dígitos", "warning");
+      Swal.fire('Advertencia', 'Ingrese un DNI válido de 8 dígitos', 'warning');
       return;
     }
 
-    const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${localStorage.getItem('token')}`
     });
 
     this.clientesService.buscarDni(dni, headers).subscribe({
       next: (data) => {
         const clienteData = JSON.parse(data.datos);
-        const nombreCompleto = `${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`;
-        this.conductorForm.patchValue({ nombre: nombreCompleto });
-        this.conductorForm.get('nombre')?.updateValueAndValidity();
-        this.conductorForm.markAsDirty();
+        this.f['nombre'].setValue(`${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`);
       },
       error: (error) => {
         console.error(error);
-        Swal.fire("Error", "No se pudo obtener los datos del DNI", "error");
+        Swal.fire('Error', 'No se pudo obtener los datos del DNI', 'error');
       }
     });
   }
 
-
-  buscarPlaca() {
-    const placa = this.conductorForm.get('placa')?.value;
-
-    if (!placa || placa.trim() === '') {
-      Swal.fire("Error", "Ingrese una placa válida", "warning");
+  buscarPlaca(): void {
+    const placa = this.f['placa'].value?.trim().toUpperCase();
+    if (!placa) {
+      Swal.fire('Error', 'Ingrese una placa válida', 'warning');
       return;
     }
 
-    this.conductorService.buscarPlaca(placa.trim().toUpperCase()).subscribe({
+    this.conductorService.buscarPlaca(placa).subscribe({
       next: (response) => {
-
         if (response.status === 200 && response.data) {
-          this.resultado = response.data;  // guarda toda la data si quieres
-
-          // Actualiza el campo modelo_vehiculo con el valor recibido
-          this.conductorForm.patchValue({
-            modelo_vehiculo: response.data.marca + " " + response.data.modelo + " COLOR: "  + response.data.color
-          });
-          this.conductorForm.get('modelo_vehiculo')?.updateValueAndValidity();
-
+          this.resultado = response.data;
+          this.f['modelo_vehiculo'].setValue(`${response.data.marca} ${response.data.modelo} COLOR: ${response.data.color}`);
         } else {
-          Swal.fire("Error", "No se encontró información de la placa", "error");
+          Swal.fire('Error', 'No se encontró información de la placa', 'error');
         }
       },
       error: (err) => {
         console.error(err);
-        Swal.fire("Error", "No se pudo obtener información de la placa", "error");
+        Swal.fire('Error', 'No se pudo obtener información de la placa', 'error');
       }
     });
   }
 
   placaDuplicadaValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (!this.conductores || control.value === null) return null;
-
-      const placa = control.value.trim().toLowerCase();
+      const placa = control.value?.trim().toLowerCase();
       const duplicado = this.conductores.some(c =>
         c.placa.trim().toLowerCase() === placa &&
         c.id_conductor !== this.conductor?.id_conductor && c.estado === 1
       );
-
       return duplicado ? { placaDuplicada: true } : null;
     };
   }
 
   dniDuplicadoValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (!this.conductores || !control.value) return null;
-
-      const dni = control.value.trim();
-      const idActual = this.id; // 👈 asegúrate de comparar con `this.id`, no con `this.conductor`
-
+      const dni = control.value?.trim();
       const duplicado = this.conductores.some(c =>
         c.dni.trim() === dni &&
-        c.id_conductor !== idActual && c.estado === 1
+        c.id_conductor !== this.id && c.estado === 1
       );
-
       return duplicado ? { dniDuplicado: true } : null;
     };
   }
-
-
-
 }

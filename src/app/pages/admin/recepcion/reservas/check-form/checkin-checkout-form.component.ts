@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CheckinCheckoutService } from '../../../../../service/checkin-checkout.service';
 import { ReservasService } from '../../../../../service/reserva.service';
 import Swal from 'sweetalert2';
+import { NotificacionesService } from '../../../../../service/notificaciones.service';
 
 interface CheckinCheckout {
   id_check?: number;
@@ -33,7 +34,9 @@ export class CheckinCheckoutFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private checkService: CheckinCheckoutService,
-    private reservasService: ReservasService
+    private reservasService: ReservasService,
+      private notificationService: NotificacionesService
+
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +59,7 @@ export class CheckinCheckoutFormComponent implements OnInit {
       estado: [1]
     });
   }
-  
+
   loadCheckData(): void {
     this.loading = true;
     if (this.id) {
@@ -68,14 +71,14 @@ export class CheckinCheckoutFormComponent implements OnInit {
             fecha_checkout: this.formatDateTime(check.fecha_checkout),
             estado: check.estado
           });
-          
+
           console.log('Check data cargado:', check);
           console.log('Formulario después del patch:', this.checkForm.value);
 
-    
+
           // Deshabilitar fecha_checkin
           this.checkForm.get('fecha_checkin')?.disable();
-    
+
           // Habilitar y añadir validador a fecha_checkout
           const checkoutCtrl = this.checkForm.get('fecha_checkout');
           checkoutCtrl?.enable();
@@ -84,15 +87,15 @@ export class CheckinCheckoutFormComponent implements OnInit {
         }
       });
     }
-    
+
   }
-  
+
 
   loadReservas(): void {
     this.reservasService.getReservas().subscribe({
       next: (reservas) => {
         this.reservas = reservas.filter((r: any) => r.estado === 1 && r.estado_reserva != "Completada" && r.estado_reserva != "Check-in" );
-  
+
         // Si estás editando, asegúrate de que la reserva actual esté en la lista
         if (this.isEditing && this.checkForm?.value?.reserva) {
           const idReservaActual = this.checkForm.value.reserva;
@@ -109,11 +112,7 @@ export class CheckinCheckoutFormComponent implements OnInit {
       }
     });
   }
-  
-  
 
-  
-  
 
   formatDateTime(dateTime: any): string {
     if (!dateTime) return '';
@@ -124,29 +123,29 @@ export class CheckinCheckoutFormComponent implements OnInit {
   onSubmit(): void {
     this.submitted = true;
     if (this.checkForm.invalid) return;
-  
+
     const formData = this.checkForm.getRawValue(); // Usa getRawValue() para campos deshabilitados
-  
+
     const reservaSeleccionada = this.reservas.find(r => Number(r.id_reserva) === Number(formData.reserva));
     if (!reservaSeleccionada) {
       this.error = 'Reserva no válida.';
       return;
     }
-  
+
     const fechaCheckin = new Date(formData.fecha_checkin);
     const fechaInicio = new Date(reservaSeleccionada.fecha_inicio);
     if (fechaCheckin.toDateString() !== fechaInicio.toDateString()) {
       this.error = 'La fecha de check-in debe coincidir con la fecha de inicio de la reserva ' + fechaInicio.toDateString();
       return;
     }
-  
+
     // ✅ Solo validar checkout si es edición
     if (this.isEditing) {
       if (!formData.fecha_checkout) {
         this.error = 'Fecha de check-out es requerida.';
         return;
       }
-  
+
       const fechaCheckout = new Date(formData.fecha_checkout);
       const fechaFin = new Date(reservaSeleccionada.fecha_fin);
       if (fechaCheckout.toDateString() !== fechaFin.toDateString()) {
@@ -154,52 +153,74 @@ export class CheckinCheckoutFormComponent implements OnInit {
         return;
       }
     }
-  
+
     const checkData: CheckinCheckout = {
       ...formData,
       reserva: { id_reserva: formData.reserva },
       ...(this.isEditing ? { id_check: this.id } : {})
     };
-  
+
     this.saveCheck(checkData);
   }
-  
-  
 
-  saveCheck(checkData: CheckinCheckout): void {
-    this.loading = true;
 
-    const operation = this.isEditing 
-      ? this.checkService.modificar(checkData)
-      : this.checkService.guardar(checkData);
+saveCheck(checkData: CheckinCheckout): void {
+  this.loading = true;
 
-    operation.subscribe({
-      next: () => {
-        this.loading = false;
-        Swal.fire({
-          icon: 'success',
-          title: this.isEditing ? 'Actualizado' : 'Registrado',
-          text: `Checkin/Checkout ${this.isEditing ? 'actualizado' : 'registrado'} correctamente`,
-          showConfirmButton: false,
-          timer: 1500
-        });
+  const operation = this.isEditing
+    ? this.checkService.modificar(checkData)
+    : this.checkService.guardar(checkData);
+
+  operation.subscribe({
+    next: () => {
+      this.loading = false;
+
+      Swal.fire({
+        icon: 'success',
+        title: this.isEditing ? 'Actualizado' : 'Registrado',
+        text: `Checkin/Checkout ${this.isEditing ? 'actualizado' : 'registrado'} correctamente`,
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        if (this.isEditing) {
+          const reserva = this.reservas.find(
+            r => Number(r.id_reserva) === Number(checkData.reserva.id_reserva)
+          );
+          const habitacion = reserva?.habitacion?.numero || 'desconocida';
+
+          // ✅ GUARDAR NOTIFICACIÓN
+          this.notificationService.agregar(
+            `La habitación #${habitacion} fue liberada y está lista para mantenimiento`
+          );
+
+          // ✅ Mostrar mensaje informativo
+          Swal.fire({
+            icon: 'info',
+            title: 'Habitación liberada',
+            text: `La habitación #${habitacion} fue liberada y está lista para mantenimiento`,
+            confirmButtonText: 'Aceptar'
+          });
+        }
+
+        // ✅ Redirigir al listado
         this.router.navigate(['/admin/checks']);
-      },
-      error: (err) => {
-        const backendMessage =
-          err.error?.message || 
-          (typeof err.error === 'string' ? err.error : null) || // si devuelve texto plano
-          'No se puede hacer check-in a una reserva no pagada';
-      
-        this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el registro: ${backendMessage}`;
-        this.loading = false;
-      
-        Swal.fire('Error', backendMessage, 'error'); // Puedes mostrar solo el mensaje del backend si prefieres
-      }
-      
-      
-    });
-  }
+      });
+    },
+
+    error: (err) => {
+      const backendMessage =
+        err.error?.message ||
+        (typeof err.error === 'string' ? err.error : null) ||
+        'No se puede hacer check-in a una reserva no pagada';
+
+      this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el registro: ${backendMessage}`;
+      this.loading = false;
+
+      Swal.fire('Error', backendMessage, 'error');
+    }
+  });
+}
+
 
   volver(): void {
     this.router.navigate(['/admin/checks']);

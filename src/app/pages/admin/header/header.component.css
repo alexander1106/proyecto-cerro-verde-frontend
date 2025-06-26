@@ -21,6 +21,18 @@
   width: 100%;
   max-width: 700px;
 }
+.notification-panel {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  width: 300px;
+  z-index: 1000;
+  border-radius: 0.5rem;
+}
+
 
 .search-field .input-group-text {
   background-color: transparent;

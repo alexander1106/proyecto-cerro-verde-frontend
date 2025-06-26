@@ -1,0 +1,37 @@
+<div class="container">
+  <app-header></app-header>
+
+  <form *ngIf="pisoForm"
+  [formGroup]="pisoForm"
+  (ngSubmit)="onSubmit()"
+  [class.disabled]="loading"
+  class="form-container shadow rounded bg-white"
+  novalidate>
+
+    <h3>Nuevo Piso</h3>
+
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div class="form-group">
+      <label for="numero">Numero</label>
+      <input type="text" id="numero" formControlName="numero" class="form-control"
+            [ngClass]="{'is-invalid': submitted && f['numero'].errors}">
+      <div *ngIf="submitted && f['numero'].errors" class="invalid-feedback">
+        <div *ngIf="f['numero'].errors['required']">Nombre es requerido</div>
+      </div>
+      <div *ngIf="submitted && f['numero'].errors?.['numeroDuplicado']" class="invalid-feedback">
+        Ya existe un tipo con este numero.
+      </div>
+    </div>
+    
+    <div class="form-buttons">
+      <button type="submit" class="btn btn-success">
+        Crear
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="volver()" [disabled]="loading">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -10,16 +10,28 @@ body {
 
 
 .form-container {
-  max-width: 960px;
-  margin: 3rem auto;
+  margin-top: 20px !important;
+  max-width: 50vw; /* antes era 960px */
+  margin: 2rem auto;
+  margin: auto;
   background-color: #ffffff;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 1.5rem 2rem; /* reduce padding horizontal y vertical */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
 }
 
+.flex{
+  margin-top: auto !important;
+  display: flex;
+  justify-content: center;
+}
+.flex img{
+  transform: scaleX(-1);
+  margin-left: 40px;
+
+}
 .form-container h2 {
   text-align: center;
   margin-bottom: 2rem;
@@ -28,8 +40,13 @@ body {
 }
 
 .form-section {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem; /* antes era 2.5rem */
 }
+
+.form-group {
+  margin-bottom: 1rem; /* antes era 1.5rem */
+}
+
 
 .form-section h3 {
   margin-bottom: 1rem;
@@ -37,10 +54,6 @@ body {
   color: #007bff;
   border-bottom: 2px solid #007bff;
   font-size: 1.3rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
 }
 
 .form-group label {
@@ -52,6 +65,8 @@ body {
 
 input[type="datetime-local"],
 input[type="text"],
+input[type="number"],
+input[type="email"],
 select,
 textarea,
 .ng-select {
@@ -214,4 +229,127 @@ button {
 
 ::ng-deep .ng-dropdown-panel .ng-option:hover {
   background-color: #f8f9fa;
+}
+
+/* Simula un sistema de columnas */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.col-md-6 {
+  flex: 1 1 48%;
+}
+
+.modal-cliente-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-cliente {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cliente-select-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-nuevo-cliente {
+  background-color: #28a745;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.btn-nuevo-cliente:hover {
+  background-color: #218838;
+}
+.imagen-inferior-derecha {
+  bottom: 20px;
+  right: 20px;
+
+  z-index: 1000;
+}
+.imagen-inferior-derecha {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.imagen-inferior-derecha img {
+  width: 200px;
+  height: auto;
+
+  transform: scaleX(-1);
+  border-radius: 10px;
+
+  /* Animación flotante */
+  animation: flotando 3s ease-in-out infinite;
+}
+
+/* Keyframes para movimiento suave arriba-abajo */
+@keyframes flotando {
+  0% {
+    transform: scaleX(-1) translateY(0);
+  }
+  50% {
+    transform: scaleX(-1) translateY(-5px); /* Subir ligeramente */
+  }
+  100% {
+    transform: scaleX(-1) translateY(0);
+  }
+}
+
+
+.alerta-temporada {
+  position: fixed;
+  bottom: 200px !important; /* encima de la imagen */
+  right: 150px;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  animation: fadeInUp 0.5s ease-out;
+  z-index: 1000;
+  max-width: 250px;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

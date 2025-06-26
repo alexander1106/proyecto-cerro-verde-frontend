@@ -45,17 +45,27 @@ export class ReservasListComponent implements OnInit {
   }
 
   updateFilteredReservas(): void {
+    const term = this.searchTerm.toLowerCase();
+  
     // Filtrar por búsqueda
-    this.filteredReservas = this.reservas.filter(reserva =>
-      Object.values(reserva).some(value =>
-        value?.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
-      )
-    );
-
+    let filtradas = this.reservas
+      .filter(reserva =>
+        reserva?.id_reserva && // evitar reservas sin id_reserva
+        Object.values(reserva).some(value =>
+          value && value.toString().toLowerCase().includes(term)
+        )
+      );
+  
+    // Ordenar por ID de forma descendente (más recientes primero)
+    filtradas.sort((a, b) => (b.id_reserva ?? 0) - (a.id_reserva ?? 0));
+  
+    // Recalcular total de páginas
+    this.totalPages = Math.ceil(filtradas.length / this.pageSize);
+  
     // Paginación
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    this.filteredReservas = this.filteredReservas.slice(startIndex, endIndex);
+    this.filteredReservas = filtradas.slice(startIndex, endIndex);
   }
 
   onSearchChange(): void {
@@ -88,17 +98,62 @@ export class ReservasListComponent implements OnInit {
   }
 
   deleteReserva(id: number): void {
-    if (confirm('¿Está seguro que desea eliminar esta reserva?')) {
-      this.reservasService.deleteReserva(id).subscribe({
-        next: () => {
-          this.loadReservas();
-        },
-        error: (err) => {
-          this.error = 'Error al eliminar la reserva: ' + err.message;
-        }
-      });
-    }
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción eliminará la reserva permanentemente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.reservasService.deleteReserva(id).subscribe({
+          next: () => {
+            Swal.fire(
+              'Eliminado',
+              'La reserva ha sido eliminada correctamente.',
+              'success'
+            );
+            this.loadReservas();
+          },
+          error: (err) => {
+            Swal.fire(
+              'Error',
+              'Ocurrió un error al eliminar la reserva: ' + err.message,
+              'error'
+            );
+          }
+        });
+      }
+    });
   }
+
+  cancelarReserva(id: number): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción cancelará la reserva y devolverá el monto al cliente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.reservasService.cancelarReserva(id).subscribe({
+          next: () => {
+            Swal.fire('Éxito', 'Reserva cancelada correctamente', 'success');
+            this.loadReservas();
+          },
+          error: (err) => {
+            Swal.fire('Error', err.error || 'No se pudo cancelar la reserva', 'error');
+          }
+        });
+      }
+    });
+  }
+  
+  
 
   formatDate(date: string | Date): string {
     if (!date) return '';
