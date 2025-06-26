@@ -37,6 +37,7 @@
           <tr>
             <th>#</th>
             <th>Nombre</th>
+            <th>Limite Huespedes</th>
             <th>Precio</th>
             <th>Acciones</th>
           </tr>
@@ -45,6 +46,7 @@
           <tr *ngFor="let tipo of tipohabitacionesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ tipo.nombre }}</td>
+            <td>{{tipo.cantidadtipo}}</td>
             <td class="precio">S/. {{ tipo.precio}}</td>
             <td class="acciones">
               <button class="btn-accion editar">

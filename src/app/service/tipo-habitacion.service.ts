@@ -6,6 +6,7 @@ export interface TipoHabitacion {
   id_tipo_habitacion?: number;
   nombre: string;
   precio: number;
+  cantidadtipo:number;
   estado: number;
 }
 

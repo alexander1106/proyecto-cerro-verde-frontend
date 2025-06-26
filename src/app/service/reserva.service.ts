@@ -1,23 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Habitacion } from './habitaciones.service';
-import { Salones } from './salones.service';
+import { Habitacion, HabitacionReserva } from './habitaciones.service';
+import { Salones, SalonReserva } from './salones.service';
 import { Cliente } from './clientes.service';
-
-export interface HabitacionReserva {
-  id_hab_reserv?: number;
-  habitacion: Habitacion;
-  reserva: Reserva;
-  estado: number;
-}
-
-export interface SalonReserva {
-  id_salon_reserv?: number;
-  salon: Salones;
-  reserva: Reserva;
-  estado: number;
-}
 
 export interface Reserva {
   id_reserva?: number;
