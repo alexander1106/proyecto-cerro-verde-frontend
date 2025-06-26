@@ -53,20 +53,24 @@ export class TipoHabitacionFormComponent implements OnInit {
         ]
       ],
       precio: [null, [Validators.required, Validators.min(0)]],
+      cantidadtipo:[null, [Validators.required, Validators.min(0)]],
       estado: [1]
     });
   }
 
   loadTipo(): void {
     if (!this.id) return;
-
+  
     this.loading = true;
     this.tipoHabitacionService.getTipoHabitacion(this.id).subscribe({
       next: (tipo) => {
         if (tipo) {
+          this.tipo = tipo; // <- Aquí asignas el tipo actual
           this.tipoForm.patchValue({
             nombre: tipo.nombre,
             precio: tipo.precio,
+            cantidadtipo: tipo.cantidadtipo,
+            estado: tipo.estado
           });
         } else {
           this.error = 'No se encontró el tipo de habitación';
@@ -80,6 +84,7 @@ export class TipoHabitacionFormComponent implements OnInit {
       }
     });
   }
+  
 
 
   onSubmit(): void {
@@ -121,16 +126,19 @@ export class TipoHabitacionFormComponent implements OnInit {
       if (!this.tipos || control.value === null) {
         return null;
       }
-
+  
       const normalizar = (valor: string) =>
         valor.toLowerCase().replace(/\s+/g, '');
-
+  
       const nombre = normalizar(control.value);
+  
       const duplicado = this.tipos.some(h =>
-        normalizar(h.nombre) === nombre && h.id_tipo_habitacion !== this.tipo?.id_tipo_habitacion
+        normalizar(h.nombre) === nombre &&
+        h.id_tipo_habitacion !== this.tipo?.id_tipo_habitacion // ← excluye el mismo
       );
-
+  
       return duplicado ? { nombreDuplicado: true } : null;
     };
   }
+  
 }

@@ -44,7 +44,7 @@
             <th>#</th>
             <th class="cliente">Cliente</th>
             <th>Tipo</th>
-            <th>Nro. huéspedes</th>
+            <th>Personas</th>
             <th>Inicio</th>
             <th>Fin</th>
             <th>Estado</th>
@@ -55,7 +55,7 @@
           <tr *ngFor="let reserva of filteredReservas; let i = index">
             <td>{{ i + 1 }}</td>
             <td class="cliente">{{ reserva.cliente.nombre }}</td>
-            <td>{{ reserva.tipo }}</td>
+            <td>{{ reserva.tipo }}</td>                     
             <td>{{ reserva.nro_persona }}</td>
             <td>{{ formatDate(reserva.fecha_inicio) }}</td>
             <td>{{ formatDate(reserva.fecha_fin) }}</td>

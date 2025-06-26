@@ -41,16 +41,18 @@
                     <th>Fecha</th>
                     <th>Cliente</th>
                     <th>Total</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let venta of ventasFiltrados">
+                <tr *ngFor="let venta of ventasPaginados">
                     <td>{{ venta.comprobantePago.numComprobante }} - {{venta.comprobantePago.numComprobante == 'B001' ?
                         venta.comprobantePago.numSerieBoleta : venta.comprobantePago.numSerieFactura}}</td>
                     <td>{{ venta.fecha | date: 'dd/MM/yyyy'}}</td>
                     <td>{{ venta.cliente.nombre }}</td>
                     <td>S/. {{ venta.total }}</td>
+                    <td>{{venta.estadoVenta}}</td>
                     <td class="acciones">
                         <!-- Siempre visible -->
                         <button class="btn-accion ver" (click)="verModal(venta.idVenta)">
