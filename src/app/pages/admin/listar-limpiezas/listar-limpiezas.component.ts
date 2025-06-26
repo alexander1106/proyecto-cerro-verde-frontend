@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
+import { HabitacionesService } from '../../../service/habitaciones.service';
+import { SalonesService } from '../../../service/salones.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -14,8 +16,13 @@ export class ListarLimpiezaComponent implements OnInit {
   error = '';
   mostrarModal = false;
   filtroEstado: string = '';
+  limpiezaSeleccionada: any = null;
 
-  constructor(private mantenimientoService: MantenimientoService) {}
+  constructor(
+    private mantenimientoService: MantenimientoService,
+    private habitacionesService: HabitacionesService,
+    private salonesService: SalonesService
+  ) {}
 
   ngOnInit(): void {
     this.obtenerLimpiezas();
@@ -50,6 +57,7 @@ export class ListarLimpiezaComponent implements OnInit {
 
   cerrarModal(): void {
     this.mostrarModal = false;
+    this.limpiezaSeleccionada = null;
   }
 
   registroExitoso(): void {
@@ -92,12 +100,51 @@ export class ListarLimpiezaComponent implements OnInit {
 
         this.mantenimientoService.actualizarLimpieza(limpieza.id_limpieza, limpiezaActualizada).subscribe({
           next: () => {
-            Swal.fire('¡Listo!', 'La limpieza fue finalizada.', 'success');
-            this.obtenerLimpiezas();
+            // ✅ Actualizar estado del lugar a "Disponible"
+            if (limpieza.habitacion && limpieza.habitacion.id_habitacion) {
+              const habitacionActualizada = {
+                ...limpieza.habitacion,
+                estado_habitacion: 'Disponible'
+              };
+
+              this.habitacionesService.updateHabitacion(habitacionActualizada).subscribe({
+                next: () => {
+                  Swal.fire('¡Listo!', 'Limpieza finalizada y habitación marcada como disponible.', 'success');
+                  this.obtenerLimpiezas();
+                },
+                error: (err) => {
+                  console.error(err);
+                  Swal.fire('Parcialmente finalizado', 'La limpieza se completó, pero no se actualizó la habitación.', 'warning');
+                  this.obtenerLimpiezas();
+                }
+              });
+
+            } else if (limpieza.salon && limpieza.salon.id_salon) {
+              const salonActualizado = {
+                ...limpieza.salon,
+                estado_salon: 'Disponible'
+              };
+
+              this.salonesService.updateSalon(salonActualizado).subscribe({
+                next: () => {
+                  Swal.fire('¡Listo!', 'Limpieza finalizada y salón marcado como disponible.', 'success');
+                  this.obtenerLimpiezas();
+                },
+                error: (err) => {
+                  console.error(err);
+                  Swal.fire('Parcialmente finalizado', 'La limpieza se completó, pero no se actualizó el salón.', 'warning');
+                  this.obtenerLimpiezas();
+                }
+              });
+
+            } else {
+              Swal.fire('¡Listo!', 'Limpieza finalizada correctamente.', 'success');
+              this.obtenerLimpiezas();
+            }
           },
           error: (err) => {
             console.error(err);
-            Swal.fire('Error', 'No se pudo actualizar la limpieza.', 'error');
+            Swal.fire('Error', 'No se pudo finalizar la limpieza.', 'error');
           }
         });
       }
@@ -127,4 +174,10 @@ export class ListarLimpiezaComponent implements OnInit {
       }
     });
   }
+
+  editarLimpieza(limpieza: any): void {
+    this.limpiezaSeleccionada = limpieza;
+    this.mostrarModal = true;
+  }
+  
 }

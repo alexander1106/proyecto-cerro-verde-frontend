@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
 import { HabitacionesService } from '../../../service/habitaciones.service';
@@ -10,7 +10,8 @@ import { SalonesService } from '../../../service/salones.service';
   styleUrls: ['./registrar-limpiezas.component.css'],
   standalone: false,
 })
-export class RegistrarLimpiezaComponent implements OnInit {
+export class RegistrarLimpiezaComponent implements OnInit, OnChanges {
+  @Input() limpiezaEditar: any = null;
   @Output() onRegistroExitoso = new EventEmitter<void>();
   @Output() onCancelar = new EventEmitter<void>();
 
@@ -21,6 +22,8 @@ export class RegistrarLimpiezaComponent implements OnInit {
   personalLimpieza: any[] = [];
   habitaciones: any[] = [];
   salones: any[] = [];
+  modoEdicion: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +60,30 @@ export class RegistrarLimpiezaComponent implements OnInit {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['limpiezaEditar']) {
+      this.modoEdicion = !!this.limpiezaEditar;
+  
+      if (this.limpiezaEditar) {
+        this.limpiezaForm.patchValue({
+          fecha_limpieza: this.limpiezaEditar.fecha_registro,
+          observaciones: this.limpiezaEditar.observaciones,
+          id_personal_limpieza: this.limpiezaEditar.personal?.id_personal_limpieza || null,
+          id_habitacion: this.limpiezaEditar.habitacion?.id_habitacion || null,
+          id_salon: this.limpiezaEditar.salon?.id_salon || null
+        });
+  
+        // 🔒 Desactivar campos si está en modo edición
+        this.limpiezaForm.get('fecha_limpieza')?.disable();
+        this.limpiezaForm.get('id_habitacion')?.disable();
+        this.limpiezaForm.get('id_salon')?.disable();
+      } else {
+        this.limpiezaForm.enable(); // por si acaso
+      }
+    }
+  }
+  
+
   getCurrentDateTime(): string {
     const now = new Date();
     const year = now.getFullYear();
@@ -73,28 +100,33 @@ export class RegistrarLimpiezaComponent implements OnInit {
     this.salonesService.getSalones().subscribe(data => this.salones = data);
   }
 
-  registrar(): void {
+  guardar(): void {
     if (this.limpiezaForm.invalid) return;
 
     const data = {
-      fecha_registro: this.limpiezaForm.value.fecha_limpieza, // CORREGIDO
-      fecha_solucion: null, // siempre null al crear
+      fecha_registro: this.limpiezaForm.value.fecha_limpieza,
+      fecha_solucion: this.limpiezaEditar ? this.limpiezaEditar.fecha_solucion : null,
       observaciones: this.limpiezaForm.value.observaciones,
-      estado_limpieza: 'Pendiente',
+      estado_limpieza: this.limpiezaEditar ? this.limpiezaEditar.estado_limpieza : 'Pendiente',
       personal: { id_personal_limpieza: this.limpiezaForm.value.id_personal_limpieza },
       habitacion: this.limpiezaForm.value.id_habitacion ? { id_habitacion: this.limpiezaForm.value.id_habitacion } : null,
       salon: this.limpiezaForm.value.id_salon ? { id_salon: this.limpiezaForm.value.id_salon } : null
     };
 
     this.loading = true;
-    this.mantenimientoService.registrarLimpieza(data).subscribe({
+
+    const request$ = this.limpiezaEditar
+      ? this.mantenimientoService.actualizarLimpieza(this.limpiezaEditar.id_limpieza, data)
+      : this.mantenimientoService.registrarLimpieza(data);
+
+    request$.subscribe({
       next: () => {
         this.loading = false;
         this.onRegistroExitoso.emit();
       },
       error: err => {
         console.error(err);
-        this.error = 'Error al registrar la limpieza.';
+        this.error = this.limpiezaEditar ? 'Error al actualizar la limpieza.' : 'Error al registrar la limpieza.';
         this.loading = false;
       }
     });

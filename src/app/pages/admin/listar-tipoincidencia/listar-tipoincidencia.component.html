@@ -19,7 +19,7 @@
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -27,13 +27,8 @@
             <td>{{ tipo.id_tipo_incidencia }}</td>
             <td>{{ tipo.nombre }}</td>
             <td>
-              <span class="badge"
-                [ngClass]="{
-                  'badge-disponible': tipo.estado === 1,
-                  'badge-ocupado': tipo.estado === 0
-                }">
-                {{ tipo.estado === 1 ? 'ACTIVO' : 'INACTIVO' }}
-              </span>
+              <button class="btn btn-sm btn-warning me-2" (click)="editarTipo(tipo)">Editar</button>
+              <button class="btn btn-sm btn-danger" (click)="eliminarTipo(tipo.id_tipo_incidencia)">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -41,18 +36,20 @@
     </div>
   </div>
 
-  <!-- Modal para registrar tipo de incidencia -->
-  <ng-container *ngIf="mostrarModal">
-    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <app-registrar-tipo-incidencia
-            (onRegistroExitoso)="registroExitoso()"
-            (onCancelar)="cerrarModal()">
-          </app-registrar-tipo-incidencia>
-        </div>
+<!-- Modal para registrar/editar tipo de incidencia -->
+<ng-container *ngIf="mostrarModal">
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <app-registrar-tipo-incidencia
+          [tipoEditar]="tipoSeleccionado"
+          (onRegistroExitoso)="registroExitoso()"
+          (onCancelar)="cerrarModal()">
+        </app-registrar-tipo-incidencia>
       </div>
     </div>
-    <div class="modal-backdrop fade show"></div>
-  </ng-container>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+</ng-container>
+
 </div>
