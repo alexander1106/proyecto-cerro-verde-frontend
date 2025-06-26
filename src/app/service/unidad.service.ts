@@ -12,10 +12,6 @@ export class UnidadService {
     return this.http.get<any[]>("http://localhost:8080/cerro-verde/unidadmedida")
   }
 
-  listarUnidadActivos(){
-    return this.http.get<any[]>("http://localhost:8080/cerro-verde/unidadmedidaactivo")
-  }
-
   buscarUnidadId(id: number){
     return this.http.get(`http://localhost:8080/cerro-verde/unidadmedida/${id}`)
   }

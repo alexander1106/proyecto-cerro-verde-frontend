@@ -47,7 +47,7 @@ export class ListUnidadComponent {
 
   //MOSTRAR LAS UNIDADES
   listarUnidades() {
-    this.unidadesService.listarUnidadActivos().subscribe(
+    this.unidadesService.listarUnidad().subscribe(
       (data: any) => {
         this.unidades = data;
         this.unidadesFiltrados = [...this.unidades];

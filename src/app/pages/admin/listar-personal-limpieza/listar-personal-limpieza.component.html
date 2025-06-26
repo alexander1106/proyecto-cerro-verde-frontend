@@ -1,0 +1,50 @@
+<div class="container">
+    <app-header></app-header>
+    <div class="card p-3">
+      <h4 class="mb-3">Personal de Limpieza</h4>
+  
+      <button class="btn btn-primary mb-3" (click)="abrirModal()">
+        Registrar Nuevo Personal
+      </button>
+  
+      <div *ngIf="loading" class="text-center text-muted">
+        <i class="bi bi-arrow-repeat spinner-border"></i> Cargando personal...
+      </div>
+  
+      <div *ngIf="!loading && personalLimpieza.length === 0" class="text-muted text-center">
+        <i class="bi bi-inbox fs-1"></i>
+        <p>No hay personal registrado</p>
+      </div>
+  
+      <div *ngIf="!loading && personalLimpieza.length > 0">
+        <table class="tabla-trabajadores">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Nombres</th>
+              <th>Sucursal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let personal of personalLimpieza">
+              <td>{{ personal.id_personal_limpieza }}</td>
+              <td>{{ personal.nombres }}</td>
+              <td>{{ personal.sucursal?.nombre }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Modal registro -->
+    <app-registrar-personal-limpieza
+      *ngIf="mostrarModal"
+      (onRegistroExitoso)="registroExitoso()"
+      (onCancelar)="cerrarModal()"
+    >
+    </app-registrar-personal-limpieza>
+  
+    <!-- Mensaje debug -->
+    <p *ngIf="mostrarModal">✅ Modal Activo</p>
+  </div>
+  

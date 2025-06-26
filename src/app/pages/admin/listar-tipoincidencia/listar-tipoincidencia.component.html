@@ -1,32 +1,58 @@
-<div class="container mt-4">
-  <h2 class="mb-3">Tipos de Incidencia</h2>
-  <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Tipo Incidencia</button>
+<div class="container">
+  <app-header></app-header>
+  <div class="card p-3">
+    <h4 class="mb-3">Listado de Tipos de Incidencia</h4>
+    <button class="btn btn-primary mb-3" (click)="abrirModal()">Registrar Tipo Incidencia</button>
 
-  <div *ngIf="loading" class="alert alert-info">Cargando tipos de incidencia...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="loading" class="text-center text-muted">
+      <i class="bi bi-arrow-repeat spinner-border"></i> Cargando tipos de incidencia...
+    </div>
 
-  <table *ngIf="!loading && !error" class="table table-bordered table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let tipo of tiposIncidencia">
-        <td>{{ tipo.id_tipo_incidencia }}</td>
-        <td>{{ tipo.nombre }}</td>
-        <td>{{ tipo.estado === 1 ? 'Activo' : 'Inactivo' }}</td>
-      </tr>
-    </tbody>
-  </table>
+    <div *ngIf="!loading && tiposIncidencia.length === 0" class="text-muted text-center">
+      <i class="bi bi-inbox fs-1"></i>
+      <p>No hay tipos de incidencia registrados</p>
+    </div>
+
+    <div *ngIf="!loading && tiposIncidencia.length > 0">
+      <table class="tabla-trabajadores">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tipo of tiposIncidencia">
+            <td>{{ tipo.id_tipo_incidencia }}</td>
+            <td>{{ tipo.nombre }}</td>
+            <td>
+              <span class="badge"
+                [ngClass]="{
+                  'badge-disponible': tipo.estado === 1,
+                  'badge-ocupado': tipo.estado === 0
+                }">
+                {{ tipo.estado === 1 ? 'ACTIVO' : 'INACTIVO' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal para registrar tipo de incidencia -->
+  <ng-container *ngIf="mostrarModal">
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <app-registrar-tipo-incidencia
+            (onRegistroExitoso)="registroExitoso()"
+            (onCancelar)="cerrarModal()">
+          </app-registrar-tipo-incidencia>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+  </ng-container>
 </div>
-
-<!-- ✅ Aquí se renderiza el modal si mostrarModal = true -->
-  <app-registrar-tipo-incidencia
-    *ngIf="mostrarModal"
-    (onRegistroExitoso)="registroExitoso()"
-    (onCancelar)="cerrarModal()">
-  </app-registrar-tipo-incidencia>
-

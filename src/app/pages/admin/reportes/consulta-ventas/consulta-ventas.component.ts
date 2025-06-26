@@ -30,6 +30,8 @@ export interface VentaResumen {
   cantidad: number;
   total:    number;
 }
+// Paso 1: Define tipo literal para evitar errores de tipo
+// type TipoReporte = 'productos' | 'salones' | 'habitaciones' | 'clientes' | 'metodos-pago';
 
 type TipoResumen  = 'productos'|'salones'|'habitaciones'|'clientes'|'metodos-pago';
 type TipoReservas = 'reservas-habitaciones'|'reservas-salones';
@@ -329,4 +331,46 @@ export class ConsultaVentasComponent implements OnInit, AfterViewInit {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+
+  // ----------- Descarga Detallado -----------
+  // descargarPDFDetallado() {
+  //   const { fechaDesde, fechaHasta } = this.filtroForm.value;
+  //   const desde = (fechaDesde as Date).toISOString().substring(0, 10);
+  //   const hasta = (fechaHasta as Date).toISOString().substring(0, 10);
+  //   let obs: Observable<Blob>;
+  //   if (this.currentTipo === 'salones')
+  //     obs = this.reportesService.descargarPdfSalonesDetallado(desde, hasta);
+  //   else if (this.currentTipo === 'habitaciones')
+  //     obs = this.reportesService.descargarPdfHabitacionesDetallado(desde, hasta);
+  //   else if (this.currentTipo === 'metodos-pago')
+  //     obs = this.reportesService.descargarPdfMetodosPagoDetallado(desde, hasta);
+  //   else return;
+  //   obs.subscribe(blob => this.descargarBlob(blob, `${this.currentTipo}_detallado.pdf`));
+  // }
+
+  // descargarExcelDetallado() {
+  //   const { fechaDesde, fechaHasta } = this.filtroForm.value;
+  //   const desde = (fechaDesde as Date).toISOString().substring(0, 10);
+  //   const hasta = (fechaHasta as Date).toISOString().substring(0, 10);
+  //   let obs: Observable<Blob>;
+  //   if (this.currentTipo === 'salones')
+  //     obs = this.reportesService.descargarExcelSalonesDetallado(desde, hasta);
+  //   else if (this.currentTipo === 'habitaciones')
+  //     obs = this.reportesService.descargarExcelHabitacionesDetallado(desde, hasta);
+  //   else if (this.currentTipo === 'metodos-pago')
+  //     obs = this.reportesService.descargarExcelMetodosPagoDetallado(desde, hasta);
+  //   else return;
+  //   obs.subscribe(blob => this.descargarBlob(blob, `${this.currentTipo}_detallado.xlsx`));
+  // }
+
+  // private descargarBlob(blob: Blob, filename: string) {
+  //   const url = window.URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = filename;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  //   URL.revokeObjectURL(url);
+  // }
 }

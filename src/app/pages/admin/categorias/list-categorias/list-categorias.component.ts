@@ -44,7 +44,7 @@ export class ListCategoriasComponent {
 
   //MOSTRAR LAS CATEGORIAS
   listarCategorias() {
-    this.categoriasService.listarCategoriasActivos().subscribe(
+    this.categoriasService.listarCategoria().subscribe(
       (data: any) => {
         this.categorias = data;
         this.categoriasFiltrados = [...this.categorias];

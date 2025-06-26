@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
-import { RegistrarAreaHotelComponent } from '../registrar-areas-hotel/registrar-areas-hotel.component';
-import { NgFor, NgIf } from '@angular/common';
+import { RegistrarPersonalLimpiezaComponent } from '../registrar-personal-limpieza/registrar-personal-limpieza.component';
 
 @Component({
-  selector: 'app-listar-areas-hotel',
-  templateUrl: './listar-areas-hotel.component.html',
-  styleUrls: ['./listar-areas-hotel.component.css'],
+  selector: 'app-listar-personal-limpieza',
+  templateUrl: './listar-personal-limpieza.component.html',
+  styleUrls: ['./listar-personal-limpieza.component.css'],
   standalone: false
 })
-export class ListarAreasHotelComponent implements OnInit {
-  areasHotel: any[] = [];
+export class ListarPersonalLimpiezaComponent implements OnInit {
+  personalLimpieza: any[] = [];
   loading = true;
   error = '';
   mostrarModal = false;
@@ -18,17 +17,17 @@ export class ListarAreasHotelComponent implements OnInit {
   constructor(private mantenimientoService: MantenimientoService) {}
 
   ngOnInit(): void {
-    this.obtenerAreasHotel();
+    this.obtenerPersonalLimpieza();
   }
 
-  obtenerAreasHotel(): void {
-    this.mantenimientoService.getAreasHotel().subscribe({
+  obtenerPersonalLimpieza(): void {
+    this.mantenimientoService.getPersonalLimpieza().subscribe({
       next: (data) => {
-        this.areasHotel = data;
+        this.personalLimpieza = data;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Error al cargar las áreas del hotel';
+        this.error = 'Error al cargar el personal de limpieza';
         console.error(err);
         this.loading = false;
       }
@@ -45,7 +44,6 @@ export class ListarAreasHotelComponent implements OnInit {
 
   registroExitoso(): void {
     this.cerrarModal();
-    this.obtenerAreasHotel();
+    this.obtenerPersonalLimpieza();
   }
-
 }

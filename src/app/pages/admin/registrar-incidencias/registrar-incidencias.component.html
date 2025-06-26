@@ -1,4 +1,4 @@
-<<!--div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -17,7 +17,21 @@
               <option [ngValue]="null">Seleccione un tipo</option>
               <option *ngFor="let t of tiposIncidencia" [value]="t.id_tipo_incidencia">{{ t.nombre }}</option>
             </select>
-          </div>          
+          </div>
+          
+          <div class="mb-2">
+            <label for="gravedad">Urgencia de la incidencia</label>
+            <select id="gravedad" class="form-control" formControlName="gravedad">
+              <option value="">Seleccione la urgencia</option>
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+            </select>
+            <div *ngIf="incidenciaForm.get('gravedad')?.invalid && incidenciaForm.get('gravedad')?.touched" class="text-danger">
+              La gravedad es obligatoria.
+            </div>
+          </div>
+          
           <div class="mb-2">
             <label>Descripción</label>
             <textarea class="form-control" formControlName="descripcion"></textarea>
@@ -27,16 +41,25 @@
             <select class="form-control" formControlName="id_habitacion">
               <option [ngValue]="null">Seleccione una habitación</option>
               <option *ngFor="let h of habitaciones" [value]="h.id_habitacion">
-                Habitación {{ h.numero }} - Piso {{ h.piso.numero }}
+                Habitación {{ h.numero }} - Piso {{ h.piso?.numero || 'N/A' }}
               </option>
             </select>
-          </div>
+          </div>          
           <div class="mb-2">
             <label>Área</label>
             <select class="form-control" formControlName="id_area">
               <option [ngValue]="null">Seleccione un área</option>
               <option *ngFor="let a of areas" [value]="a.id_area">
                 {{ a.nombre }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label>Salón</label>
+            <select class="form-control" formControlName="id_salon">
+              <option [ngValue]="null">Seleccione un salón</option>
+              <option *ngFor="let s of salones" [value]="s.id_salon">
+                {{ s.nombre }}
               </option>
             </select>
           </div>
@@ -49,4 +72,4 @@
       </div>
     </div>
   </div>
-</div>-->
+</div>

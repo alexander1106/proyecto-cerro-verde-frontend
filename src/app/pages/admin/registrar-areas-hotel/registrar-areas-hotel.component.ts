@@ -7,8 +7,7 @@ import { NgIf } from '@angular/common';
   selector: 'app-registrar-area-hotel',
   templateUrl: './registrar-areas-hotel.component.html',
   styleUrls: ['./registrar-areas-hotel.component.css'],
-  imports: [ReactiveFormsModule, NgIf],
-  standalone: true
+  standalone: false
 })
 export class RegistrarAreaHotelComponent {
   @Output() onRegistroExitoso = new EventEmitter<void>();

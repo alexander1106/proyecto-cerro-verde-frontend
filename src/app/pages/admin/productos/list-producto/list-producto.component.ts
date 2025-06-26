@@ -96,7 +96,7 @@ export class ListProductoComponent {
 
   //MOSTRAR LOS PRODUCTOS
   listarProductos() {
-    this.productosService.listarProductosActivos().subscribe(
+    this.productosService.listarProductos().subscribe(
       (data: any) => {
         this.productos = data;
         this.productosFiltrados = [...this.productos];
@@ -222,7 +222,7 @@ export class ListProductoComponent {
 
   //CARGAR CATEGORIAS
   cargarCategorias() {
-    this.categoriasService.listarCategoriasActivos().subscribe((data) => {
+    this.categoriasService.listarCategoria().subscribe((data) => {
       this.categorias = data;
       this.categoriaFiltrado = [...this.categorias];
     })
@@ -250,7 +250,7 @@ export class ListProductoComponent {
 
   //CARGAR UNIDADES
   cargarUnidades() {
-    this.unidadesService.listarUnidadActivos().subscribe((data) => {
+    this.unidadesService.listarUnidad().subscribe((data) => {
       this.unidades = data;
       this.unidadFiltrado = [...this.unidades];
     })

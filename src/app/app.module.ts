@@ -93,6 +93,8 @@ import { ReportesComprasComponent } from './pages/admin/reportes/reportes-compra
 import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 import { NgChartsModule } from 'ng2-charts';
 import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+// import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+// import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
 import { ReportesVentasService } from './service/reportes-ventas.service';
 import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
 import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
@@ -103,6 +105,11 @@ import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencia
 import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
 import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
 import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
+import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
+import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
+import { RegistrarPersonalLimpiezaComponent } from './pages/admin/registrar-personal-limpieza/registrar-personal-limpieza.component';
+import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
 
 @NgModule({
   declarations: [
@@ -170,6 +177,12 @@ import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoin
     PisosListComponent,
     CajaReporteComponent,
     DashboardInicioComponent,
+    ListarAreasHotelComponent,
+    RegistrarAreaHotelComponent,
+    ListarLimpiezaComponent,
+    RegistrarLimpiezaComponent,
+    RegistrarPersonalLimpiezaComponent,
+    ListarPersonalLimpiezaComponent
   ],
 
   imports: [
