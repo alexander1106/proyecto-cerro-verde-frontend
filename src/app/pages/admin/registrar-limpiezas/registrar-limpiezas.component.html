@@ -2,15 +2,20 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Registrar Nueva Limpieza</h5>
+        <h5 class="modal-title">
+          {{ limpiezaEditar ? 'Editar Limpieza' : 'Registrar Nueva Limpieza' }}
+        </h5>
         <button type="button" class="btn-close" (click)="cancelar()"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="limpiezaForm">
           <div class="mb-2">
             <label>Fecha y Hora de Limpieza</label>
-            <input type="datetime-local" class="form-control" formControlName="fecha_hora_limpieza" />
-          </div>
+            <input type="datetime-local"
+            class="form-control"
+            formControlName="fecha_limpieza"
+            [readonly]="modoEdicion" />
+               </div>
 
           <div class="mb-2">
             <label>Personal de Limpieza</label>
@@ -22,22 +27,26 @@
 
           <div class="mb-2">
             <label>Habitación</label>
-            <select class="form-control" formControlName="id_habitacion">
-              <option [ngValue]="null">Seleccione una habitación</option>
-              <option *ngFor="let h of habitaciones" [value]="h.id_habitacion">
-                Habitación {{ h.numero }} - Piso {{ h.piso }}
-              </option>
-            </select>
+            <select class="form-control"
+            formControlName="id_habitacion"
+            [disabled]="modoEdicion">
+      <option [ngValue]="null">Seleccione una habitación</option>
+      <option *ngFor="let h of habitaciones" [value]="h.id_habitacion">
+        Habitación {{ h.numero }} - Piso {{ h.piso }}
+      </option>
+    </select>
+    
           </div>
 
           <div class="mb-2">
             <label>Salón</label>
-            <select class="form-control" formControlName="id_salon">
-              <option [ngValue]="null">Seleccione un salón</option>
-              <option *ngFor="let s of salones" [value]="s.id_salon">
-                {{ s.nombre }}
-              </option>
-            </select>
+            <select class="form-control"
+            formControlName="id_salon"
+            [disabled]="modoEdicion">
+      <option [ngValue]="null">Seleccione un salón</option>
+      <option *ngFor="let s of salones" [value]="s.id_salon">{{ s.nombre }}</option>
+    </select>
+    
           </div>
 
           <div class="mb-2">
@@ -51,7 +60,9 @@
 
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-        <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+        <button class="btn btn-primary" [disabled]="loading" (click)="guardar()">
+          {{ limpiezaEditar ? 'Actualizar' : 'Registrar' }}
+        </button>
       </div>
     </div>
   </div>

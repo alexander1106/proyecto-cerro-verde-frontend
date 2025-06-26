@@ -78,17 +78,30 @@
             </td>
             <td>{{ limpieza.observaciones }}</td>
             <td>
+              <button *ngIf="limpieza.estado_limpieza !== 'Completada'"
+              class="btn btn-sm btn-warning me-1"
+              title="Editar limpieza"
+              (click)="editarLimpieza(limpieza)">
+        <i class="bi bi-pencil-square"></i>
+      </button>      
+
               <button *ngIf="limpieza.estado_limpieza === 'Pendiente'"
-                class="btn btn-sm btn-success ms-2"
+                class="btn btn-sm btn-success me-1"
+                title="Finalizar limpieza"
                 (click)="finalizarLimpieza(limpieza)">
-                <i class="bi bi-check-circle-fill me-1"></i>
+                <i class="bi bi-check-circle-fill"></i>
               </button>
+              
               <button *ngIf="limpieza.estado_limpieza === 'Pendiente'"
-                class="btn btn-danger btn-sm ms-2"
+                class="btn btn-sm btn-danger"
+                title="Eliminar limpieza"
                 (click)="eliminarLimpieza(limpieza)">
-                <i class="bi bi-trash-fill me-1"></i>
+                <i class="bi bi-trash-fill"></i>
               </button>
+            
+              <span *ngIf="limpieza.estado_limpieza === 'Completada'" class="text-muted fst-italic">Completada</span>
             </td>
+            
           </tr>
         </tbody>
       </table>
@@ -97,10 +110,12 @@
 
   <!-- Modal registro -->
   <app-registrar-limpieza
-    *ngIf="mostrarModal"
-    (onRegistroExitoso)="registroExitoso()"
-    (onCancelar)="cerrarModal()">
-  </app-registrar-limpieza>
+  *ngIf="mostrarModal"
+  [limpiezaEditar]="limpiezaSeleccionada"
+  (onRegistroExitoso)="registroExitoso()"
+  (onCancelar)="cerrarModal()">
+</app-registrar-limpieza>
+
 
   <!-- Mensaje debug -->
   <p *ngIf="mostrarModal">✅ Modal Activo</p>

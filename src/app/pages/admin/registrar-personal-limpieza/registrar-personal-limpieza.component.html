@@ -2,7 +2,9 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Registrar Personal de Limpieza</h5>
+        <h5 class="modal-title">
+          {{ modoEdicion ? 'Editar Personal de Limpieza' : 'Registrar Personal de Limpieza' }}
+        </h5>
         <button type="button" class="btn-close" (click)="cancelar()"></button>
       </div>
       <div class="modal-body">
@@ -16,7 +18,9 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-        <button class="btn btn-primary" [disabled]="loading" (click)="registrar()">Registrar</button>
+        <button class="btn btn-primary" [disabled]="loading" (click)="guardar()">
+          {{ modoEdicion ? 'Actualizar' : 'Registrar' }}
+        </button>
       </div>
     </div>
   </div>

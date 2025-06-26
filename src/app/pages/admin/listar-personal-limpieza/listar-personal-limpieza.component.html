@@ -22,14 +22,17 @@
             <tr>
               <th>ID</th>
               <th>Nombres</th>
-              <th>Sucursal</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let personal of personalLimpieza">
               <td>{{ personal.id_personal_limpieza }}</td>
               <td>{{ personal.nombres }}</td>
-              <td>{{ personal.sucursal?.nombre }}</td>
+              <td>
+                <button class="btn btn-sm btn-warning me-2" (click)="editarPersonal(personal)">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="eliminarPersonal(personal.id_personal_limpieza)">Eliminar</button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -38,11 +41,13 @@
   
     <!-- Modal registro -->
     <app-registrar-personal-limpieza
-      *ngIf="mostrarModal"
-      (onRegistroExitoso)="registroExitoso()"
-      (onCancelar)="cerrarModal()"
-    >
-    </app-registrar-personal-limpieza>
+    *ngIf="mostrarModal"
+    [personalEditar]="personalSeleccionado"
+    (onRegistroExitoso)="registroExitoso()"
+    (onCancelar)="cerrarModal()"
+  >
+  </app-registrar-personal-limpieza>
+  
   
     <!-- Mensaje debug -->
     <p *ngIf="mostrarModal">✅ Modal Activo</p>
