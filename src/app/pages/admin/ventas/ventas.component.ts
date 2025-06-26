@@ -103,104 +103,6 @@ export class VentasComponent {
     pais: '',
     estado: 1,
   };
-  //Objeto Venta RecibirDatoss
-  public ventaRecibir = {
-    idVenta: '',
-    numComprobante: '',
-    numSerieBoleta: '',
-    numSerieFactura: '',
-    dniiRucCliente: '',
-    cliente: '',
-    fecha: '',
-    total: '',
-    descuento: 0,
-    cargo: 0,
-    igv: 0,
-    estado: 1,
-    estadoVenta: '',
-    ventaXReserva: [] as Array<{
-      idVentaReserva: any;
-      reserva: {
-        id_reserva: any;
-        fecha_incio: any;
-        fecha_fin: any;
-        estado_reserva: any;
-        comentarios: any;
-        estado: 1;
-        tipo: any;
-        cliente: {
-          idCliente: '';
-          dniRuc: '';
-          nombre: '';
-          telefono: '';
-          correo: '';
-          pais: '';
-          estado: 1;
-        };
-      };
-    }>,
-    detalleVenta: [] as Array<{
-      idDetalleVenta: any;
-      cantidad: any;
-      precioUnit: any;
-      subtotal: any;
-      estado: 1;
-      producto?: {
-        id_producto: any;
-        nombre: any;
-        descripcion: any;
-        estado: 1;
-        stock: any;
-        categoriaproducto: {
-          id_categoria: '';
-          nombre: '';
-          estado: 1;
-        };
-      };
-    }>,
-    detalleHabitacion: [] as Array<{
-      idVentaHabitacion: any;
-      dias: any;
-      subTotal: any;
-      habitacion: {
-        id_habitacion: any;
-        numero: any;
-        piso: any;
-        estado_habitacion: any;
-        estado: 1;
-        tipo_habitacion: {
-          id_tipo_habitacion: any;
-          nombre: any;
-          precio: any;
-          precio_corporativo: any;
-          estado: 1;
-        };
-      };
-    }>,
-    detalleSalon: [] as Array<{
-      idVentaSalon: any;
-      horas: any;
-      dias: any;
-      subTotal: any;
-      salon: {
-        id_salon: any;
-        precio_diario: any;
-        precio_hora: any;
-        nombre: any;
-        estado_salon: any;
-        estado: 1;
-      };
-    }>,
-    metodosPago: [] as Array<{
-      idVentaMetodoPago: any;
-      pago: any;
-      metodoPago: {
-        idMetodoPago: any;
-        nombre: any;
-        estado: 1;
-      };
-    }>,
-  };
   //Objeto Venta
   public venta = {
     idVenta: '',
@@ -564,7 +466,7 @@ export class VentasComponent {
     const descuento = Number(this.venta.descuento) || 0;
 
     this.venta.detalleVenta.forEach((item: any) => {
-      item.subTotal = item.cantidad * item.producto.precioVenta;
+      item.subtotal = item.cantidad * item.producto.precioVenta;
       console.log(item.subTotal);
     });
 
@@ -639,17 +541,17 @@ export class VentasComponent {
     //   this.venta.ventaMetodoPago.length === 1 &&
     //   this.venta.ventaMetodoPago[0].metodoPago.nombre === 'EFECTIVO';
 
-    // if (totalPagado > totalVenta) {
-    //   this.snack.open(
-    //     'El monto pagado excede el total de la venta.',
-    //     'Cerrar',
-    //     {
-    //       duration: 3000,
-    //       panelClass: ['snackbar-error'],
-    //     }
-    //   );
-    //   return;
-    // }
+    if (totalPagado > totalVenta) {
+      this.snack.open(
+        'El monto pagado excede el total de la venta.',
+        'Cerrar',
+        {
+          duration: 3000,
+          panelClass: ['snackbar-error'],
+        }
+      );
+      return;
+    }
 
     // if (soloEfectivo && totalPagado > totalVenta) {
     //   this.vuelto = totalPagado - totalVenta;
@@ -667,27 +569,27 @@ export class VentasComponent {
         : null;
 
     // Si existe y tiene un monto válido, generar la transacción
-    if (
-      efectivoPago &&
-      efectivoPago.pago > 0 &&
-      reserva?.estado_reserva == ''
-    ) {
-      const nuevaTransaccion = {
-        montoTransaccion: efectivoPago.pago,
-        tipo: { id: 1 }, // 1: ingreso
-      };
+    // if (
+    //   efectivoPago &&
+    //   efectivoPago.pago > 0 &&
+    //   reserva?.estado_reserva == ''
+    // ) {
+    //   const nuevaTransaccion = {
+    //     montoTransaccion: efectivoPago.pago,
+    //     tipo: { id: 1 }, // 1: ingreso
+    //   };
 
-      console.log('NUEVA TRANSACCION', nuevaTransaccion);
+    //   console.log('NUEVA TRANSACCION', nuevaTransaccion);
 
-      this.cajaService.guardarTransaccion(nuevaTransaccion).subscribe({
-        next: () => {
-          console.log('Transacción guardada correctamente');
-        },
-        error: (err) => {
-          console.error('Error al guardar transacción', err);
-        },
-      });
-    }
+    //   this.cajaService.guardarTransaccion(nuevaTransaccion).subscribe({
+    //     next: () => {
+    //       console.log('Transacción guardada correctamente');
+    //     },
+    //     error: (err) => {
+    //       console.error('Error al guardar transacción', err);
+    //     },
+    //   });
+    // }
 
     this.ventasService.registrarVenta(this.venta).subscribe(
       (data) => {
@@ -944,7 +846,7 @@ export class VentasComponent {
   aplicarFiltros() {
     let filtrados = this.ventas;
 
-    // Filtro por estado (si hay uno seleccionado)
+    // Filtro por estado
     if (this.estadoSeleccionado) {
       filtrados = filtrados.filter(
         (v) => v.estadoVenta === this.estadoSeleccionado
@@ -959,8 +861,8 @@ export class VentasComponent {
       );
     }
 
-    // Asigna resultados y actualiza paginación
     this.ventasFiltrados = filtrados;
+    this.paginaActualCompra = 1; // 🔁 Reinicia la página al aplicar filtro
     this.actualizarPaginacion();
   }
 
