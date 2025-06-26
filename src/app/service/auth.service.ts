@@ -5,7 +5,7 @@ import { switchMap, map, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private API_URL = 'http://hotel.spring.informaticapp.com:9351/hoteleria';
+  private API_URL = 'http://localhost:8080/cerro-verde';
 
   constructor(private http: HttpClient) {}
 

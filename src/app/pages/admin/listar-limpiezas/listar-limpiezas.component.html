@@ -1,12 +1,28 @@
 <div class="container">
   <app-header></app-header>
-
   <div class="card p-3">
-    <h4 class="mb-3">Historial de Limpiezas</h4>
+    <h4 class="mb-3">Listado de Limpiezas</h4>
 
     <button class="btn btn-primary mb-3" (click)="abrirModal()">
-      Registrar Limpieza
+      Registrar Nueva Limpieza
     </button>
+
+    <!-- Filtro -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Filtrar por Estado</label>
+        <select class="form-select" [(ngModel)]="filtroEstado">
+          <option value="">-- Todos --</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Completada">Completada</option>
+        </select>
+      </div>
+      <div class="col-md-2 align-self-end">
+        <button class="btn btn-outline-secondary w-100" (click)="limpiarFiltroEstado()">
+          <i class="bi bi-x-circle me-1"></i> Limpiar Filtro
+        </button>
+      </div>
+    </div>
 
     <!-- Cargando -->
     <div *ngIf="loading" class="text-center text-muted">
@@ -14,47 +30,78 @@
     </div>
 
     <!-- Sin resultados -->
-    <div *ngIf="!loading && limpiezas.length === 0" class="text-muted text-center">
+    <div *ngIf="!loading && limpiezasFiltradas.length === 0" class="text-muted text-center">
       <i class="bi bi-inbox fs-1"></i>
       <p>No hay limpiezas registradas</p>
     </div>
 
     <!-- Tabla -->
-    <div *ngIf="!loading && limpiezas.length > 0">
-      <table class="table table-bordered table-striped">
-        <thead class="table-dark">
+    <div *ngIf="!loading && limpiezasFiltradas.length > 0">
+      <table class="tabla-trabajadores">
+        <thead class="table-light">
           <tr>
             <th>ID</th>
-            <th>Fecha y Hora</th>
+            <th>Registro</th>
+            <th>Solución</th>
+            <th>Estado</th>
+            <th>Personal</th>
+            <th>Lugar</th>
             <th>Observaciones</th>
-            <th>Habitación</th>
-            <th>Usuario</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let limpieza of limpiezas">
+          <tr *ngFor="let limpieza of limpiezasFiltradas">
             <td>{{ limpieza.id_limpieza }}</td>
-            <td>{{ limpieza.fecha_hora_limpieza }}</td>
+            <td>{{ limpieza.fecha_registro }}</td>
+            <td>{{ limpieza.fecha_solucion || '—' }}</td>
+            <td>
+              <span class="badge"
+                [ngClass]="{
+                  'badge-ocupado': limpieza.estado_limpieza === 'Pendiente',
+                  'badge-disponible': limpieza.estado_limpieza === 'Completada'
+                }">
+                {{ limpieza.estado_limpieza?.toUpperCase() }}
+              </span>
+            </td>
+            <td>{{ limpieza.personal?.nombres }}</td>
+            <td>
+              <span *ngIf="limpieza.habitacion">
+                Hab. {{ limpieza.habitacion.numero }} - Piso {{ limpieza.habitacion.piso }}
+              </span>
+              <span *ngIf="!limpieza.habitacion && limpieza.salon">
+                Salón {{ limpieza.salon.nombre }}
+              </span>
+              <span *ngIf="!limpieza.habitacion && !limpieza.salon">
+                —
+              </span>
+            </td>
             <td>{{ limpieza.observaciones }}</td>
-            <td>{{ limpieza.habitacion?.numero || '—' }}</td>
-            <td>{{ limpieza.usuario?.nombre || '—' }}</td>
+            <td>
+              <button *ngIf="limpieza.estado_limpieza === 'Pendiente'"
+                class="btn btn-sm btn-success ms-2"
+                (click)="finalizarLimpieza(limpieza)">
+                <i class="bi bi-check-circle-fill me-1"></i>
+              </button>
+              <button *ngIf="limpieza.estado_limpieza === 'Pendiente'"
+                class="btn btn-danger btn-sm ms-2"
+                (click)="eliminarLimpieza(limpieza)">
+                <i class="bi bi-trash-fill me-1"></i>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Modal de registro -->
+  <!-- Modal registro -->
   <app-registrar-limpieza
     *ngIf="mostrarModal"
     (onRegistroExitoso)="registroExitoso()"
     (onCancelar)="cerrarModal()">
   </app-registrar-limpieza>
 
-  <!-- Depuración opcional -->
+  <!-- Mensaje debug -->
   <p *ngIf="mostrarModal">✅ Modal Activo</p>
 </div>
-
-
-
-

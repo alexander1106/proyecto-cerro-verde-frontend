@@ -9,14 +9,22 @@ import Swal from 'sweetalert2';
   standalone: false
 })
 export class ListarIncidenciasComponent implements OnInit {
+  Math = Math;
   incidencias: any[] = [];
   loading = true;
   error = '';
   mostrarModal = false;
   incidenciaSeleccionada: any = null;
-  mostrarModalDetalle: boolean = false;
+  mostrarModalDetalle = false;
 
   filtroEstado: string = '';
+  filtroGravedad: string = '';
+  ordenCampo: string = 'fecha_registro';
+  ordenAscendente: boolean = true;
+
+  // Paginación
+  paginaActual = 1;
+  elementosPorPagina = 5;
 
   constructor(private mantenimientoService: MantenimientoService) {}
 
@@ -25,6 +33,7 @@ export class ListarIncidenciasComponent implements OnInit {
   }
 
   obtenerIncidencias(): void {
+    this.loading = true;
     this.mantenimientoService.getIncidencias().subscribe({
       next: (data) => {
         this.incidencias = data;
@@ -39,12 +48,56 @@ export class ListarIncidenciasComponent implements OnInit {
   }
 
   get incidenciasFiltradas(): any[] {
-    if (!this.filtroEstado) return this.incidencias;
-    return this.incidencias.filter(i => i.estado_incidencia === this.filtroEstado);
+    let resultado = [...this.incidencias];
+
+    // Filtrado
+    if (this.filtroEstado) {
+      resultado = resultado.filter(i => i.estado_incidencia === this.filtroEstado);
+    }
+
+    if (this.filtroGravedad) {
+      resultado = resultado.filter(i => i.gravedad === this.filtroGravedad);
+    }
+
+    // Ordenamiento
+    resultado.sort((a, b) => {
+      const campoA = a[this.ordenCampo] ?? '';
+      const campoB = b[this.ordenCampo] ?? '';
+      if (campoA < campoB) return this.ordenAscendente ? -1 : 1;
+      if (campoA > campoB) return this.ordenAscendente ? 1 : -1;
+      return 0;
+    });
+
+    return resultado;
   }
 
-  limpiarFiltroEstado(): void {
+  get incidenciasPaginadas(): any[] {
+    const start = (this.paginaActual - 1) * this.elementosPorPagina;
+    return this.incidenciasFiltradas.slice(start, start + this.elementosPorPagina);
+  }
+
+  cambiarOrden(campo: string): void {
+    if (this.ordenCampo === campo) {
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      this.ordenCampo = campo;
+      this.ordenAscendente = true;
+    }
+  }
+
+  limpiarFiltros(): void {
     this.filtroEstado = '';
+    this.filtroGravedad = '';
+  }
+
+  cambiarPagina(delta: number): void {
+    const totalPaginas = Math.ceil(this.incidenciasFiltradas.length / this.elementosPorPagina);
+    this.paginaActual = Math.max(1, Math.min(this.paginaActual + delta, totalPaginas));
+  }
+
+  registroExitoso(): void {
+    this.cerrarModal();
+    this.obtenerIncidencias();
   }
 
   abrirModal(): void {
@@ -55,20 +108,24 @@ export class ListarIncidenciasComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  registroExitoso(): void {
-    this.cerrarModal();
-    this.obtenerIncidencias();
+  verDetalle(incidencia: any): void {
+    this.incidenciaSeleccionada = incidencia;
+    this.mostrarModalDetalle = true;
+  }
+
+  cerrarDetalle(): void {
+    this.mostrarModalDetalle = false;
+    this.incidenciaSeleccionada = null;
   }
 
   finalizarIncidencia(incidencia: any): void {
-    const fechaHoraActual = new Date();
-    const fechaSolucionStr = fechaHoraActual.toISOString().slice(0, 16).replace('T', ' ');
+    const fechaSolucion = new Date().toISOString();
 
     Swal.fire({
       title: 'Finalizar incidencia',
       html: `
         <p>Se marcará como <strong>resuelta</strong> con fecha:</p>
-        <p><i class="bi bi-calendar-check"></i> ${fechaSolucionStr}</p>
+        <p><i class="bi bi-calendar-check"></i> ${fechaSolucion}</p>
         <textarea id="observacionInput" class="swal2-textarea" placeholder="Observaciones de solución..."></textarea>
       `,
       icon: 'warning',
@@ -89,7 +146,7 @@ export class ListarIncidenciasComponent implements OnInit {
         const incidenciaActualizada = {
           ...incidencia,
           estado_incidencia: 'resuelta',
-          fecha_solucion: new Date().toISOString(),
+          fecha_solucion: fechaSolucion,
           observaciones_solucion: observacionesSolucion
         };
 
@@ -105,16 +162,6 @@ export class ListarIncidenciasComponent implements OnInit {
         });
       }
     });
-  }
-
-  verDetalle(incidencia: any): void {
-    this.incidenciaSeleccionada = incidencia;
-    this.mostrarModalDetalle = true;
-  }
-
-  cerrarDetalle(): void {
-    this.mostrarModalDetalle = false;
-    this.incidenciaSeleccionada = null;
   }
 
   eliminarIncidencia(incidencia: any): void {
@@ -141,4 +188,3 @@ export class ListarIncidenciasComponent implements OnInit {
     });
   }
 }
-

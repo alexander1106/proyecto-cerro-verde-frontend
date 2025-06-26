@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgIf, NgFor } from '@angular/common';
-import { HabitacionesService, Habitacion } from '../../../service/habitaciones.service'; // aquí se importa tu servicio real
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HabitacionesService } from '../../../service/habitaciones.service';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
+import { SalonesService } from '../../../service/salones.service';
 
 @Component({
   selector: 'app-registrar-incidencia',
@@ -18,63 +18,82 @@ export class RegistrarIncidenciaComponent implements OnInit {
   loading = false;
   error = '';
 
-  habitaciones: Habitacion[] = [];
+  habitaciones: any[] = [];
   tiposIncidencia: any[] = [];
   areas: any[] = [];
+  salones: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private mantenimientoService: MantenimientoService,
-    private habitacionesService: HabitacionesService
+    private habitacionesService: HabitacionesService,
+    private salonesService: SalonesService
   ) {
     this.incidenciaForm = this.fb.group({
       fecha_registro: [{ value: this.getCurrentDateTime(), disabled: true }],
       fecha_solucion: [''],
       descripcion: ['', Validators.required],
       id_habitacion: [null],
+      id_area: [null],
+      id_salon: [null],
       id_tipo_incidencia: [null],
-      id_area: [null]
+      gravedad: ['', Validators.required] // <-- Nuevo campo aquí
     });
   }
 
   ngOnInit(): void {
     this.cargarListas();
-  
-    this.incidenciaForm.get('id_habitacion')?.valueChanges.subscribe(value => {
-      if (value) {
-        this.incidenciaForm.get('id_area')?.disable();
-      } else {
-        this.incidenciaForm.get('id_area')?.enable();
-      }
+
+    // Lógica de campos mutuamente exclusivos
+    this.incidenciaForm.get('id_habitacion')?.valueChanges.subscribe(() => {
+      this.actualizarCamposMutualmenteExclusivos();
     });
-  
-    this.incidenciaForm.get('id_area')?.valueChanges.subscribe(value => {
-      if (value) {
-        this.incidenciaForm.get('id_habitacion')?.disable();
-      } else {
-        this.incidenciaForm.get('id_habitacion')?.enable();
-      }
+
+    this.incidenciaForm.get('id_area')?.valueChanges.subscribe(() => {
+      this.actualizarCamposMutualmenteExclusivos();
+    });
+
+    this.incidenciaForm.get('id_salon')?.valueChanges.subscribe(() => {
+      this.actualizarCamposMutualmenteExclusivos();
     });
   }
-  
+
+  actualizarCamposMutualmenteExclusivos(): void {
+    const habitacionSeleccionada = this.incidenciaForm.get('id_habitacion')?.value;
+    const areaSeleccionada = this.incidenciaForm.get('id_area')?.value;
+    const salonSeleccionado = this.incidenciaForm.get('id_salon')?.value;
+
+    if (habitacionSeleccionada) {
+      this.incidenciaForm.get('id_area')?.disable({ emitEvent: false });
+      this.incidenciaForm.get('id_salon')?.disable({ emitEvent: false });
+    } else if (areaSeleccionada) {
+      this.incidenciaForm.get('id_habitacion')?.disable({ emitEvent: false });
+      this.incidenciaForm.get('id_salon')?.disable({ emitEvent: false });
+    } else if (salonSeleccionado) {
+      this.incidenciaForm.get('id_habitacion')?.disable({ emitEvent: false });
+      this.incidenciaForm.get('id_area')?.disable({ emitEvent: false });
+    } else {
+      this.incidenciaForm.get('id_habitacion')?.enable({ emitEvent: false });
+      this.incidenciaForm.get('id_area')?.enable({ emitEvent: false });
+      this.incidenciaForm.get('id_salon')?.enable({ emitEvent: false });
+    }
+  }
 
   getCurrentDateTime(): string {
     const now = new Date();
-  
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-  
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
-  
 
   cargarListas(): void {
     this.habitacionesService.getHabitaciones().subscribe(data => this.habitaciones = data);
     this.mantenimientoService.getTiposIncidencia().subscribe(data => this.tiposIncidencia = data);
     this.mantenimientoService.getAreasHotel().subscribe(data => this.areas = data);
+    this.salonesService.getSalones().subscribe(data => this.salones = data);
   }
 
   registrar(): void {
@@ -85,11 +104,12 @@ export class RegistrarIncidenciaComponent implements OnInit {
     const data = {
       fecha_registro: fecha_registro,
       fecha_solucion: this.incidenciaForm.value.fecha_solucion,
-      estado_incidencia: this.incidenciaForm.value.estado_incidencia,
       descripcion: this.incidenciaForm.value.descripcion,
-      habitacion: this.incidenciaForm.value.id_habitacion ? { id_habitacion: this.incidenciaForm.value.id_habitacion } : null,
+      gravedad: this.incidenciaForm.value.gravedad, // <-- Campo agregado al payload
       tipoIncidencia: this.incidenciaForm.value.id_tipo_incidencia ? { id_tipo_incidencia: this.incidenciaForm.value.id_tipo_incidencia } : null,
+      habitacion: this.incidenciaForm.value.id_habitacion ? { id_habitacion: this.incidenciaForm.value.id_habitacion } : null,
       area: this.incidenciaForm.value.id_area ? { id_area: this.incidenciaForm.value.id_area } : null,
+      salon: this.incidenciaForm.value.id_salon ? { id_salon: this.incidenciaForm.value.id_salon } : null
     };
 
     this.loading = true;

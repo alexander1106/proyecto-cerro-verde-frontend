@@ -21,23 +21,14 @@
   width: 100%;
   max-width: 700px;
 }
-.notification-panel {
-  position: absolute;
-  top: 2.5rem;
-  right: 0;
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 1rem;
-  width: 300px;
-  z-index: 1000;
-  border-radius: 0.5rem;
-}
+
 
 
 .search-field .input-group-text {
   background-color: transparent;
   border: none;
   padding-left: 14px;
+
   color: #888;
   font-size: 1.1rem;
 }
@@ -169,4 +160,57 @@ h3{
 
 .dropdown-item.logout {
   color: #e74c3c;
+}
+
+
+.notification-panel {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  width: 360px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.25s ease-out;
+}
+
+.notification-panel h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.notification-panel ul {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.notification-panel li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.notification-panel li:last-child {
+  border-bottom: none;
+}
+
+.notification-panel i {
+  color: #f0ad4e;
+}
+
+.notification-badge {
+  font-size: 0.7rem;
+  padding: 0.35em 0.6em;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -5,6 +5,7 @@ import { CheckinCheckoutService } from '../../../../../service/checkin-checkout.
 import { ReservasService } from '../../../../../service/reserva.service';
 import Swal from 'sweetalert2';
 import { NotificacionesService } from '../../../../../service/notificaciones.service';
+import { HabitacionReserva } from '../../../../../service/habitaciones.service';
 
 interface CheckinCheckout {
   id_check?: number;
@@ -163,7 +164,6 @@ export class CheckinCheckoutFormComponent implements OnInit {
     this.saveCheck(checkData);
   }
 
-
 saveCheck(checkData: CheckinCheckout): void {
   this.loading = true;
 
@@ -186,23 +186,25 @@ saveCheck(checkData: CheckinCheckout): void {
           const reserva = this.reservas.find(
             r => Number(r.id_reserva) === Number(checkData.reserva.id_reserva)
           );
-          const habitacion = reserva?.habitacion?.numero || 'desconocida';
 
-          // ✅ GUARDAR NOTIFICACIÓN
+          // ✅ Especificar tipo para evitar error TS7006
+          const habitaciones = (reserva?.habitacionesXReserva || [])
+            .filter((hr: HabitacionReserva) => hr.estado === 1 && hr.habitacion)
+            .map((hr: HabitacionReserva) => `#${hr.habitacion.numero}`)
+            .join(', ') || 'desconocidas';
+
           this.notificationService.agregar(
-            `La habitación #${habitacion} fue liberada y está lista para mantenimiento`
+            `La habitacion # {habitaciones} fueron liberada y están lista para mantenimiento`
           );
 
-          // ✅ Mostrar mensaje informativo
           Swal.fire({
             icon: 'info',
-            title: 'Habitación liberada',
-            text: `La habitación #${habitacion} fue liberada y está lista para mantenimiento`,
+            title: 'Habitaciones liberadas',
+            text: `La habitacion # {habitaciones} fueron liberada y están lista para mantenimiento`,
             confirmButtonText: 'Aceptar'
           });
         }
 
-        // ✅ Redirigir al listado
         this.router.navigate(['/admin/checks']);
       });
     },
@@ -220,7 +222,6 @@ saveCheck(checkData: CheckinCheckout): void {
     }
   });
 }
-
 
   volver(): void {
     this.router.navigate(['/admin/checks']);

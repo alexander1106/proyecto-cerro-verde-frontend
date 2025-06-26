@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, Reserva } from '../../../../../service/reserva.service';
 import { HabitacionesService, Habitacion, HabitacionReserva } from '../../../../../service/habitaciones.service';
@@ -30,6 +30,7 @@ export class HabitacionReservaFormComponent implements OnInit {
   error = '';
   paso: number = 1;
   mostrarModalCliente = false;
+  habitacionesConError: number[] = []; // ID de habitaciones con sobrecupo
 
 
   constructor(
@@ -41,6 +42,7 @@ export class HabitacionReservaFormComponent implements OnInit {
     private router: Router,
     private iaService:IaService
   ) {}
+
 mostrarAlertaTemporada = false;
 
   ngOnInit(): void {
@@ -74,7 +76,9 @@ mostrarAlertaTemporada = false;
       comentarios: [''],
       habitaciones: this.fb.array([])
     }, {
-      validators: [fechaFinMayorQueInicio()]
+      validators: [
+        fechaFinMayorQueInicio()// ← AQUÍ
+      ]
     });
 
     this.reservaForm.get('fecha_inicio')?.valueChanges.subscribe(() => {
@@ -234,6 +238,12 @@ mostrarAlertaTemporada = false;
       this.error = 'Complete todos los campos requeridos y seleccione al menos una habitación.';
       return;
     }
+
+    if (!this.verificarCapacidadHabitaciones()) {
+      this.error = 'Una o más habitaciones no tienen capacidad suficiente para el número de personas.';
+      return;
+    }
+
 
     this.submitting = true;
     const formValue = this.reservaForm.value;
@@ -488,6 +498,20 @@ irPasoDosFecha() {
     }
   }
 
+  verificarCapacidadHabitaciones(): boolean {
+    const nroPersonas = this.reservaForm.get('nro_persona')?.value;
+    this.habitacionesConError = [];
+
+    this.habitacionesArray.controls.forEach((control: AbstractControl) => {
+      const habitacion: Habitacion = control.value;
+      const capacidad = habitacion.tipo_habitacion?.cantidadtipo || 0;
+      if (nroPersonas > capacidad) {
+        this.habitacionesConError.push(habitacion.id_habitacion!);
+      }
+    });
+
+    return this.habitacionesConError.length === 0;
+  }
 }
 
 function fechaNoPasada(): ValidatorFn {

@@ -8,8 +8,8 @@
             <div class="mover">
                 <div class="buscador">
                     <div class="input-wrapper">
-                        <input type="text" id="searchInput" placeholder="Buscador categoria"
-                            [(ngModel)]="filtroBusqueda" (ngModelChange)="buscarCliente()" />
+                        <input type="text" id="searchInput" placeholder="Buscador cliente" [(ngModel)]="filtroBusqueda"
+                            (ngModelChange)="buscarCliente()" />
                         <button type="button" class="btn-icono">
                             <i class="fas fa-search"></i>
                         </button>
@@ -21,6 +21,7 @@
                 </button>
             </div>
         </div>
+
 
         <table class="tabla-categorias mb-5">
             <thead>
@@ -49,6 +50,11 @@
                         </button>
                     </td>
                 </tr>
+                <tr *ngIf="clientesFiltrados.length === 0">
+                    <td colspan="7" class="text-center text-muted">
+                        No hay clientes que coincidan con el filtro.
+                    </td>
+                </tr>
             </tbody>
         </table>
 
@@ -70,7 +76,8 @@
             <form (ngSubmit)="formSubmit()" #formulario="ngForm">
 
                 <mat-form-field class="w-25 me-2">
-                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="dniORuc(tipo)" required [disabled]="esEditar">
+                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="dniORuc(tipo)" required
+                        [disabled]="esEditar">
                         <option value="DNI">DNI</option>
                         <option value="RUC">RUC</option>
                     </select>
@@ -78,7 +85,8 @@
                 <mat-form-field class="w-50" appearance="outline">
                     <mat-label>{{ tipo }}</mat-label>
                     <input id="dniRuc" [(ngModel)]="cliente.dniRuc" name="dniRuc" #dniRuc="ngModel" required matInput
-                        minlength={{longitud}} maxlength={{longitud}} [pattern]="patronNumerico" type="text" [disabled]="esEditar"/>
+                        minlength={{longitud}} maxlength={{longitud}} [pattern]="patronNumerico" type="text"
+                        [disabled]="esEditar" />
                     <mat-error *ngIf="dniRuc?.errors?.['pattern'] && dniRuc.touched">
                         Solo se permiten números
                     </mat-error>
@@ -92,14 +100,14 @@
 
                 <mat-form-field class="w-100" appearance="outline">
                     <mat-label>Nombre</mat-label>
-                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" required matInput placeholder="Digite Nombre" />
+                    <input [(ngModel)]="cliente.nombre" name="nombre" minlength="1" required matInput
+                        placeholder="Digite Nombre" />
                 </mat-form-field>
 
                 <mat-form-field class="w-100" appearance="outline">
                     <mat-label>Correo</mat-label>
-                    <input id="correo" [(ngModel)]="cliente.correo" name="correo" #correo="ngModel" required matInput
-                        placeholder="ejemplo@gmail.com"
-                        [pattern]="patronCorreo" type="email" />
+                    <input id="correo" [(ngModel)]="cliente.correo" name="correo" #correo="ngModel" matInput
+                        placeholder="ejemplo@gmail.com" [pattern]="patronCorreo" type="email" />
                     <mat-error *ngIf="correo.errors?.['pattern'] && correo.touched">
                         El correo electrónico no es válido.
                     </mat-error>
@@ -120,7 +128,7 @@
 
                 <mat-form-field class="w-50 ms-4 mb-4" appearance="outline">
                     <mat-label>País</mat-label>
-                    <input [(ngModel)]="cliente.pais" name="pais" minlength="1" required matInput placeholder="Digite País" />
+                    <input [(ngModel)]="cliente.pais" name="pais" minlength="1" matInput placeholder="Digite País" />
                 </mat-form-field>
 
                 <div class="form-actions position-absolute bottom-0 start-50 translate-middle-x mb-3">

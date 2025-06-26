@@ -29,6 +29,7 @@ export interface SalonReserva {
   salon: Salones;
   reserva: Reserva;
   estado: number;
+  precioreserva:number;
 }
 
 @Injectable({

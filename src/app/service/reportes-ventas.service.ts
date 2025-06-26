@@ -113,6 +113,7 @@ export class ReportesVentasService {
     const params = new HttpParams().set('desde', desde).set('hasta', hasta);
     return this.http.get<PagoVentasDetalladoDTO[]>(`${this.baseUrl}/metodos-pago/detallado`, { params });
   }
+
   // ----- Reservas por mes JSON -----
   getReservasPorMes(
     tipo: 'habitaciones' | 'salones',

@@ -102,6 +102,7 @@
           <th class="col-id">#</th>
           <th class="col-fecha">Fecha y Hora</th>
           <th class="col-monto">Monto</th>
+          <th class="col-metodo">Método de Pago</th>
           <th class="col-tipo">Tipo</th>
         </tr>
       </thead>
@@ -117,6 +118,7 @@
           }">
             {{ t.tipo.id === 1 ? '+' : t.tipo.id === 2 ? '-' : '' }} S/.{{ t.montoTransaccion.toFixed(2) }}
           </td>
+          <td class="col-metodo">{{t.metodoPago ? t.metodoPago.nombre : '---------'}}</td>
           <td class="col-tipo">
             <span class="badge" [ngClass]="{
               'badge-disponible': t.tipo.id === 1,

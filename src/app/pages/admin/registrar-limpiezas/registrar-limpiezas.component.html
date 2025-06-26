@@ -1,31 +1,48 @@
-<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Registrar Limpieza</h5>
+        <h5 class="modal-title">Registrar Nueva Limpieza</h5>
         <button type="button" class="btn-close" (click)="cancelar()"></button>
       </div>
-
       <div class="modal-body">
         <form [formGroup]="limpiezaForm">
           <div class="mb-2">
-            <label>Fecha y Hora</label>
+            <label>Fecha y Hora de Limpieza</label>
             <input type="datetime-local" class="form-control" formControlName="fecha_hora_limpieza" />
+          </div>
+
+          <div class="mb-2">
+            <label>Personal de Limpieza</label>
+            <select class="form-control" formControlName="id_personal_limpieza">
+              <option [ngValue]="null">Seleccione un personal</option>
+              <option *ngFor="let p of personalLimpieza" [value]="p.id_personal_limpieza">{{ p.nombres }}</option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <label>Habitación</label>
+            <select class="form-control" formControlName="id_habitacion">
+              <option [ngValue]="null">Seleccione una habitación</option>
+              <option *ngFor="let h of habitaciones" [value]="h.id_habitacion">
+                Habitación {{ h.numero }} - Piso {{ h.piso }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <label>Salón</label>
+            <select class="form-control" formControlName="id_salon">
+              <option [ngValue]="null">Seleccione un salón</option>
+              <option *ngFor="let s of salones" [value]="s.id_salon">
+                {{ s.nombre }}
+              </option>
+            </select>
           </div>
 
           <div class="mb-2">
             <label>Observaciones</label>
             <textarea class="form-control" formControlName="observaciones"></textarea>
-          </div>
-
-          <div class="mb-2">
-            <label>ID Usuario</label>
-            <input type="number" class="form-control" formControlName="idUsuario" />
-          </div>
-
-          <div class="mb-2">
-            <label>ID Habitación</label>
-            <input type="number" class="form-control" formControlName="idHabitacion" />
           </div>
         </form>
 
@@ -39,4 +56,3 @@
     </div>
   </div>
 </div>
-

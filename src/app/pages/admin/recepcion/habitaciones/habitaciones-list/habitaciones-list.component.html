@@ -44,7 +44,7 @@
           <tr *ngFor="let habitacion of habitacionesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ habitacion.piso.numero }}</td>
-            <td>{{ habitacion.numero }}</td>
+            <td>{{ habitacion?.numero }}</td>
             <td>
               <span [ngClass]="{
                 'doble': habitacion.tipo_habitacion.id_tipo_habitacion === 1,

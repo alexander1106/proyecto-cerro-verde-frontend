@@ -133,10 +133,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let habitacion of habitacionesFiltradas()">
-            <td>{{ habitacion.numero }}</td>
+            <td>{{ habitacion?.numero }}</td>
             <td>{{ habitacion.tipo_habitacion.nombre }}</td>
             <td>{{ habitacion.piso.numero }}</td>
-<td>{{ habitacion.tipo_habitacion.precio | currency:'USD' }}</td>
+<td>S/. {{ habitacion.tipo_habitacion.precio}}</td>
             <td>{{ habitacion.estado_habitacion }}</td>
             <td>
               <input
@@ -162,10 +162,19 @@
         <ul>
           <li *ngFor="let h of habitacionesArray.value">
             Habitación {{ h.numero }} - Piso: {{ h.piso.numero }} - Tipo: {{ h.tipo_habitacion.nombre }}
+            <span *ngIf="habitacionesConError.includes(h.id_habitacion)" class="error-hint">
+              → Esta habitación solo permite hasta {{ h.tipo_habitacion.cantidadtipo }} personas.
+            </span>
             <button type="button" (click)="toggleHabitacion(h)">Quitar</button>
           </li>
         </ul>
+
       </div>
+
+      <div class="error-hint" *ngIf="reservaForm.errors?.['capacidadInsuficiente'] && reservaForm.touched">
+        El número de personas de la reserva no puede exceder la cantidad designada al tipo de habitación.
+      </div>
+
 
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" (click)="paso = 1">Volver</button>
@@ -237,10 +246,7 @@
   </div>
 </div>
 
-
-
-
-
 <div class="alerta-temporada" *ngIf="mostrarAlertaTemporada">
+  <button (click)="mostrarAlertaTemporada = false" class="btn-cerrar">&times;</button>
   <p>Por estas fechas y al haber esta temporada,<br>los precios sugeridos son los mostrados.</p>
 </div>

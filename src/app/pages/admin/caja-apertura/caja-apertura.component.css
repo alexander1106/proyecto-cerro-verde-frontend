@@ -180,6 +180,11 @@ select.form-select:focus {
   text-align: center;
 }
 
+.col-metodo {
+  width: 150px;
+  text-align: right;
+}
+
 /* Contenedor responsive */
 .table-responsive {
   overflow-x: auto;

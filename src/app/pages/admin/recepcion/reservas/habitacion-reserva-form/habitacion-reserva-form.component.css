@@ -288,6 +288,9 @@ button {
 .btn-nuevo-cliente:hover {
   background-color: #218838;
 }
+
+
+
 .imagen-inferior-derecha {
   bottom: 20px;
   right: 20px;
@@ -339,7 +342,7 @@ button {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   animation: fadeInUp 0.5s ease-out;
   z-index: 1000;
-  max-width: 250px;
+  max-width: 420px;
 }
 
 /* Animación de entrada */
@@ -352,4 +355,16 @@ button {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.btn-cerrar {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #856404;
+  cursor: pointer;
 }
