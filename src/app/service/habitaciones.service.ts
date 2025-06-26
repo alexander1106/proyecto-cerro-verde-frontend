@@ -26,6 +26,7 @@ export interface HabitacionReserva {
   id_hab_reserv?: number;
   habitacion: Habitacion;
   reserva: Reserva;
+  precio_reserva:number;
   estado: number;
 }
 
