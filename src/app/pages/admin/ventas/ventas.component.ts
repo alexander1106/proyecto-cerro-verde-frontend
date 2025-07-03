@@ -147,7 +147,7 @@ export class VentasComponent {
       idDetalleVenta: any;
       cantidad: any;
       precioUnit: any;
-      subtotal: any;
+      subTotal: any;
       estado: 1;
       producto?: {
         id_producto: any;
@@ -461,12 +461,12 @@ export class VentasComponent {
   //REGISTRAR VENTA
   formSubmit() {
     const sumaSubTotales = Number(
-      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subTotal, 0)
     );
     const descuento = Number(this.venta.descuento) || 0;
 
     this.venta.detalleVenta.forEach((item: any) => {
-      item.subtotal = item.cantidad * item.producto.precioVenta;
+      item.subTotal = item.cantidad * item.producto.precioVenta;
       console.log(item.subTotal);
     });
 
@@ -610,7 +610,7 @@ export class VentasComponent {
   //ACTUALIZAR VENTA
   actualizarVenta() {
     const sumaSubTotales = Number(
-      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subTotal, 0)
     );
     const descuento = Number(this.venta.descuento) || 0;
 
@@ -893,7 +893,7 @@ export class VentasComponent {
         idDetalleVenta: null,
         cantidad: 1,
         precioUnit: 0,
-        subtotal: 0,
+        subTotal: 0,
         estado: 1 as const,
         producto: producto,
       };
@@ -918,8 +918,8 @@ export class VentasComponent {
       });
       return;
     }
-    item.subtotal = item.cantidad * item.producto?.precioVenta || 0;
-    console.log(item.subtotal);
+    item.subTotal = item.cantidad * item.producto?.precioVenta || 0;
+    console.log(item.subTotal);
     this.actualizarTotales();
   }
   eliminarProducto(index: number) {
@@ -934,7 +934,7 @@ export class VentasComponent {
   //TOTAL
   actualizarTotales() {
     let sumaSubTotalesProductos = Number(
-      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subTotal, 0)
     );
     let sumaSubTotalesHabitaciones = Number(
       this.venta.ventaHabitacion.reduce((acc, item) => acc + item.subTotal, 0)

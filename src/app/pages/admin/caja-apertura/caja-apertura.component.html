@@ -18,7 +18,7 @@
     </div>
 
     <!-- Detalles de Caja -->
-    <div *ngIf="cajaAperturada" class="mb-4">     
+    <div *ngIf="cajaAperturada" class="mb-4">
       <p><strong>Estado: </strong>
         <span class="badge"
           [ngClass]="{
@@ -32,69 +32,19 @@
 <ng-container *ngIf="cajaAperturada.estadoCaja === 'abierta'; else detallesCajaCerrada">
   <p><strong>Fecha Apertura:</strong> {{ cajaAperturada.fechaApertura | date:'medium' }}</p>
   <p><strong>Monto Apertura:</strong> S/. {{ cajaAperturada.montoApertura?.toFixed(2) || '—' }}</p>
-  <p><strong>Cantidad de transacciones del dia:</strong> S/. {{ cantidadTransaccionesHoy  || '—' }}</p>
+  <p><strong>Cantidad de transacciones del dia:</strong> {{ cantidadTransaccionesHoy  || '—' }}</p>
 
   <!-- 🟢 Cards solo visibles si caja está abierta -->
 <!-- 🟢 Cards solo visibles si caja está abierta -->
 <div class="row text-white mb-4">
-  <!-- Yape -->
-  <div class="col-md-4 mb-3">
-    <div class="card bg-purple shadow h-100">
-      <div class="card-body d-flex align-items-center">
-        <i class="bi bi-phone display-6 me-3"></i>
-        <div>
-          <h6 class="card-title mb-1 text-white fw-semibold">Ventas con Yape</h6>
-          <h5 class="card-title text-white">S/. {{ totalVentasYape | number:'1.2-2' }}</h5>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Plin -->
-  <div class="col-md-4 mb-3">
-    <div class="card bg-info shadow h-100">
-      <div class="card-body d-flex align-items-center">
-        <i class="bi bi-phone-vibrate display-6 me-3"></i>
-        <div>
-          <h6 class="card-title mb-1 text-white fw-semibold">Ventas con Plin</h6>
-          <h5 class="card-title text-white">S/. {{ totalVentasPlin | number:'1.2-2' }}</h5>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tarjeta -->
-  <div class="col-md-4 mb-3">
-    <div class="card bg-primary shadow h-100">
-      <div class="card-body d-flex align-items-center">
-        <i class="bi bi-credit-card display-6 me-3"></i>
-        <div>
-          <h6 class="card-title mb-1 text-white fw-semibold">Ventas con Tarjeta</h6>
-          <h5 class="card-title text-white">S/. {{ totalVentasTarjeta | number:'1.2-2' }}</h5>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Efectivo -->
-  <div class="col-md-4 mb-3">
-    <div class="card bg-success shadow h-100">
-      <div class="card-body d-flex align-items-center">
-        <i class="bi bi-cash-coin display-6 me-3"></i>
-        <div>
-          <h6 class="card-title mb-1 text-white fw-semibold">Ventas en Efectivo</h6>
-          <h5 class="card-title text-white">S/. {{ totalVentasEfectivo | number:'1.2-2' }}</h5>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Saldo Físico -->
   <div class="col-md-4 mb-3">
     <div class="card bg-secondary shadow h-100">
       <div class="card-body d-flex align-items-center">
         <i class="bi bi-safe2-fill display-6 me-3"></i>
         <div>
-          <h6 class="card-title mb-1 text-white fw-semibold">Saldo Físico Actual</h6>
+          <h6 class="card-title mb-1 text-white fw-semibold">Saldo Efectivo Actual</h6>
           <h5 class="card-title text-white">S/. {{ cajaAperturada?.saldoFisico?.toFixed(2) || '—' }}</h5>
         </div>
       </div>
@@ -177,8 +127,8 @@
         </button>
       </div>
     </div>
-    
-    
+
+
     <table class="tabla-trabajadores">
       <thead>
         <tr>
@@ -213,25 +163,25 @@
         </tr>
       </tbody>
     </table>
-    
+
   </div>
   <nav *ngIf="totalPaginas > 1" class="mt-3">
     <ul class="pagination justify-content-center">
       <li class="page-item" [class.disabled]="paginaActual === 1">
         <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
       </li>
-  
+
       <li class="page-item" *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
           [class.active]="paginaActual === i + 1">
         <button class="page-link" (click)="cambiarPagina(i + 1)">{{ i + 1 }}</button>
       </li>
-  
+
       <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
         <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
       </li>
     </ul>
   </nav>
-  
+
 
   <!-- Template si no hay transacciones -->
   <ng-template #sinTransacciones>
@@ -345,7 +295,7 @@
 </div>
 </div>
 
-        
+
           <!-- REAPERTURA (SALDO READONLY) -->
           <ng-template #montoReadOnly>
             <label class="form-label">Monto de Apertura</label>
@@ -354,14 +304,14 @@
               <input type="number" class="form-control" [value]="cajaAperturada?.saldoFisico?.toFixed(2)" readonly />
             </div>
           </ng-template>
-        
+
           <div class="d-grid">
             <button type="submit" class="btn btn-success">
               <i class="bi bi-check-circle me-1"></i> Aperturar Caja
             </button>
           </div>
         </form>
-        
+
       </div>
     </div>
   </div>
@@ -397,7 +347,7 @@
   <button type="button" class="btn-close" (click)="mostrarModalDetalleArqueo = false"></button>
 </div>
 <div class="modal-body">
-  <app-arqueo-caja 
+  <app-arqueo-caja
     [modoModal]="true"
     [soloLectura]="true"
     [idArqueo]="arqueoSeleccionadoId">
