@@ -9,7 +9,7 @@
         <button class="btn-agregar">
           <a routerLink="/admin/recepcion/reservas/habitaciones/nuevo">+ Reserva de Habitación</a>
         </button>
-        <button class="btn-agregar secondary" *ngIf="tienePermiso('salones')">
+        <button class="btn-agregar secondary">
           <a routerLink="/admin/recepcion/reservas/salones/nuevo">+ Reserva de Salón</a>
         </button>
       </div>
@@ -22,7 +22,7 @@
       <select [(ngModel)]="filtroTipoReserva" (ngModelChange)="updateFilteredReservas()">
         <option value="">Todos los tipos</option>
         <option value="Habitación">Habitación</option>
-        <option value="Salón" *ngIf="tienePermiso('salones')">Salón</option>
+        <option value="Salón">Salón</option>
       </select>
 
       <select [(ngModel)]="filtroEstadoReserva" (ngModelChange)="updateFilteredReservas()">

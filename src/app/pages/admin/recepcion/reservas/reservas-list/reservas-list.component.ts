@@ -200,9 +200,4 @@ export class ReservasListComponent implements OnInit {
     return new Date(date).toLocaleString();
   }
 
-  tienePermiso(clave: string): boolean {
-    const funcionalidades = this.loginService.getFuncionalidadesActivas();
-    console.log('📋 Verificando permiso para:', clave, '| Funcionalidades activas:', funcionalidades);
-    return this.loginService.getFuncionalidadesActivas().includes(clave);
-  }
 }
