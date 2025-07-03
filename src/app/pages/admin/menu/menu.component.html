@@ -1,53 +1,67 @@
-  <mat-card class="sidebar-card">
-    <mat-card-header class="sidebar-header">
-      <div class="logo-container">
-        <img src="../../../../assets/logo-cerroverde.svg" alt="Logo" />
-      </div>
-    </mat-card-header>
+<div class="container">
+<mat-card class="sidebar-card p-3">
+  <mat-card-header class="sidebar-header">
+    <div class="logo-container d-flex justify-content-center flex-column align-items-center">
+      <!-- Logo visible solo en pantallas grandes -->
+      <img src="../../../../assets/logo-cerroverde.svg" alt="Logo" class="logo-img" />
 
-    <mat-card-content class="sidebar-content">
-      <mat-action-list>
+      <!-- Texto que aparece en responsive -->
+      <h5 class="logo-text-responsive">Hotel Cerro Verde</h5>
+    </div>
+  </mat-card-header>
 
-        <!-- Inicio -->
-        <button mat-list-item
-              routerLink="/admin/dashboard-inicio"
-              routerLinkActive="active"
-              class="nav-button">
+  <mat-card-content class="sidebar-content">
+    <mat-action-list>
+
+      <!-- INICIO -->
+      <button
+        mat-list-item
+        routerLink="/admin/dashboard-inicio"
+        routerLinkActive="active"
+        class="nav-button d-flex align-items-center w-100"
+      >
         <mat-icon mat-list-icon>dashboard</mat-icon>
         <span class="capitalize-first inicio">Inicio</span>
       </button>
 
-        <!-- Módulos -->
-        <mat-accordion>
-          <mat-expansion-panel *ngFor="let modulo of modulos" class="modulo-panel">
-            <mat-expansion-panel-header>
-              <div class="modulo-header">
-                <mat-icon mat-list-icon>{{ modulo.icon }}</mat-icon>
-                <span class="nombre_modulo">{{ modulo.nombre }}</span>
-              </div>
-            </mat-expansion-panel-header>
+      <!-- MÓDULOS -->
+      <mat-accordion>
+        <mat-expansion-panel
+          *ngFor="let modulo of modulos"
+          class="modulo-panel"
+        >
+          <mat-expansion-panel-header>
+            <div class="modulo-header d-flex align-items-center gap-2">
+              <mat-icon mat-list-icon>{{ modulo.icon }}</mat-icon>
+              <span class="nombre_modulo">{{ modulo.nombre }}</span>
+            </div>
+          </mat-expansion-panel-header>
 
-            <div class="submodulo-buttons">
-           <button
+          <div class="submodulo-buttons">
+            <button
               *ngFor="let permiso of modulo.permisos"
               mat-list-item
               routerLink="/admin/{{ permiso.nombrePermiso | lowercase | replaceSpaces }}"
-              class="nav-button submodulo-nav-button"
+              class="nav-button submodulo-nav-button d-flex align-items-center w-100"
             >
               <mat-icon mat-list-icon>{{ permiso.icon }}</mat-icon>
-              <span class="capitalize-first">> {{ permiso.nombrePermiso }}</span>
+              <span class="capitalize-first">{{ permiso.nombrePermiso }}</span>
             </button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
 
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
+      <!-- SALIR -->
+      <button
+        mat-list-item
+        (click)="cerrar()"
+        class="nav-button logout d-flex align-items-center w-100 mt-3"
+      >
+        <mat-icon mat-list-icon>logout</mat-icon>
+        <span class="inicio">Salir</span>
+      </button>
 
-        <!-- Cerrar sesión -->
-        <button mat-list-item (click)="cerrar()" class="nav-button logout">
-          <mat-icon mat-list-icon>logout</mat-icon>
-          <span>Salir</span>
-        </button>
-
-      </mat-action-list>
-    </mat-card-content>
-  </mat-card>
+    </mat-action-list>
+  </mat-card-content>
+</mat-card>
+</div>
