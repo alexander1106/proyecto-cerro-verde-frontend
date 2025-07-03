@@ -15,6 +15,9 @@ export class ChecksListComponent implements OnInit {
   loading = true;
   error = '';
 
+  fechaDesde: string = '';
+  fechaHasta: string = '';
+
   constructor(private checkService: CheckinCheckoutService) {}
 
   ngOnInit(): void {
@@ -26,19 +29,18 @@ export class ChecksListComponent implements OnInit {
     this.error = '';
 
     this.checkService.buscarTodos().subscribe({
-      next: (data: CheckinCheckout[]) => {
-      this.checks = data.sort((a: CheckinCheckout, b: CheckinCheckout) => {
-  return new Date(b.fecha_checkin).getTime() - new Date(a.fecha_checkin).getTime();
-});
-
-      this.loading = false;
-    },
+      next: (data) => {
+        // Ordenar del más reciente al más antiguo por id_check
+        this.checks = data.sort((a: CheckinCheckout, b: CheckinCheckout) => b.id_check! - a.id_check!);
+        this.loading = false;
+      },
       error: (err) => {
         this.error = 'Error al cargar los checks. Intente nuevamente.';
         this.loading = false;
         console.error('Error:', err);
       }
     });
+
   }
 
   eliminar(id: number): void {
@@ -85,26 +87,33 @@ export class ChecksListComponent implements OnInit {
 
   get checkActivosFiltrados() {
     const filtro = this.filtroGeneral.toLowerCase();
+    const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+    const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+
     return this.checkActivos.filter(h => {
       const checkin = h.fecha_checkin?.toString() || '';
       const reserva = h.reserva?.toString() || '';
+      const fechaHora = h.fecha_checkin ? new Date(h.fecha_checkin) : null;
       const checkout = h.fecha_checkout?.toString() || '';
-      return (
-        checkin.includes(filtro) ||
+
+      const coincideTexto =
+        filtro === '' ||
         reserva.includes(filtro) ||
-        checkout.includes(filtro)
-      );
+        checkin?.toString().toLowerCase().includes(filtro) ||
+        checkout?.toString().toLowerCase().includes(filtro);
+
+      const coincideFecha =
+      (!desde || (fechaHora && fechaHora >= desde)) &&
+      (!hasta || (fechaHora && fechaHora <= hasta));
+
+      return coincideTexto && coincideFecha;
     });
   }
 
+
   get checkActivos() {
-  return this.checks
-    ?.filter(h => h.estado === 1)
-    .sort((a, b) => (b.id_check ?? 0) - (a.id_check ?? 0)) || [];
-}
-
-
-
+    return this.checks?.filter(h => h.estado === 1) || [];
+  }
 
     currentPage: number = 1;
   itemsPerPage: number = 10;
@@ -128,5 +137,16 @@ export class ChecksListComponent implements OnInit {
   formatDate(date: string | Date): string {
     if (!date) return '';
     return new Date(date).toLocaleString();
+  }
+
+  limpiarFiltros(): void {
+    this.filtroGeneral = '';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.currentPage = 1;
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1; // Resetear a la primera página al cambiar el término de búsqueda
   }
 }

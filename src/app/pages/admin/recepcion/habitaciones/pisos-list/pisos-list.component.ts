@@ -112,4 +112,9 @@ export class PisosListComponent implements OnInit {
       this.currentPage = nextPage;
     }
   }
+
+  limpiarFiltros(): void {
+    this.filtroGeneral = '';
+    this.currentPage = 1;
+  }
 }

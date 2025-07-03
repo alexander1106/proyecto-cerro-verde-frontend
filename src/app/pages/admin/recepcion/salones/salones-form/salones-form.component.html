@@ -1,35 +1,40 @@
 <form [formGroup]="salonForm" (ngSubmit)="onSubmit()" novalidate class="form-container shadow rounded bg-white">
 
-  <h3>Nuevo Salón</h3>
+  <h3 >{{ isEditing ? 'Editar' : 'Nuevo' }} Salón</h3>
 
   <div class="mb-3">
     <label for="nombre" class="form-label">Nombre de Salón</label>
     <input type="text" id="nombre" formControlName="nombre" class="form-control"
+           placeholder="Ingrese el nombre del salón"
            [ngClass]="{'is-invalid': submitted && f['nombre'].invalid}">
-    <div *ngIf="submitted && f['nombre'].invalid" class="invalid-feedback">
+           
+    <div *ngIf="submitted && f['nombre'].errors?.['required']" class="invalid-feedback">
       Nombre de salón es requerido.
     </div>
-    <div *ngIf="submitted && f['nombre'].errors?.['nombreDuplicado']" class="invalid-feedback">
-      Ya existe una salón con este nombre.
+    
+    <div *ngIf="submitted && !f['nombre'].errors?.['required'] && f['nombre'].errors?.['nombreDuplicado']" class="invalid-feedback">
+      Nombre de salón ya existe.
     </div>
   </div>
+  
 
   <div class="mb-3">
     <label for="capacidad" class="form-label">Capacidad</label>
     <input type="text" id="capacidad" formControlName="capacidad" class="form-control"
+           placeholder="Ingrese la capacidad del salón"
            [ngClass]="{'is-invalid': submitted && f['capacidad'].invalid}">
     <div *ngIf="submitted && f['capacidad'].invalid" class="invalid-feedback">
       Capacidad es requerida.
     </div>
-    
   </div>
 
   <div class="form-group">
-    <label for="precio_hora">Precio por hora</label>
+    <label class="form-label" for="precio_hora">Precio por hora</label>
     <div class="input-group">
       <span class="input-group-text">S/.</span>
-      <input type="number" id="precio_hora" formControlName="precio_hora" class="form-control" 
-            [ngClass]="{'is-invalid': submitted && f['precio_hora'].errors}" step="0.01">
+      <input type="number" id="precio_hora" formControlName="precio_hora" class="form-control"
+             placeholder="0.00"
+             [ngClass]="{'is-invalid': submitted && f['precio_hora'].errors}" step="0.01">
     </div>
     <div *ngIf="submitted && f['precio_hora'].errors" class="invalid-feedback">
       <div *ngIf="f['precio_hora'].errors['required']">Precio por hora es requerido</div>
@@ -38,16 +43,19 @@
   </div>
 
   <div class="form-group">
-    <label for="precio_diario">Precio por día</label>
+    <label class="form-label" for="precio_diario">Precio por día</label>
     <div class="input-group">
       <span class="input-group-text">S/.</span>
-      <input type="number" id="precio_diario" formControlName="precio_diario" class="form-control" 
-            [ngClass]="{'is-invalid': submitted && f['precio_diario'].errors}" step="0.01">
+      <input type="number" id="precio_diario" formControlName="precio_diario" class="form-control"
+             placeholder="0.00"
+             [ngClass]="{'is-invalid': submitted && f['precio_diario'].errors}" step="0.01">
     </div>
     <div *ngIf="submitted && f['precio_diario'].errors" class="invalid-feedback">
       <div *ngIf="f['precio_diario'].errors['required']">Precio por día es requerido</div>
       <div *ngIf="f['precio_diario'].errors['min']">Precio debe ser mayor a 0</div>
+      <div *ngIf="f['precio_diario'].errors['menorQueHora']">Debe ser mayor al precio por hora</div>
     </div>
+    
   </div>
 
   <div class="form-buttons">

@@ -4,21 +4,26 @@
   <div class="card">
     <div class="info-trabajadores-linea">
       <h4>Gestión de Pisos</h4>
-
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input type="text" placeholder="Buscar piso..." [(ngModel)]="filtroGeneral" />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-
         <button class="btn-agregar">
           <a routerLink="/admin/recepcion/pisos/nuevo">+ Nuevo Piso</a>
         </button>
+    </div>
+
+    <div class="filtros-container">
+      <div class="buscador">
+        <div class="input-wrapper">
+          <input type="text" placeholder="Buscar piso..." [(ngModel)]="filtroGeneral" />
+          <button type="button" class="btn-icono">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
       </div>
+      <div class="filtros-select">
+        
+        <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+
+      </div>
+      
     </div>
 
     <div *ngIf="loading" class="loading">Cargando pisos..</div>

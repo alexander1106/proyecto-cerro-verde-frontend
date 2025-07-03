@@ -12,6 +12,12 @@ export class RecojosListComponent implements OnInit {
   recojos: Recojos[] = [];
   loading = true;
   error = '';
+  filtroEstado: string = '';
+  estadosRecojo: string[] = ['Pendiente', 'En ruta', 'Completo'];
+  
+  fechaDesde: string = '';
+  fechaHasta: string = '';
+
 
   constructor(private recojosService: RecojosService) {}
 
@@ -69,21 +75,41 @@ export class RecojosListComponent implements OnInit {
 
   filtroGeneral: string = '';
 
+  onSearchChange(): void {
+    this.currentPage = 1; // Resetear a la primera página al cambiar el término de búsqueda
+  }
+
   get recojosActivosFiltrados() {
     const filtro = this.filtroGeneral.toLowerCase();
+    const estadoFiltro = this.filtroEstado.toLowerCase();
+    const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+    const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+  
     return this.recojosActivos.filter(h => {
       const destino = h.destino?.toLowerCase() || '';
-      const conductor = h.conductor?.nombre.toLowerCase() || '';
-      const reserva = h.reserva?.cliente.nombre.toLowerCase() || '';
-      const fecha_hora = h.fecha_hora?.toString() || '';
-      return (
+      const conductor = h.conductor?.nombre?.toLowerCase() || '';
+      const cliente = h.reserva?.cliente?.nombre?.toLowerCase() || '';
+      const fechaHora = h.fecha_hora ? new Date(h.fecha_hora) : null;
+      const estado = h.estado_recojo?.toLowerCase() || '';
+  
+      const coincideTexto =
+        filtro === '' ||
         destino.includes(filtro) ||
         conductor.includes(filtro) ||
-        reserva.includes(filtro) ||
-        fecha_hora.includes(filtro)
-      );
+        cliente.includes(filtro) ||
+        h.fecha_hora?.toString().toLowerCase().includes(filtro);
+  
+      const coincideEstado =
+        estadoFiltro === '' || estado === estadoFiltro;
+  
+      const coincideFecha =
+        (!desde || (fechaHora && fechaHora >= desde)) &&
+        (!hasta || (fechaHora && fechaHora <= hasta));
+  
+      return coincideTexto && coincideEstado && coincideFecha;
     });
   }
+  
 
 
   get recojosActivos() {
@@ -113,5 +139,14 @@ export class RecojosListComponent implements OnInit {
     if (!date) return '';
     return new Date(date).toLocaleString();
   }
+
+  limpiarFiltros(): void {
+    this.filtroGeneral = '';
+    this.filtroEstado = '';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.currentPage = 1;
+  }
+  
 
 }

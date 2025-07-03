@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReservasService, Reserva } from '../../../../../service/reserva.service';
 import Swal from 'sweetalert2';
+import { LoginService } from '../../../../../service/login.service';
 
 @Component({
   selector: 'app-reservas-list',
@@ -20,8 +21,14 @@ export class ReservasListComponent implements OnInit {
   currentPage = 1;
   totalPages = 0;
   pageSize = 10;
+  filtroTipoReserva: string = '';
+  filtroEstadoReserva: string = '';
+  fechaDesde: string = '';
+  fechaHasta: string = '';
 
-  constructor(private reservasService: ReservasService, private router: Router) { }
+
+
+  constructor(private reservasService: ReservasService, private loginService: LoginService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadReservas();
@@ -46,17 +53,41 @@ export class ReservasListComponent implements OnInit {
 
   updateFilteredReservas(): void {
     const term = this.searchTerm.toLowerCase();
+    const tipoFiltro = this.filtroTipoReserva.toLowerCase();
+    const estadoFiltro = this.filtroEstadoReserva.toLowerCase();
   
-    // Filtrar por búsqueda
-    let filtradas = this.reservas
-      .filter(reserva =>
-        reserva?.id_reserva && // evitar reservas sin id_reserva
-        Object.values(reserva).some(value =>
-          value && value.toString().toLowerCase().includes(term)
-        )
+    const fechaDesdeVal = this.fechaDesde ? new Date(this.fechaDesde) : null;
+    const fechaHastaVal = this.fechaHasta ? new Date(this.fechaHasta) : null;
+  
+    let filtradas = this.reservas.filter(reserva => {
+      const coincideBusqueda = !term || [
+        reserva.cliente?.nombre,
+        reserva.cliente?.dniRuc,
+        reserva.tipo,
+        reserva.estado_reserva,
+        reserva.nro_persona?.toString(),
+        this.formatDate(reserva.fecha_inicio),
+        this.formatDate(reserva.fecha_fin)
+      ].some(valor =>
+        valor?.toString().toLowerCase().includes(term)
       );
   
-    // Ordenar por ID de forma descendente (más recientes primero)
+      const coincideTipo =
+        !tipoFiltro || reserva.tipo.toLowerCase() === tipoFiltro;
+  
+      const coincideEstado =
+        !estadoFiltro || reserva.estado_reserva.toLowerCase() === estadoFiltro;
+  
+      const fechaInicio = new Date(reserva.fecha_inicio);
+  
+      const coincideFechas =
+        (!fechaDesdeVal || fechaInicio >= fechaDesdeVal) &&
+        (!fechaHastaVal || fechaInicio <= fechaHastaVal);
+  
+      return coincideBusqueda && coincideTipo && coincideEstado && coincideFechas;
+    });
+  
+    // Ordenar por ID descendente
     filtradas.sort((a, b) => (b.id_reserva ?? 0) - (a.id_reserva ?? 0));
   
     // Recalcular total de páginas
@@ -66,8 +97,19 @@ export class ReservasListComponent implements OnInit {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
     this.filteredReservas = filtradas.slice(startIndex, endIndex);
-  }
+  }  
+  
 
+  limpiarFiltros(): void {
+    this.searchTerm = '';
+    this.filtroTipoReserva = '';
+    this.filtroEstadoReserva = '';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.currentPage = 1;
+    this.updateFilteredReservas();
+  }
+  
   onSearchChange(): void {
     this.currentPage = 1; // Resetear a la primera página al cambiar el término de búsqueda
     this.updateFilteredReservas();
@@ -97,7 +139,12 @@ export class ReservasListComponent implements OnInit {
     }
   }
 
-  deleteReserva(id: number): void {
+  deleteReserva(reserva: Reserva): void {
+    if (reserva.estado_reserva.toLowerCase() !== 'pendiente') {
+      Swal.fire('No permitido', 'Solo se pueden eliminar reservas en estado pendiente.', 'warning');
+      return;
+    }
+  
     Swal.fire({
       title: '¿Está seguro?',
       text: 'Esta acción eliminará la reserva permanentemente.',
@@ -109,26 +156,19 @@ export class ReservasListComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.reservasService.deleteReserva(id).subscribe({
+        this.reservasService.deleteReserva(reserva.id_reserva!).subscribe({
           next: () => {
-            Swal.fire(
-              'Eliminado',
-              'La reserva ha sido eliminada correctamente.',
-              'success'
-            );
+            Swal.fire('Eliminado', 'La reserva ha sido eliminada correctamente.', 'success');
             this.loadReservas();
           },
           error: (err) => {
-            Swal.fire(
-              'Error',
-              'Ocurrió un error al eliminar la reserva: ' + err.message,
-              'error'
-            );
+            Swal.fire('Error', 'Ocurrió un error al eliminar la reserva: ' + err.message, 'error');
           }
         });
       }
     });
   }
+  
 
   cancelarReserva(id: number): void {
     Swal.fire({
@@ -159,4 +199,5 @@ export class ReservasListComponent implements OnInit {
     if (!date) return '';
     return new Date(date).toLocaleString();
   }
+
 }

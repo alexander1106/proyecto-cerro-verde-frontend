@@ -1,6 +1,6 @@
 <form [formGroup]="habitacionForm" (ngSubmit)="onSubmit()" novalidate class="form-container shadow rounded bg-white">
   
-  <h3>Nueva Habitación</h3>
+  <h3 >{{ isEditing ? 'Editar' : 'Nueva' }} Habitación</h3>
       
   <div class="mb-3">
     <label for="piso" class="form-label">Piso</label>
@@ -20,13 +20,16 @@
     <label for="numero" class="form-label">Número de Habitación</label>
     <input type="number" id="numero" formControlName="numero" class="form-control"
            [ngClass]="{'is-invalid': submitted && f['numero'].invalid}">
-    <div *ngIf="submitted && f['numero'].invalid" class="invalid-feedback">
+           
+    <div *ngIf="submitted && f['numero'].errors?.['required']" class="invalid-feedback">
       Número de habitación es requerido.
     </div>
-    <div *ngIf="submitted && f['numero'].errors?.['numeroDuplicado']" class="invalid-feedback">
+    
+    <div *ngIf="submitted && !f['numero'].errors?.['required'] && f['numero'].errors?.['numeroDuplicado']" class="invalid-feedback">
       Ya existe una habitación con este número.
     </div>
   </div>
+  
 
   <div class="mb-3">
     <label for="tipo_habitacion" class="form-label">Tipo de Habitación</label>

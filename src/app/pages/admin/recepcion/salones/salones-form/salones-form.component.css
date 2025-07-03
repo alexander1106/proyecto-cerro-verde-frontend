@@ -12,7 +12,7 @@ html, body {
 /* Contenedor del formulario */
 .form-container {
   width: 100%;  /* El contenedor ocupa el 100% del ancho disponible */
-  max-width: 800px;  /* Máximo ancho del formulario */
+  max-width: 500px;  /* Máximo ancho del formulario */
   padding: 24px;
   margin-top: 100px;
   margin-left: 300px;
@@ -30,13 +30,13 @@ html, body {
   text-align: center;
   margin-bottom: 24px;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   color: #333;
 }
 
 /* Estilo general para las etiquetas de los campos */
 .form-label {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #333;
 }
@@ -101,8 +101,8 @@ button[type="button"].btn-secondary:hover {
 
 /* Botón de submit en color éxito */
 button[type="submit"].btn-success {
-  background-color: #28a745;
-  color: white;
+  background-color: #6275e2 !important;
+    color: white;
   border: none;
 }
 

@@ -5,20 +5,26 @@
     <div class="info-trabajadores-linea">
       <h4>Gestión de Tipos de Habitación</h4>
 
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input type="text" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-
         <button class="btn-agregar">
           <a routerLink="/admin/recepcion/tipos/nuevo">+ Nuevo Tipo</a>
         </button>
+    </div>
+
+    <div class="filtros-container">
+      <div class="buscador">
+        <div class="input-wrapper">
+          <input type="text" placeholder="Buscar tipos por nombre, precio, límite.." [(ngModel)]="filtroGeneral" />
+          <button type="button" class="btn-icono">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
       </div>
+      <div class="filtros-select">
+        
+        <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+
+      </div>
+      
     </div>
 
     <div *ngIf="loading" class="loading">Cargando tipos de habitación...</div>

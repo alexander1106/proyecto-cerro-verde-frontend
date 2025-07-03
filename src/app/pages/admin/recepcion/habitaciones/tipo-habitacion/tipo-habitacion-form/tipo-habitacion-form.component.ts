@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TipoHabitacionService, TipoHabitacion } from '../../../../../../service/tipo-habitacion.service';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-tipo-habitacion-form',
@@ -29,9 +31,10 @@ export class TipoHabitacionFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
+  
     this.tipoHabitacionService.getTiposHabitacion().subscribe((tipos) => {
       this.tipos = tipos;
-      this.initForm(); // ← Aquí, solo se debe llamar cuando ya se tienen los tipos
       this.id = +this.route.snapshot.params['id'];
       this.isEditing = !!this.id;
       if (this.isEditing) {
@@ -39,6 +42,7 @@ export class TipoHabitacionFormComponent implements OnInit {
       }
     });
   }
+  
   
 
   get f() { return this.tipoForm.controls; }
@@ -83,31 +87,46 @@ export class TipoHabitacionFormComponent implements OnInit {
         console.error('Error:', err);
       }
     });
+    this.tipoForm.get('nombre')?.updateValueAndValidity(); 
   }
   
-
-
   onSubmit(): void {
     this.submitted = true;
-
+  
     if (this.tipoForm.invalid) {
       return;
     }
-
+  
     this.loading = true;
     const tipo: TipoHabitacion = {
       ...this.tipoForm.value,
       ...(this.isEditing ? { id_tipo_habitacion: this.id } : {})
     };
-
-    const saveTipo = this.isEditing ?
-      this.tipoHabitacionService.updateTipoHabitacion({ ...tipo, id_tipo_habitacion: this.id }) :
-      this.tipoHabitacionService.createTipoHabitacion(tipo);
-
+  
+    const saveTipo = this.isEditing
+      ? this.tipoHabitacionService.updateTipoHabitacion({ ...tipo, id_tipo_habitacion: this.id })
+      : this.tipoHabitacionService.createTipoHabitacion(tipo);
+  
     saveTipo.subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/admin/tipos-habitaciones']);
+  
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registro guardado!',
+          text: 'El tipo de habitación fue creado correctamente.',
+          showConfirmButton: false,
+          confirmButtonText: 'Aceptar',
+          customClass: {
+            popup: 'border shadow rounded-4',
+            confirmButton: 'btn btn-success px-4',
+            title: 'fs-4 text-success',
+            htmlContainer: 'fs-6 text-secondary'
+          },
+          buttonsStyling: false
+        }).then(() => {
+          this.router.navigate(['/admin/tipos-habitaciones']);
+        });
       },
       error: (err) => {
         this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el tipo de habitación`;
@@ -116,6 +135,7 @@ export class TipoHabitacionFormComponent implements OnInit {
       }
     });
   }
+  
 
   volver(): void {
     this.router.navigate(['/admin/tipos-habitaciones']);

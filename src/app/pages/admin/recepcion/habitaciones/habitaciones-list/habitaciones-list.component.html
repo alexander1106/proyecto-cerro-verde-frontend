@@ -2,31 +2,64 @@
   <app-header></app-header>
 
   <div class="card">
+    <!-- Título -->
     <div class="info-trabajadores-linea">
       <h4>Gestión de Habitaciones</h4>
-
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input type="text" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-
-        <button class="btn-agregar">
-          <a routerLink="/admin/recepcion/habitaciones/nuevo">+ Nueva Habitación</a>
-        </button>
-      </div>
+      <button class="btn-agregar">
+        <a routerLink="/admin/recepcion/habitaciones/nuevo">+ Nueva Habitación</a>
+      </button>
     </div>
 
+    <!-- Filtros, buscador y botón en la misma línea -->
+    <div class="filtros-container">
+      <div class="filtros-select">
+        <select [(ngModel)]="filtroTipo" >
+          <option value="">Todos los tipos</option>
+          <option *ngFor="let tipo of tiposHabitacion" [value]="tipo.nombre.toLowerCase()">
+            {{ tipo.nombre }}
+          </option>
+        </select>
+
+        <select [(ngModel)]="filtroEstado" >
+          <option value="">Todos los estados</option>
+          <option *ngFor="let estado of estadosHabitacion" [value]="estado.toLowerCase()">
+            {{ estado }}
+          </option>
+        </select>
+
+        <select [(ngModel)]="filtroPiso">
+          <option value="">Todos los pisos</option>
+          <option *ngFor="let piso of pisosUnicos" [value]="piso">
+            Piso {{ piso }}
+          </option>
+        </select>
+        <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+      </div>
+
+
+
+      <div class="buscador">
+        <div class="input-wrapper">
+          <input type="text" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
+          <button type="button" class="btn-icono">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+
+      
+    </div>
+
+    <!-- Cargando -->
     <div *ngIf="loading" class="loading">Cargando habitaciones...</div>
 
+    <!-- Error -->
     <div *ngIf="error" class="alert alert-danger">
       {{ error }}
     </div>
 
+    <!-- Tabla -->
     <div class="table-responsive" *ngIf="!loading && !error">
       <table class="tabla-trabajadores">
         <thead>
@@ -44,15 +77,15 @@
           <tr *ngFor="let habitacion of habitacionesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ habitacion.piso.numero }}</td>
-            <td>{{ habitacion?.numero }}</td>
+            <td>{{ habitacion.numero }}</td>
             <td>
               <span [ngClass]="{
                 'doble': habitacion.tipo_habitacion.id_tipo_habitacion === 1,
                 'simple': habitacion.tipo_habitacion.id_tipo_habitacion === 2,
                 'triple': habitacion.tipo_habitacion.id_tipo_habitacion === 3,
-                'matrimonial': habitacion.tipo_habitacion.id_tipo_habitacion === 4,
+                'matrimonial': habitacion.tipo_habitacion.id_tipo_habitacion === 4
               }">
-              {{ habitacion.tipo_habitacion.nombre }}
+                {{ habitacion.tipo_habitacion.nombre }}
               </span>
             </td>
             <td>S/. {{ habitacion.tipo_habitacion.precio }}</td>
@@ -81,6 +114,7 @@
       </table>
     </div>
 
+    <!-- Paginación -->
     <div class="pagination-controls mt-4 text-center">
       <button class="btn btn-outline-secondary"
               [disabled]="currentPage === 1"

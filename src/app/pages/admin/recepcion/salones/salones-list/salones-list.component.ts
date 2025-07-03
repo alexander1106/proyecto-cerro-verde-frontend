@@ -16,6 +16,9 @@ export class SalonesListComponent implements OnInit {
   salones: Salones[] = [];
   loading = true;
   error = '';
+  filtroTipo: string = '';
+  filtroEstado: string = '';
+  estadosSalon: string[] = ['Disponible', 'Reservado', 'Limpieza'];
 
   constructor(private salonesService: SalonesService) {}
 
@@ -51,21 +54,28 @@ export class SalonesListComponent implements OnInit {
     }).then((result: { isConfirmed: any; }) => {
       if (result.isConfirmed) {
         this.salonesService.deleteSalon(id).subscribe({
-          next: () => {
-            this.salones = this.salones.filter(h => h.id_salon !== id);
-            // @ts-ignore
-            Swal.fire({
-              icon: 'success',
-              title: 'Eliminado',
-              text: 'El salón fue eliminado correctamente',
-              timer: 1500,
-              showConfirmButton: false
-            });
+          next: (resp) => {
+            console.log('Respuesta delete:', resp); // <--- mira qué trae
+            
+            // Suponiendo que el backend devuelve algo como { success: false, message: 'Tiene reservas' }
+            if (resp && resp.success === false) {
+              Swal.fire('Error', resp.message || 'No se pudo eliminar el salón.', 'error');
+            } else {
+              this.salones = this.salones.filter(h => h.id_salon !== id);
+              Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'El salón fue eliminado correctamente',
+                timer: 1500,
+                showConfirmButton: false
+              });
+            }
           },
           error: () => {
             Swal.fire('Error', 'No se pudo eliminar el salón. Tiene una reserva activa.', 'error');
           }
         });
+        
       }
     });
   }
@@ -111,5 +121,13 @@ export class SalonesListComponent implements OnInit {
       this.currentPage = nextPage;
     }
   }
+
+  limpiarFiltros(): void {
+    this.filtroGeneral = '';
+    this.filtroTipo = '';
+    this.filtroEstado = '';
+    this.currentPage = 1; // Reinicia la paginación a la primera página
+  }
+  
 
 }

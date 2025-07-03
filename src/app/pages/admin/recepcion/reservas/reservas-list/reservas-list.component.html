@@ -4,39 +4,69 @@
   <div class="card">
     <div class="info-trabajadores-linea">
       <h4>Gestión de Reservas</h4>
-
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input
-              type="text"
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearchChange()"
-              placeholder="Buscar en todas las columnas..."
-            />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="d-flex gap-2">
-          <button class="btn-agregar">
-            <a routerLink="/admin/recepcion/reservas/habitaciones/nuevo">+ Reserva de Habitación</a>
-          </button>
-          <button class="btn-agregar secondary">
-            <a routerLink="/admin/recepcion/reservas/salones/nuevo">+ Reserva de Salón</a>
-          </button>
-        </div>
+    
+      <div class="d-flex gap-2">
+        <button class="btn-agregar">
+          <a routerLink="/admin/recepcion/reservas/habitaciones/nuevo">+ Reserva de Habitación</a>
+        </button>
+        <button class="btn-agregar secondary">
+          <a routerLink="/admin/recepcion/reservas/salones/nuevo">+ Reserva de Salón</a>
+        </button>
       </div>
     </div>
 
+    <!-- Filtros -->
+    <div class="toolbar-filtros-buscador">
+
+    <div class="filtros-reserva">
+      <select [(ngModel)]="filtroTipoReserva" (ngModelChange)="updateFilteredReservas()">
+        <option value="">Todos los tipos</option>
+        <option value="Habitación">Habitación</option>
+        <option value="Salón">Salón</option>
+      </select>
+
+      <select [(ngModel)]="filtroEstadoReserva" (ngModelChange)="updateFilteredReservas()">
+        <option value="">Todos los estados</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Check-in">Check-in</option>
+        <option value="Completada">Completada</option>
+        <option value="Pagada">Pagada</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+    </div>
+
+    <div class="filtros-fechas">
+      <label>Desde:</label>
+      <input type="date" [(ngModel)]="fechaDesde" (change)="onSearchChange()">
+      <label>Hasta:</label>
+      <input type="date" [(ngModel)]="fechaHasta" (change)="onSearchChange()">
+    </div>
+
+    <div class="buscador">
+      <div class="input-wrapper">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Buscar en todas las columnas..." />
+        <button type="button" class="btn-icono">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+
+  </div>
+
+    <!-- Mensajes -->
     <div *ngIf="loading" class="loading">Cargando reservas...</div>
     <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
     <div *ngIf="filteredReservas.length === 0 && !loading" class="alert alert-info">
       No hay reservas registradas.
     </div>
 
+    <!-- Tabla -->
     <div class="table-responsive" *ngIf="filteredReservas.length > 0">
       <table class="tabla-trabajadores">
         <thead>
@@ -55,7 +85,7 @@
           <tr *ngFor="let reserva of filteredReservas; let i = index">
             <td>{{ i + 1 }}</td>
             <td class="cliente">{{ reserva.cliente.nombre }}</td>
-            <td>{{ reserva.tipo }}</td>                     
+            <td>{{ reserva.tipo }}</td>
             <td>{{ reserva.nro_persona }}</td>
             <td>{{ formatDate(reserva.fecha_inicio) }}</td>
             <td>{{ formatDate(reserva.fecha_fin) }}</td>
@@ -66,7 +96,6 @@
                 'completada': reserva.estado_reserva === 'Completada',
                 'pagada': reserva.estado_reserva === 'Pagada',
                 'cancelada': reserva.estado_reserva === 'Cancelada'
-
               }">
               {{ reserva.estado_reserva }}
               </span>
@@ -81,27 +110,20 @@
               <button *ngIf="reserva.estado_reserva?.toLowerCase() !== 'completada'" class="btn-accion editar" (click)="editReserva(reserva)">
                 <i class="edit fa-regular fa-pen-to-square"></i>
               </button>
-              <button *ngIf="reserva.estado_reserva?.toLowerCase() !== 'completada'" class="btn-accion eliminar" (click)="deleteReserva(reserva.id_reserva!)">
-                <i class="delete fa-regular fa-trash-can"></i>
-              </button>
+              <button class="btn-accion" *ngIf="reserva.estado_reserva?.toLowerCase() === 'pendiente'" (click)="deleteReserva(reserva)"><i class=" delete fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
+    <!-- Paginación -->
     <div class="pagination-controls mt-4 text-center">
-      <button class="btn btn-outline-secondary"
-              [disabled]="currentPage === 1"
-              (click)="changePage(currentPage - 1)">
+      <button class="btn btn-outline-secondary" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
         ← Anterior
       </button>
-
       <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
-
-      <button class="btn btn-outline-secondary"
-              [disabled]="currentPage === totalPages"
-              (click)="changePage(currentPage + 1)">
+      <button class="btn btn-outline-secondary" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
         Siguiente →
       </button>
     </div>

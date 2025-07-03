@@ -74,7 +74,7 @@
 
 
 .buscador {
-  max-width: 300px;
+  max-width: 400px;
   width: 100%;
 }
 
@@ -354,4 +354,52 @@
     font-size: 14px;
     font-weight: 500;
     text-transform: capitalize;
+}
+
+.btn-icon {
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 6px;
+  color: rgb(38, 109, 203);
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+}
+
+
+/* Contenedor horizontal de filtros + buscador + botón */
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content:flex-start;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+
+/* Para asegurar ancho completo en móviles */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-agregar {
+    width: 100%;
+  }
+
+  .buscador {
+    min-width: 200px;
+    flex: 1;
+  }
+
+  .filtros-select {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

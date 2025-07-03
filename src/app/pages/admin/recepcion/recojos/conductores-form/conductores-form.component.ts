@@ -103,8 +103,16 @@ export class ConductoresFormComponent implements OnInit {
           this.loading = false;
           Swal.fire({
             icon: 'success',
-            title: this.isEditing ? 'Conductor actualizado' : 'Conductor creado',
+            title: '¡Registro exitoso',
+            text: this.isEditing ? 'Conductor actualizado' : 'Conductor creado',
             showConfirmButton: false,
+          customClass: {
+            popup: 'border shadow rounded-4',
+            confirmButton: 'btn btn-success px-4',
+            title: 'fs-4 text-success',
+            htmlContainer: 'fs-6 text-secondary'
+          },
+          buttonsStyling: false,
             timer: 1500
           });
           this.router.navigate(['/admin/conductores']);

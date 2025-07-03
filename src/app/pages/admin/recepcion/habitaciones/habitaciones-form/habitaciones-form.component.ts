@@ -215,8 +215,16 @@ export class HabitacionesFormComponent implements OnInit {
   
           Swal.fire({
             icon: 'success',
-            title: msg,
+            title: '¡Registro guardado!',
+            text: msg,
             showConfirmButton: false,
+          customClass: {
+            popup: 'border shadow rounded-4',
+            confirmButton: 'btn btn-success px-4',
+            title: 'fs-4 text-success',
+            htmlContainer: 'fs-6 text-secondary'
+          },
+          buttonsStyling: false,
             timer: 2000
           }).then(() => {
             this.router.navigate(['/admin/habitaciones']);
