@@ -115,4 +115,9 @@ export class TipoHabitacionListComponent implements OnInit {
       this.currentPage = nextPage;
     }
   }
+
+  limpiarFiltros(): void {
+    this.filtroGeneral = '';
+    this.currentPage = 1; // Reinicia la paginación a la primera página
+  }
 }

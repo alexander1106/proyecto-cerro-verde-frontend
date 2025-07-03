@@ -125,8 +125,16 @@ export class PisosFormComponent implements OnInit {
           this.loading = false;
           Swal.fire({
             icon: 'success',
-            title: 'Piso creado',
+            title: '¡Registro guardado!',
+            text: 'Piso creado',
             showConfirmButton: false,
+          customClass: {
+            popup: 'border shadow rounded-4',
+            confirmButton: 'btn btn-success px-4',
+            title: 'fs-4 text-success',
+            htmlContainer: 'fs-6 text-secondary'
+          },
+          buttonsStyling: false,
             timer: 1500
           });
           this.router.navigate(['/admin/pisos']);

@@ -4,22 +4,41 @@
   <div class="card">
     <div class="info-trabajadores-linea">
       <h4>Gestión de Recojos</h4>
+      <button class="btn-agregar">
+        <a routerLink="/admin/recepcion/recojos/nuevo">+ Nuevo Recojo</a>
+      </button>
+    </div>
 
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input type="text" placeholder="Buscar recojo..." [(ngModel)]="filtroGeneral" />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
+      <div class="filtros-container">
+        <div class="filtros-select">
+  
+          <select [(ngModel)]="filtroEstado" >
+            <option value="">Todos los estados</option>
+            <option *ngFor="let estado of estadosRecojo" [value]="estado.toLowerCase()">
+              {{ estado }}
+            </option>
+          </select>
         </div>
 
-        <button class="btn-agregar">
-          <a routerLink="/admin/recepcion/recojos/nuevo">+ Nuevo Recojo</a>
-        </button>
+          <div class="filtros-fechas">
+            <label>Desde:</label>
+            <input type="date" [(ngModel)]="fechaDesde" (change)="onSearchChange()">
+            <label>Hasta:</label>
+            <input type="date" [(ngModel)]="fechaHasta" (change)="onSearchChange()">
+          </div>
+
+          <div class="buscador">
+            <div class="input-wrapper">
+              <input type="text" placeholder="Buscar recojo por cliente, dirección, conductor..." [(ngModel)]="filtroGeneral" />
+              <button type="button" class="btn-icono">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            </div>
+
+          <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+        
       </div>
-    </div>
 
     <div *ngIf="loading" class="loading">Cargando recojos...</div>
 

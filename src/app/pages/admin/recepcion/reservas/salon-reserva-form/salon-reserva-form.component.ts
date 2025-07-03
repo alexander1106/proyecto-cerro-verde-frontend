@@ -25,10 +25,13 @@ export class SalonReservaFormComponent implements OnInit {
   submitting = false;
   isEditing = false;
   mostrarModalCliente = false;
+  buscandoDni = false;
   id: number | null = null;
   error = '';
   salonesConError: number[] = [];
-
+  filtroEstadoSalon: string = '';
+filtroCapacidadMin: number = 0;
+verSoloSeleccionados: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -435,15 +438,6 @@ private mostrarError(mensaje: string): void {
     return this.salonesArray.value.some((s: Salones) => s.id_salon === salon.id_salon);
   }
 
-  salonesFiltrados(): Salones[] {
-    const filtro = this.filtroSalones?.toLowerCase() || '';
-
-    return this.salones.filter(h =>
-          h.nombre?.toLowerCase().includes(filtro) ||
-          h.precio_hora?.toString().toLowerCase().includes(filtro) ||
-          h.precio_diario?.toString().toLowerCase().includes(filtro) ||
-          h.capacidad?.toString().toLowerCase().includes(filtro) );
-  }
 
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
@@ -487,6 +481,24 @@ private mostrarError(mensaje: string): void {
   
     return this.salonesConError.length === 0;
   }
+
+  salonesFiltradosAvanzado(): Salones[] {
+    const filtro = this.filtroSalones?.toLowerCase() || '';
+  
+    return this.salones.filter(salon => {
+      const coincideTexto =
+        salon.nombre?.toLowerCase().includes(filtro) ||
+        salon.precio_hora?.toString().includes(filtro) ||
+        salon.precio_diario?.toString().includes(filtro) ||
+        salon.capacidad?.toString().includes(filtro);
+  
+      const cumpleSeleccion =
+        !this.verSoloSeleccionados || this.isSalonSelected(salon);
+  
+      return coincideTexto && cumpleSeleccion;
+    });
+  }
+  
   
 }
 

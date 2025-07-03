@@ -14,6 +14,9 @@ export class ChecksListComponent implements OnInit {
   checks: CheckinCheckout[] = [];
   loading = true;
   error = '';
+    
+  fechaDesde: string = '';
+  fechaHasta: string = '';
 
   constructor(private checkService: CheckinCheckoutService) {}
 
@@ -27,7 +30,8 @@ export class ChecksListComponent implements OnInit {
 
     this.checkService.buscarTodos().subscribe({
       next: (data) => {
-        this.checks = data;
+        // Ordenar del más reciente al más antiguo por id_check
+        this.checks = data.sort((a: CheckinCheckout, b: CheckinCheckout) => b.id_check! - a.id_check!);
         this.loading = false;
       },
       error: (err) => {
@@ -36,6 +40,7 @@ export class ChecksListComponent implements OnInit {
         console.error('Error:', err);
       }
     });
+    
   }
 
   eliminar(id: number): void {
@@ -82,15 +87,26 @@ export class ChecksListComponent implements OnInit {
 
   get checkActivosFiltrados() {
     const filtro = this.filtroGeneral.toLowerCase();
+    const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+    const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+  
     return this.checkActivos.filter(h => {
       const checkin = h.fecha_checkin?.toString() || '';
       const reserva = h.reserva?.toString() || '';
+      const fechaHora = h.fecha_checkin ? new Date(h.fecha_checkin) : null;
       const checkout = h.fecha_checkout?.toString() || '';
-      return (
-        checkin.includes(filtro) ||
+
+      const coincideTexto =
+        filtro === '' ||
         reserva.includes(filtro) ||
-        checkout.includes(filtro)
-      );
+        checkin?.toString().toLowerCase().includes(filtro) ||
+        checkout?.toString().toLowerCase().includes(filtro);
+  
+      const coincideFecha =
+      (!desde || (fechaHora && fechaHora >= desde)) &&
+      (!hasta || (fechaHora && fechaHora <= hasta));
+
+      return coincideTexto && coincideFecha;
     });
   }
 
@@ -121,5 +137,16 @@ export class ChecksListComponent implements OnInit {
   formatDate(date: string | Date): string {
     if (!date) return '';
     return new Date(date).toLocaleString();
+  }
+
+  limpiarFiltros(): void {
+    this.filtroGeneral = '';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.currentPage = 1;
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1; // Resetear a la primera página al cambiar el término de búsqueda
   }
 }

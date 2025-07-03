@@ -7,8 +7,7 @@ import { ClientesService, Cliente } from '../../../../../service/clientes.servic
 import Swal from 'sweetalert2';
 import { forkJoin } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
-import { formatDate } from '@angular/common';
-import { IaService } from '../../../../../service/ia.service';
+import { TipoHabitacionService } from '../../../../../service/tipo-habitacion.service';
 
 @Component({
   selector: 'app-habitacion-reserva-form',
@@ -28,24 +27,31 @@ export class HabitacionReservaFormComponent implements OnInit {
   isEditing = false;
   id: number | null = null;
   error = '';
-  paso: number = 1;
   mostrarModalCliente = false;
-  habitacionesConError: number[] = []; // ID de habitaciones con sobrecupo
-
+  habitacionesConError: number[] = [];
+  habitacionesSeleccionadasPorTipo: { [tipo: string]: number } = {};
+  tiposDisponibles: { tipo: string, cantidadtipo: number, disponibles: number }[] = [];
+  mostrarTablaHabitaciones = false;
+  filtroTipo = '';
+  filtroPiso = '';
+  tiposUnicos: string[] = [];
+  pisosUnicos: number[] = [];
+  buscandoDni = false;
 
   constructor(
     private fb: FormBuilder,
     private reservasService: ReservasService,
     private habitacionesService: HabitacionesService,
+    private tipoHabitacionService: TipoHabitacionService,
     private clientesService: ClientesService,
     private route: ActivatedRoute,
-    private router: Router,
-    private iaService:IaService
+    private router: Router
   ) {}
 
-mostrarAlertaTemporada = false;
-
   ngOnInit(): void {
+    
+  this.filtroTipo = '';
+  this.filtroPiso = '';
     this.createForm();
     this.loadClientes();
 
@@ -53,8 +59,11 @@ mostrarAlertaTemporada = false;
       dniRuc: ['', [Validators.required, Validators.pattern(/^\d{8}$|^\d{11}$/)]],
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', Validators.required],
-      pais: ['', Validators.required]
+      telefono: ['', Validators.compose([
+        Validators.required,
+        Validators.pattern(/^\d{9}$/)
+      ])],
+            pais: ['', Validators.required]
     });
 
     this.id = Number(this.route.snapshot.paramMap.get('id'));
@@ -74,6 +83,7 @@ mostrarAlertaTemporada = false;
       nro_persona: [1, [Validators.required, Validators.min(1)]],
       estado_reserva: ['Pendiente', Validators.required],
       comentarios: [''],
+      tipos: this.fb.group({}),
       habitaciones: this.fb.array([])
     }, {
       validators: [
@@ -86,59 +96,90 @@ mostrarAlertaTemporada = false;
     });
   }
 
-
+  
   abrirModalCliente(): void {
     this.mostrarModalCliente = true;
     this.nuevoClienteForm.reset();
   }
 
-  buscarDni(): void {
-      const dni = this.nuevoClienteForm.get('dniRuc')?.value;
-      if (!dni || !/^\d{8}$/.test(dni)) {
-        Swal.fire('Advertencia', 'Ingrese un DNI válido de 8 dígitos', 'warning');
-        return;
-      }
-
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      });
-
-      this.clientesService.buscarDni(dni, headers).subscribe({
-        next: (data) => {
-          const clienteData = JSON.parse(data.datos);
-          this.nuevoClienteForm.get('nombre')?.setValue(`${clienteData.apellidoPaterno} ${clienteData.apellidoMaterno} ${clienteData.nombres}`);
-        },
-        error: (error) => {
-          console.error(error);
-          Swal.fire('Error', 'No se pudo obtener los datos del DNI', 'error');
-        }
-      });
+  buscarDni() {
+    const dni = this.nuevoClienteForm.get('dniRuc')?.value;
+    if (!dni || dni.length !== 8) {
+      Swal.fire('DNI inválido', 'Debe tener 8 dígitos.', 'warning');
+      return;
     }
+  
+    const yaExiste = this.clientes.some(c => c.dniRuc === dni);
+    if (yaExiste) {
+      Swal.fire('DNI duplicado', 'Este DNI ya está registrado.', 'error');
+      return;
+    }
+  
+    this.buscandoDni = true;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  
+    this.clientesService.buscarDni(dni, headers).subscribe({
+      next: (data) => {
+        try {
+          const datos = JSON.parse(data.datos); // 👈 Deserializa el string JSON
+  
+          console.log('Datos parseados:', datos);
+  
+          this.nuevoClienteForm.patchValue({
+            nombre: datos.nombreCompleto || '',
+            pais: 'Perú'
+          });
+  
+        } catch (e) {
+          console.error('Error al parsear datos del DNI:', e);
+          Swal.fire('Error', 'No se pudo procesar la respuesta del DNI.', 'error');
+        }
+  
+        this.buscandoDni = false;
+      },
+      error: (err) => {
+        console.error('Error al buscar DNI:', err);
+        Swal.fire('Error', 'No se pudo buscar el DNI.', 'error');
+        this.buscandoDni = false;
+      }
+    });
+  }
+  
+
 
   cerrarModalCliente(): void {
     this.mostrarModalCliente = false;
   }
 
-  guardarCliente(): void {
+  guardarCliente() {
     if (this.nuevoClienteForm.invalid) {
       this.nuevoClienteForm.markAllAsTouched();
       return;
     }
-
-    const nuevoCliente = this.nuevoClienteForm.value;
-
-    this.clientesService.createCliente(nuevoCliente).subscribe({
-      next: (clienteCreado) => {
-        this.clientes.push(clienteCreado);
-        this.reservaForm.get('cliente')?.setValue(clienteCreado.idCliente);
+  
+    const clienteData = {
+      ...this.nuevoClienteForm.value,
+      estado: 1 // O el valor que uses por defecto
+    };
+  
+    this.clientesService.createCliente(clienteData).subscribe({
+      next: (nuevoCliente) => {
+        // Agrega a la lista de clientes y selecciona
+        this.clientes.push(nuevoCliente);
+        this.reservaForm.patchValue({ cliente: nuevoCliente.idCliente });
+  
         this.cerrarModalCliente();
-        Swal.fire('Cliente agregado', 'Se agregó correctamente el cliente.', 'success');
+  
+        Swal.fire('Éxito', 'Cliente creado correctamente', 'success');
       },
-      error: err => {
-        Swal.fire('Error', 'No se pudo registrar el cliente: ' + err.message, 'error');
+      error: (error) => {
+        console.error('Error al guardar cliente:', error);
+        Swal.fire('Error', 'No se pudo guardar el cliente', 'error');
       }
     });
   }
+  
+  
 
   get habitacionesArray(): FormArray {
     return this.reservaForm.get('habitaciones') as FormArray;
@@ -158,7 +199,7 @@ mostrarAlertaTemporada = false;
     } else {
       // Quitar habitación
       this.habitacionesArray.removeAt(index);
-
+      
       // Si estamos editando y quitamos una habitación original, marcarla como disponible
       if (this.isEditing && this.habitacionesOriginales.some(h => h.id_habitacion === habitacion.id_habitacion)) {
         habitacion.estado_habitacion = 'Disponible';
@@ -179,25 +220,50 @@ mostrarAlertaTemporada = false;
   }
 
   loadHabitaciones(): void {
-    this.habitacionesService.getHabitaciones().subscribe({
-      next: data => {
-        const idsOriginales = this.habitacionesOriginales.map(h => h.id_habitacion);
-        this.habitaciones = data.filter(h =>
-          h.estado === 1 &&
-          (h.estado_habitacion === 'Disponible' || idsOriginales.includes(h.id_habitacion!))
-        );
+  this.habitacionesService.getHabitaciones().subscribe({
+    next: data => {
+      const idsOriginales = this.habitacionesOriginales.map(h => h.id_habitacion);
+      this.habitaciones = data.filter(h =>
+        h.estado === 1 &&
+        (h.estado_habitacion === 'Disponible' || idsOriginales.includes(h.id_habitacion!))
+      );
+
+      this.tiposUnicos = [...new Set(this.habitaciones.map(h => h.tipo_habitacion.nombre))];
+      this.pisosUnicos = [...new Set(this.habitaciones.map(h => h.piso.numero))];
+
+      this.calcularTiposDisponibles();
+    },
+    error: err => this.error = 'Error al cargar las habitaciones: ' + err.message
+  });
+}
+
+  
+  calcularTiposDisponibles(): void {
+    this.tipoHabitacionService.getTiposHabitacion().subscribe({
+      next: tipos => {
+        this.tiposDisponibles = tipos.map(tipo => {
+          const habitacionesDeEsteTipo = this.habitaciones.filter(h => h.tipo_habitacion.nombre === tipo.nombre);
+          const disponibles = habitacionesDeEsteTipo.filter(h => h.estado === 1 && h.estado_habitacion === 'Disponible').length;
+  
+          return {
+            tipo: tipo.nombre,
+            cantidadtipo: tipo.cantidadtipo,
+            disponibles
+          };
+        });
+        console.log('TIPOS DISPONIBLES:', this.tiposDisponibles);
       },
-      error: err => this.error = 'Error al cargar las habitaciones: ' + err.message
+      error: err => console.error('Error al cargar tipos:', err)
     });
   }
-
+    
   loadReserva(id: number): void {
     this.loading = true;
     this.reservasService.getReservaById(id).subscribe({
       next: reserva => {
         const relacionesActivas = (reserva.habitacionesXReserva || [])
           .filter(hr => hr.estado === 1);
-
+  
         relacionesActivas.forEach(hr => {
           this.habitacionesArray.push(this.fb.control(hr.habitacion));
           if (hr.id_hab_reserv != null) {
@@ -206,18 +272,25 @@ mostrarAlertaTemporada = false;
               id_habitacionreserva: hr.id_hab_reserv
             });
           }
-
         });
-
+  
+        // 1. Cargamos valores en el formulario
         this.reservaForm.patchValue({
           fecha_inicio: this.formatDateForInput(reserva.fecha_inicio as string),
-          fecha_fin: this.formatDateForInput(reserva.fecha_fin as string),
+          fecha_fin: this.formatDateForInput(reserva.fecha_fin as string, true),
           estado_reserva: reserva.estado_reserva,
           comentarios: reserva.comentarios,
           cliente: reserva.cliente.idCliente
         });
-
+  
+        // 2. Deshabilitamos el campo solo después de cargar el valor
+        if (this.isEditing) {
+          this.reservaForm.get('fecha_inicio')?.disable({ onlySelf: true });
+        }
+  
         this.loadHabitaciones();
+        this.mostrarTablaHabitaciones = true;
+        this.actualizarConteoPorTipo(); 
         this.loading = false;
       },
       error: err => {
@@ -226,11 +299,16 @@ mostrarAlertaTemporada = false;
       }
     });
   }
+  
 
-  formatDateForInput(date: string): string {
+  formatDateForInput(date: string, onlyDate = false): string {
     const d = new Date(date);
+    if (onlyDate) {
+      return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
+    }
     return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}T${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   }
+  
 
   onSubmit(): void {
     if (this.reservaForm.invalid || this.habitacionesArray.length === 0) {
@@ -238,20 +316,22 @@ mostrarAlertaTemporada = false;
       this.error = 'Complete todos los campos requeridos y seleccione al menos una habitación.';
       return;
     }
-
+  
     if (!this.verificarCapacidadHabitaciones()) {
       this.error = 'Una o más habitaciones no tienen capacidad suficiente para el número de personas.';
       return;
     }
-
-
+  
     this.submitting = true;
-    const formValue = this.reservaForm.value;
+    const formValue = this.reservaForm.getRawValue();
     const cliente = this.clientes.find(c => c.idCliente === formValue.cliente)!;
-
+  
+    const fechaFinParts = formValue.fecha_fin.split('-').map(Number);
+    const fechaFinLocal = new Date(fechaFinParts[0], fechaFinParts[1] - 1, fechaFinParts[2], 8, 0, 0);
+      
     const reserva: Reserva = {
-      fecha_inicio: new Date(formValue.fecha_inicio),
-      fecha_fin: new Date(formValue.fecha_fin),
+      fecha_inicio: formValue.fecha_inicio,
+      fecha_fin: fechaFinLocal,
       estado_reserva: formValue.estado_reserva,
       comentarios: formValue.comentarios,
       estado: 1,
@@ -259,16 +339,18 @@ mostrarAlertaTemporada = false;
       tipo: 'Habitación',
       cliente
     };
-
+  
     const action$ = this.isEditing && this.id
       ? this.reservasService.updateReserva(this.id, { ...reserva, id_reserva: this.id })
       : this.reservasService.createReserva(reserva);
-
+  
     action$.subscribe({
       next: res => this.manejarHabitaciones(res),
       error: err => this.mostrarError('Error al guardar la reserva: ' + err.message)
     });
   }
+   
+
 
   private manejarHabitaciones(reserva: Reserva): void {
     const habitacionesSeleccionadas = this.habitacionesArray.value as Habitacion[];
@@ -281,7 +363,7 @@ mostrarAlertaTemporada = false;
       return habitacion;
     });
 
-    const habitacionesParaLiberar = this.isEditing
+    const habitacionesParaLiberar = this.isEditing 
       ? this.habitacionesOriginales
           .filter(original => !idsSeleccionados.includes(original.id_habitacion))
           .map(original => {
@@ -316,14 +398,14 @@ mostrarAlertaTemporada = false;
       });
     } else {
       const relacionesAEliminar = this.habitacionesOriginales
-        .filter(original =>
+        .filter(original => 
           !idsSeleccionados.includes(original.id_habitacion) &&
           original.id_habitacionreserva !== null &&
           original.id_habitacionreserva !== undefined
         );
 
       const relacionesACrear = this.habitacionesArray.value
-        .filter((habitacion: Habitacion) => habitacion.id_habitacion !== undefined &&
+        .filter((habitacion: Habitacion) => habitacion.id_habitacion !== undefined && 
               !this.habitacionesOriginales.some(o => o.id_habitacion === habitacion.id_habitacion))
         .map((habitacion: Habitacion) => ({
           habitacion,
@@ -335,7 +417,7 @@ mostrarAlertaTemporada = false;
         this.crearNuevasRelaciones(relacionesACrear);
       } else {
         forkJoin(
-          relacionesAEliminar.map(rel =>
+          relacionesAEliminar.map(rel => 
             this.habitacionesService.deleteHabitacionReserva(rel.id_habitacionreserva)
           )
         ).subscribe({
@@ -347,7 +429,7 @@ mostrarAlertaTemporada = false;
   }
 
   private crearNuevasRelaciones(relaciones: HabitacionReserva[]): void {
-    if (relaciones.length === 0) {
+    if (relaciones.length === 0) { 
         this.finalizarGuardado();
         return;
         }
@@ -395,15 +477,24 @@ if (control instanceof FormGroup || control instanceof FormArray) {
   }
 
   habitacionesFiltradas(): Habitacion[] {
-    const filtro = this.filtroHabitaciones?.toLowerCase() || '';
+    const filtroActivo = this.filtroTipo !== '' || this.filtroPiso !== '';
+  
+    if (!filtroActivo) {
+      return this.habitacionesArray.value; // solo seleccionadas
+    }
+  
     return this.habitaciones.filter(h =>
-      h.numero?.toString().toLowerCase().includes(filtro) ||
-      h.tipo_habitacion.nombre?.toLowerCase().includes(filtro) ||
-      h.piso?.toString().toLowerCase().includes(filtro) ||
-      h.tipo_habitacion.precio?.toString().includes(filtro)   );
+      (this.filtroTipo === '' || h.tipo_habitacion.nombre === this.filtroTipo) &&
+      (this.filtroPiso === '' || h.piso.numero.toString() === this.filtroPiso)
+    );
   }
-
-
+  
+  
+  limpiarFiltros(): void {
+    this.filtroTipo = '';
+    this.filtroPiso = '';
+  }
+  
 
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
@@ -428,80 +519,11 @@ if (control instanceof FormGroup || control instanceof FormArray) {
       }
     });
   }
-irPasoDosFecha() {
-  const fechaInicio = this.reservaForm.get('fecha_inicio')?.value;
-
-  if (!fechaInicio) {
-    alert("Debe seleccionar una fecha de inicio.");
-    return;
-  }
-    this.mostrarAlertaTemporada = true;
-
-  // Formatear la fecha a 'dd/MM/yyyy'
-  const fechaFormateada = formatDate(fechaInicio, 'dd/MM/yyyy', 'en-US');
-
-  const payload = {
-    fecha: fechaFormateada
-  };
-
- this.iaService.consultarPrecio(payload).subscribe({
-  next: (respuesta) => {
-    console.log("Respuesta IA:", respuesta);
-
-    // Mapear precios por tipo
-    const preciosMap = new Map<string, number>();
-    for (const item of respuesta.precios) {
-      preciosMap.set(item.tipo_habitacion, item.precio_predicho);
-    }
-
-    // Actualizar precios de habitaciones locales
-    this.habitaciones = this.habitaciones.map(habitacion => {
-      const nuevoPrecio = preciosMap.get(habitacion.tipo_habitacion.nombre);
-      if (nuevoPrecio !== undefined) {
-        return {
-          ...habitacion,
-          tipo_habitacion: {
-            ...habitacion.tipo_habitacion,
-            precio: nuevoPrecio // Aquí se actualiza el precio
-          }
-        };
-      }
-      return habitacion;
-    });
-
-    this.paso = 2; // avanzar al siguiente paso
-  },
-  error: (err) => {
-    console.error("Error al consultar precio:", err);
-    alert("Error al consultar el precio. Intenta de nuevo.");
-  }
-});
-}
-
-
-  irPasoDos(): void {
-    const controles = ['cliente', 'fecha_inicio', 'fecha_fin', 'nro_persona'];
-    let valido = true;
-
-    controles.forEach(control => {
-      const c = this.reservaForm.get(control);
-      if (c?.invalid) {
-        c.markAsTouched();
-        valido = false;
-      }
-    });
-
-    if (valido) {
-      this.paso = 2;
-    } else {
-      this.error = 'Completa los campos obligatorios antes de continuar.';
-    }
-  }
 
   verificarCapacidadHabitaciones(): boolean {
     const nroPersonas = this.reservaForm.get('nro_persona')?.value;
     this.habitacionesConError = [];
-
+  
     this.habitacionesArray.controls.forEach((control: AbstractControl) => {
       const habitacion: Habitacion = control.value;
       const capacidad = habitacion.tipo_habitacion?.cantidadtipo || 0;
@@ -509,9 +531,90 @@ irPasoDosFecha() {
         this.habitacionesConError.push(habitacion.id_habitacion!);
       }
     });
-
+  
     return this.habitacionesConError.length === 0;
   }
+
+  asignarHabitacionesPorTipo(): void {
+  this.mostrarTablaHabitaciones = true;
+
+  for (const tipo in this.habitacionesSeleccionadasPorTipo) {
+    const cantidadDeseada = this.habitacionesSeleccionadasPorTipo[tipo];
+
+    // Habitaciones ya seleccionadas de ese tipo
+    const seleccionadasActuales = this.habitacionesArray.value.filter(
+      (h: Habitacion) => h.tipo_habitacion.nombre === tipo
+    );
+
+    const diferencia = cantidadDeseada - seleccionadasActuales.length;
+
+    if (diferencia > 0) {
+      // Agregar habitaciones faltantes
+      const disponibles = this.habitaciones.filter(h =>
+        h.tipo_habitacion.nombre === tipo &&
+        h.estado_habitacion === 'Disponible' &&
+        !this.isHabitacionSelected(h)
+      ).slice(0, diferencia);
+
+      disponibles.forEach(h => {
+        h.estado_habitacion = 'Reservada';
+        this.habitacionesArray.push(this.fb.control(h));
+      });
+
+    } else if (diferencia < 0) {
+      // Quitar habitaciones sobrantes (últimas agregadas)
+      let aEliminar = -diferencia;
+
+      for (let i = this.habitacionesArray.length - 1; i >= 0 && aEliminar > 0; i--) {
+        const habitacion: Habitacion = this.habitacionesArray.at(i).value;
+        if (habitacion.tipo_habitacion.nombre === tipo) {
+          this.habitacionesArray.removeAt(i);
+          habitacion.estado_habitacion = 'Disponible';
+          aEliminar--;
+        }
+      }
+    }
+  }
+
+  this.actualizarConteoPorTipo(); // <- importante mantener actualizado
+}
+  
+  
+  eliminarHabitacionSeleccionada(habitacion: Habitacion): void {
+    const index = this.habitacionesArray.controls.findIndex(ctrl => ctrl.value.id_habitacion === habitacion.id_habitacion);
+    if (index !== -1) {
+      this.habitacionesArray.removeAt(index);
+      habitacion.estado_habitacion = 'Disponible';
+    }
+  }
+  
+  toggleHabitacionDesdeTabla(habitacion: Habitacion): void {
+    const index = this.habitacionesArray.controls.findIndex(ctrl => ctrl.value.id_habitacion === habitacion.id_habitacion);
+  
+    if (index === -1) {
+      this.habitacionesArray.push(this.fb.control(habitacion));
+      habitacion.estado_habitacion = 'Reservada';
+    } else {
+      this.habitacionesArray.removeAt(index);
+      habitacion.estado_habitacion = 'Disponible';
+    }
+  
+    this.habitacionesService.updateHabitacion(habitacion).subscribe(); // opcional
+    this.actualizarConteoPorTipo();
+  }
+  
+  
+  actualizarConteoPorTipo(): void {
+    const conteo: { [tipo: string]: number } = {};
+    this.habitacionesArray.value.forEach((h: Habitacion) => {
+      const tipo = h.tipo_habitacion.nombre;
+      conteo[tipo] = (conteo[tipo] || 0) + 1;
+    });
+    this.habitacionesSeleccionadasPorTipo = conteo;
+  }
+  
+  
+  
 }
 
 function fechaNoPasada(): ValidatorFn {
@@ -522,9 +625,20 @@ return fecha < new Date() ? { fechaPasada: true } : null;
 }
 
 function fechaFinMayorQueInicio(): ValidatorFn {
-return (group: AbstractControl) => {
-const inicio = new Date(group.get('fecha_inicio')?.value);
-const fin = new Date(group.get('fecha_fin')?.value);
-return fin <= inicio ? { fechaInvalida: true } : null;
-};
+  return (group: AbstractControl): ValidationErrors | null => {
+    const fechaInicioCtrl = group.get('fecha_inicio');
+    const fechaFinCtrl = group.get('fecha_fin');
+
+    if (!fechaInicioCtrl || !fechaFinCtrl) return null;
+
+    const inicio = new Date(fechaInicioCtrl.value);
+    const fin = new Date(fechaFinCtrl.value);
+
+    if (!inicio || !fin || isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+      return null;
+    }
+
+    return fin <= inicio ? { fechaInvalida: true } : null;
+  };
 }
+

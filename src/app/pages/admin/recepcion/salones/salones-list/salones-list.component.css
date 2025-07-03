@@ -74,7 +74,7 @@
 
 
 .buscador {
-  max-width: 300px;
+  max-width: 400px;
   width: 100%;
 }
 
@@ -354,4 +354,82 @@
     font-size: 14px;
     font-weight: 500;
     text-transform: capitalize;
+}
+
+
+/* Contenedor horizontal de filtros + buscador + botón */
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+
+/* Para asegurar ancho completo en móviles */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-agregar {
+    width: 100%;
+  }
+
+  .buscador {
+    min-width: 200px;
+    flex: 1;
+  }
+
+  .filtros-select {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
+.btn-icon {
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 6px;
+  color: rgb(38, 109, 203);
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+}
+.filtros-select {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filtros-select select {
+  padding: 0.4rem 2.5rem 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  font-size: 0.9rem;
+  min-width: 150px;
+  max-width: 200px;
+
+  appearance: none;              /* quita el ícono nativo */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23666" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25rem;
+  box-sizing: border-box;
+  height: 38px;
+  line-height: 1.5;
+
 }

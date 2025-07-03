@@ -3,32 +3,47 @@
 
   <div class="card">
     <div class="info-trabajadores-linea">
-      <h4>Gestión de Checkin Checkout</h4>
+      <h4>Gestión de Ingresos y Salidas</h4>
+      <button class="btn-agregar">
+        <a routerLink="/admin/recepcion/checks/nuevo">+ Registrar ingreso</a>
+      </button>
+      </div>
 
-      <div class="mover">
+
+      <div class="filtros-container">
+        <div class="filtros-fechas">
+          <label>Desde:</label>
+          <input type="date" [(ngModel)]="fechaDesde" (change)="onSearchChange()">
+          <label>Hasta:</label>
+          <input type="date" [(ngModel)]="fechaHasta" (change)="onSearchChange()">
+        </div>
+        
         <div class="buscador">
           <div class="input-wrapper">
-            <input type="text" placeholder="Buscar check..." [(ngModel)]="filtroGeneral" />
+            <input type="text" placeholder="Buscar por número de reserva, fecha..." [(ngModel)]="filtroGeneral" />
             <button type="button" class="btn-icono">
               <i class="fas fa-search"></i>
             </button>
           </div>
         </div>
 
-        <button class="btn-agregar">
-          <a routerLink="/admin/recepcion/checks/nuevo">+ Registrar checkin</a>
-        </button>
+        
+        <div class="filtros-select">
+          
+          <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+  
+        </div>
+        
       </div>
-    </div>
 
-    <div *ngIf="loading" class="loading">Cargando checkes...</div>
+    <div *ngIf="loading" class="loading">Cargando registros...</div>
 
     <div *ngIf="error" class="alert alert-danger">
       {{ error }}
     </div>
 
     <div *ngIf="!loading && !error && checks.length === 0" class="alert alert-info">
-      No hay checkes registrados. Cree uno nuevo.
+      No hay registros. Cree uno nuevo.
     </div>
 
     <div class="table-responsive" *ngIf="!loading && !error">
@@ -37,8 +52,10 @@
           <tr>
             <th>#</th>
             <th>Reserva</th>
+            <th>Tipo</th>
             <th>Fecha Checkin</th>
             <th>Fecha Checkout</th>
+            <th></th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -46,21 +63,33 @@
           <tr *ngFor="let check of checksPaginados; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ check.reserva.id_reserva }}</td>
+            <td>{{ check.reserva.tipo }}</td>
             <td>{{ formatDate(check.fecha_checkin) }}</td>
-            <td>{{ formatDate(check.fecha_checkout) }}</td>
-            <td class="acciones">
-              <button class="btn-accion editar">
-                <a [routerLink]="['/admin/recepcion/checks/editar', check.id_check]">
-                  <i class="edit fa-regular fa-pen-to-square"></i>
-                </a>
-              </button>
-              <button class="btn-accion eliminar" (click)="eliminar(check.id_check!)">
-                <i class="delete fa-regular fa-trash-can"></i>
-              </button>
-            </td>
+            <td>
+              <span *ngIf="check.fecha_checkout; else pendiente">
+                {{ formatDate(check.fecha_checkout) }}
+              </span>
+              <ng-template #pendiente>
+                <span style="color: red; font-weight: 500; ">-> Checkout pendiente</span>
+              </ng-template>
+              <td>
+                <ng-container *ngIf="!check.fecha_checkout">
+                  <button class="btn-accion editar">
+                    <a [routerLink]="['/admin/recepcion/checks/editar', check.id_check]" class="btn btn-primary">
+                      <i class="fa-regular fa-pen-to-square"></i> Registrar Checkout
+                    </a>   
+                  </button>
+                </ng-container>
+              </td>
+              
+              <td>
+                <button class="btn-accion eliminar" (click)="eliminar(check.id_check!)">
+                  <i class="delete fa-regular fa-trash-can"></i>
+                </button>
+              </td>
           </tr>
           <tr *ngIf="checkActivosFiltrados.length === 0">
-            <td colspan="6" class="text-center text-muted">No hay checkes que coincidan con el filtro.</td>
+            <td colspan="6" class="text-center text-muted">No hay registros que coincidan con el filtro.</td>
           </tr>
         </tbody>
       </table>

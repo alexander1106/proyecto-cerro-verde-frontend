@@ -1,180 +1,238 @@
 <div class="container">
   <app-header></app-header>
-<div class="form-container">
-  <h2>{{ isEditing ? 'Editar' : 'Nueva' }} Reserva de Salón</h2>
+  <div class="form-container">
+    <h2>{{ isEditing ? 'Editar' : 'Nueva' }} Reserva de Salón</h2>
 
-  <div *ngIf="error" class="error-message">{{ error }}</div>
-  <div *ngIf="loading" class="loading">Cargando datos...</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+    <div *ngIf="loading" class="loading">Cargando datos...</div>
 
-  <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
-    <div class="form-section">
-      <h3>Información de la Reserva</h3>
+    <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      <div class="form-flex-container">
+        <!-- IZQUIERDA -->
+        <div class="form-section form-left seccion-con-borde">
+          <h3>Información de la Reserva</h3>
 
-      <div class="form-group">
-        <label for="cliente">Cliente:</label>
-        <div class="cliente-select-wrapper">
-          <ng-select
-            [items]="clientes"
-            bindLabel="dniRuc"
-            bindValue="idCliente"
-            placeholder="Buscar cliente..."
-            formControlName="cliente"
-            [searchFn]="customSearch"
-            [searchable]="true"
-            [class.invalid]="reservaForm.get('cliente')?.invalid && reservaForm.get('cliente')?.touched">
-            <ng-template ng-option-tmp let-item="item">
-              {{ item.nombre }} ({{ item.dniRuc }})
-            </ng-template>
-      
-            <ng-template ng-label-tmp let-item="item">
-              {{ item.nombre }} <span *ngIf="item.dniRuc">({{ item.dniRuc }})</span>
-            </ng-template>
-          </ng-select>
-      
-          <button type="button" class="btn-nuevo-cliente" (click)="abrirModalCliente()">+</button>
+          <div class="form-group">
+            <label for="cliente">Cliente:</label>
+            <div class="cliente-select-wrapper">
+              <ng-select
+                [items]="clientes"
+                bindLabel="dniRuc"
+                bindValue="idCliente"
+                placeholder="Buscar cliente..."
+                formControlName="cliente"
+                [searchFn]="customSearch"
+                [searchable]="true"
+                [class.invalid]="reservaForm.get('cliente')?.invalid && reservaForm.get('cliente')?.touched">
+                <ng-template ng-option-tmp let-item="item">
+                  {{ item.nombre }} ({{ item.dniRuc }})
+                </ng-template>
+                <ng-template ng-label-tmp let-item="item">
+                  {{ item.nombre }} <span *ngIf="item.dniRuc">({{ item.dniRuc }})</span>
+                </ng-template>
+              </ng-select>
+              <button type="button" class="btn-nuevo-cliente" (click)="abrirModalCliente()">+</button>
+            </div>
+            <div class="error-hint" *ngIf="reservaForm.get('cliente')?.invalid && reservaForm.get('cliente')?.touched">
+              Cliente es requerido
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="modo_reserva">Modo de Reserva</label>
+            <select id="modo_reserva" formControlName="modo_reserva">
+              <option value="hora">Por hora</option>
+              <option value="dia">Por día</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label for="fecha_inicio">Fecha de Inicio:</label>
+              <input type="datetime-local" id="fecha_inicio" formControlName="fecha_inicio"
+                [class.invalid]="reservaForm.get('fecha_inicio')?.invalid && reservaForm.get('fecha_inicio')?.touched">
+              <div class="error-hint"
+                *ngIf="reservaForm.get('fecha_inicio')?.touched && reservaForm.get('fecha_inicio')?.errors?.['required']">
+                Fecha de inicio es requerida
+              </div>
+              <div class="error-hint"
+                *ngIf="reservaForm.get('fecha_inicio')?.errors?.['fechaPasada'] && reservaForm.get('fecha_inicio')?.touched">
+                La fecha de inicio no puede ser anterior a hoy.
+              </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="fecha_fin">Fecha de Fin:</label>
+              <input type="datetime-local" id="fecha_fin" formControlName="fecha_fin"
+                [class.invalid]="reservaForm.get('fecha_fin')?.invalid && reservaForm.get('fecha_fin')?.touched">
+              <div class="error-hint"
+                *ngIf="reservaForm.get('fecha_fin')?.hasError('required') && reservaForm.get('fecha_fin')?.touched">
+                Fecha de fin es requerida
+              </div>
+              <div class="error-hint"
+                *ngIf="reservaForm.hasError('fechaInvalida') && (reservaForm.get('fecha_fin')?.touched || reservaForm.get('fecha_inicio')?.touched)">
+                La fecha de fin debe ser al menos 1 hora después de la fecha de inicio.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nro_persona">Número de Personas:</label>
+            <input type="number" id="nro_persona" formControlName="nro_persona" min="1"
+              [class.invalid]="reservaForm.get('nro_persona')?.invalid && reservaForm.get('nro_persona')?.touched">
+            <div class="error-hint"
+              *ngIf="reservaForm.get('nro_persona')?.hasError('required') && reservaForm.get('nro_persona')?.touched">
+              Este campo es obligatorio
+            </div>
+            <div class="error-hint"
+              *ngIf="reservaForm.get('nro_persona')?.hasError('min') && reservaForm.get('nro_persona')?.touched">
+              Debe haber al menos una persona
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="comentarios">Comentarios:</label>
+            <textarea id="comentarios" formControlName="comentarios" rows="3"></textarea>
+          </div>
         </div>
-      
-        <div class="error-hint" *ngIf="reservaForm.get('cliente')?.invalid && reservaForm.get('cliente')?.touched">
-          Cliente es requerido
-        </div>
-      </div>
 
-      <div class="form-group">
-        <label for="modo_reserva">Modo de Reserva</label>
-        <select id="modo_reserva" formControlName="modo_reserva">
-          <option value="hora">Por hora</option>
-          <option value="dia">Por día</option>
-        </select>
-      </div>
-      
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label for="fecha_inicio">Fecha de Inicio:</label>
-          <input 
-            type="datetime-local" 
-            id="fecha_inicio" 
-            formControlName="fecha_inicio"
-            [class.invalid]="reservaForm.get('fecha_inicio')?.invalid && reservaForm.get('fecha_inicio')?.touched">
-          <div class="error-hint" *ngIf="reservaForm.get('fecha_inicio')?.touched && reservaForm.get('fecha_inicio')?.errors?.['required']">
-            Fecha de inicio es requerida
-          </div>
-          <div class="error-hint" *ngIf="reservaForm.get('fecha_inicio')?.errors?.['fechaPasada'] && reservaForm.get('fecha_inicio')?.touched">
-            La fecha de inicio no puede ser anterior a hoy.
-          </div>
-        </div>
+        <!-- DERECHA -->
+        <div class="form-section form-right">
+          <h3>Selección de Salones</h3>
 
-        <div class="form-group col-md-6">
-          <label for="fecha_fin">Fecha de Fin:</label>
-          <input 
-            type="datetime-local" 
-            id="fecha_fin" 
-            formControlName="fecha_fin"
-            [class.invalid]="reservaForm.get('fecha_fin')?.invalid && reservaForm.get('fecha_fin')?.touched">
-          <div class="error-hint" *ngIf="reservaForm.get('fecha_fin')?.hasError('required') && reservaForm.get('fecha_fin')?.touched">
-            Fecha de fin es requerida
-          </div>
-          <div class="error-hint" *ngIf="reservaForm.hasError('fechaInvalida') && (reservaForm.get('fecha_fin')?.touched || reservaForm.get('fecha_inicio')?.touched)">
-            La fecha de fin debe ser al menos 1 hora después de la fecha de inicio.
-          </div>
+          <div class="filtros-salon-container">
+
+            <div class="form-group">
+              <label for="search">Buscar:</label>
+              <input id="search" type="text" [(ngModel)]="filtroSalones"
+                placeholder="Buscar salón por nombre, capacidad o precio" [ngModelOptions]="{ standalone: true }">
+            </div>
+
+            <button type="button" class="btn-filtrar-seleccionados" (click)="verSoloSeleccionados = !verSoloSeleccionados">
+              {{ verSoloSeleccionados ? 'Ver todos los salones' : 'Ver solo seleccionados' }}
+            </button>
           
+          </div>
+
+          <div class="tabla-wrapper">
+          <table class="habitaciones-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Capacidad</th>
+                <th>Precio/hora</th>
+                <th>Precio diario</th>
+                <th>Estado</th>
+                <th>Seleccionar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let salon of salonesFiltradosAvanzado()">
+                <td>{{ salon.nombre }}</td>
+                <td>{{ salon.capacidad }}</td>
+                <td>S/.{{ salon.precio_hora }}</td>
+                <td>S/.{{ salon.precio_diario }}</td>
+                <td>{{ salon.estado_salon }}</td>
+                <td>
+                  <input type="checkbox" [checked]="isSalonSelected(salon)" (change)="toggleSalon(salon)" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+          <div class="error-hint"
+            *ngIf="salonesArray.invalid && reservaForm.touched && salonesArray.length === 0">
+            Debe seleccionar al menos un salón
+          </div>
+
+          <div class="selected-summary" *ngIf="salonesArray.length > 0">
+            <h4>Salones Seleccionados</h4>
+            <ul>
+              <li *ngFor="let s of salonesArray.value">
+                {{ s.nombre }} –
+                Modo: {{ reservaForm.get('modo_reserva')?.value }} –
+                Precio: S/. {{
+                  reservaForm.get('modo_reserva')?.value === 'hora' ? s.precio_hora : s.precio_diario
+                }}
+                <span *ngIf="salonesConError.includes(s.id_salon)" class="error-hint">
+                  → Máx. {{ s.capacidad }} personas
+                </span>
+                <button type="button" (click)="toggleSalon(s)">Quitar</button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="nro_persona">Número de Personas:</label>
-        <input
-          type="number"
-          id="nro_persona"
-          formControlName="nro_persona"
-          min="1"
-          [class.invalid]="reservaForm.get('nro_persona')?.invalid && reservaForm.get('nro_persona')?.touched">
-        
-        <div class="error-hint" *ngIf="reservaForm.get('nro_persona')?.hasError('required') && reservaForm.get('nro_persona')?.touched">
-          Este campo es obligatorio
-        </div>
-        <div class="error-hint" *ngIf="reservaForm.get('nro_persona')?.hasError('min') && reservaForm.get('nro_persona')?.touched">
-          Debe haber al menos una persona
-        </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting">
+          {{ submitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar') }}
+        </button>
       </div>
-      
-
-      <div class="form-group">
-        <label for="comentarios">Comentarios:</label>
-        <textarea id="comentarios" formControlName="comentarios" rows="3"></textarea>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <h3>Selección de Salones</h3>
-
-      <div class="form-group">
-        <label for="search">Buscar salón:</label>
-        <input
-          id="search"
-          type="text"
-          [(ngModel)]="filtroSalones"
-          placeholder="Buscar salón por nombre, capacidad o precio"
-          [ngModelOptions]="{ standalone: true }">
-      </div>
-
-      <table class="habitaciones-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Capacidad</th>
-            <th>Precio/hora</th>
-            <th>Precio diario</th>
-            <th>Estado</th>
-            <th>Seleccionar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let salon of salonesFiltrados()">
-            <td>{{ salon.nombre }}</td>
-            <td>{{ salon.capacidad }}</td>
-            <td>S/.{{ salon.precio_hora }}</td>
-            <td>S/.{{ salon.precio_diario }}</td>
-            <td>{{ salon.estado_salon }}</td>
-            <td>
-              <input
-                type="checkbox"
-                [checked]="isSalonSelected(salon)"
-                (change)="toggleSalon(salon)"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="error-hint" *ngIf="salonesArray.invalid && reservaForm.touched && salonesArray.length === 0">
-        Debe seleccionar al menos un salón
-      </div>
-
-      <div class="selected-summary" *ngIf="salonesArray.length > 0">
-        <h5>Salones Seleccionados:</h5>
-        <ul>
-          <li *ngFor="let s of salonesArray.value">
-            {{ s.nombre }} -
-            Modo: {{ reservaForm.get('modo_reserva')?.value }} -
-            Precio aplicado: S/. {{
-              reservaForm.get('modo_reserva')?.value === 'hora' ? s.precio_hora : s.precio_diario
-            }}
-            <span *ngIf="salonesConError.includes(s.id_salon)" class="error-hint">
-              → Este salón solo permite hasta {{ s.capacidad }} personas.
-            </span>
-            <button type="button" (click)="toggleSalon(s)">Quitar</button>
-          </li>         
-          
-        </ul>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="submitting">
-        {{ submitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar') }}
-      </button>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
+
+<div class="modal-cliente-backdrop" *ngIf="mostrarModalCliente">
+  <div class="modal-cliente">
+    <h3>Nuevo Cliente</h3>
+    <form [formGroup]="nuevoClienteForm" (ngSubmit)="guardarCliente()">
+        <div class="form-group">
+          <label>DNI o RUC:</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" formControlName="dniRuc" maxlength="11">
+            
+            <button type="button" (click)="buscarDni()" class="btn btn-secondary" [disabled]="buscandoDni">
+              Buscar
+            </button>
+        
+            <!-- Indicador de carga -->
+            <span *ngIf="buscandoDni" class="spinner-small">Buscando...</span>
+          </div>
+        
+          <div *ngIf="nuevoClienteForm.get('dniRuc')?.invalid && nuevoClienteForm.get('dniRuc')?.touched" class="error">
+            DNI o RUC requerido (8 u 11 dígitos)
+          </div>       
+      </div>
+
+      <div class="form-group">
+        <label>Nombre:</label>
+        <input type="text" formControlName="nombre">
+        <div *ngIf="nuevoClienteForm.get('nombre')?.invalid && nuevoClienteForm.get('nombre')?.touched" class="error">
+          Nombre requerido
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Correo:</label>
+        <input type="email" formControlName="correo">
+        <div *ngIf="nuevoClienteForm.get('correo')?.invalid && nuevoClienteForm.get('correo')?.touched" class="error">
+          Correo inválido
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Teléfono:</label>
+        <input type="text" formControlName="telefono" maxlength="15">
+        <div *ngIf="nuevoClienteForm.get('telefono')?.invalid && nuevoClienteForm.get('telefono')?.touched" class="error">
+          Teléfono inválido
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>País:</label>
+        <input type="text" formControlName="pais">
+        <div *ngIf="nuevoClienteForm.get('pais')?.invalid && nuevoClienteForm.get('pais')?.touched" class="error">
+          País requerido
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="nuevoClienteForm.invalid" class="btn-primary">Guardar</button>
+        <button type="button" class="btn-secondary" (click)="cerrarModalCliente()">Cancelar</button>
+      </div>
+    </form>
+  </div>
 </div>

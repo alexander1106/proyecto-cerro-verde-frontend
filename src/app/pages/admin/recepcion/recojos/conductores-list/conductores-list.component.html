@@ -4,23 +4,28 @@
   <div class="card">
     <div class="info-trabajadores-linea">
       <h4>Gestión de Conductores</h4>
+      <button class="btn-agregar">
+        <a routerLink="/admin/recepcion/conductores/nuevo">+ Nuevo Conductor</a>
+      </button>
+      </div>
 
-      <div class="mover">
+      <div class="filtros-container">
         <div class="buscador">
           <div class="input-wrapper">
-            <input type="text" placeholder="Buscar conductor..." [(ngModel)]="filtroGeneral" />
+            <input type="text" placeholder="Buscar conductores por dni, nombre, vehículo, placa..." [(ngModel)]="filtroGeneral" />
             <button type="button" class="btn-icono">
               <i class="fas fa-search"></i>
             </button>
           </div>
         </div>
-
-        <button class="btn-agregar">
-          <a routerLink="/admin/recepcion/conductores/nuevo">+ Nuevo Conductor</a>
-        </button>
+        <div class="filtros-select">
+          
+          <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+  
+        </div>
+        
       </div>
-    </div>
-
+  
     <div *ngIf="loading" class="loading">Cargando conductores...</div>
 
     <div *ngIf="error" class="alert alert-danger">
@@ -38,6 +43,7 @@
             <th>#</th>
             <th>DNI</th>
             <th>Nombre y apellidos</th>
+            <th>Teléfono</th>
             <th>Vehículo</th>
             <th>Placa</th>
             <th>Acciones</th>
@@ -48,6 +54,7 @@
             <td>{{ i + 1 }}</td>
             <td>{{ conductor.dni }}</td>
             <td>{{ conductor.nombre }}</td>
+            <td>{{ conductor.telefono }}</td>
             <td>{{ conductor.modelo_vehiculo }}</td>
             <td>{{ conductor.placa }}</td>
             <td class="acciones">
