@@ -53,12 +53,10 @@ export class CajaAperturaComponent implements OnInit {
       const diff = new Date(b.fechaHoraTransaccion).getTime() - new Date(a.fechaHoraTransaccion).getTime();
       return this.ordenTransaccionesDesc ? diff : -diff;
     });
-  }
-  
+  } 
   get totalPaginas(): number {
     return Math.ceil(this.transaccionesFiltradas.length / this.tamanioPagina);
   }
-  
   get transaccionesPaginadas() {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
     const fin = inicio + this.tamanioPagina;
@@ -80,20 +78,75 @@ export class CajaAperturaComponent implements OnInit {
       return this.ordenArqueosDesc ? diff : -diff;
     });
   }
-  
-  
-  
   get totalPaginasArqueo(): number {
     return Math.ceil(this.arqueosFiltrados.length / this.tamanioPaginaArqueo);
   }
-  
   get arqueosPaginados() {
     const inicio = (this.paginaArqueoActual - 1) * this.tamanioPaginaArqueo;
     return this.arqueosFiltrados.slice(inicio, inicio + this.tamanioPaginaArqueo);
   }
+  get transaccionesDeHoy() {
+    const hoy = new Date();
+    return this.transacciones.filter(t => {
+      const fecha = new Date(t.fechaHoraTransaccion);
+      return fecha.toDateString() === hoy.toDateString();
+    });
+  }
+  get totalVentasNoEfectivo(): number {
+    return this.transaccionesDeHoy
+      .filter(t => 
+        t.tipo.id === 1 &&
+        t.id_venta != null &&
+        t.metodoPago?.nombre?.toLowerCase() !== 'efectivo'
+      )
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
   
-
-
+  get totalVentasHoy(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.tipo.id === 1)
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
+  get totalEgresosHoy(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.tipo.id === 2)
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
+  get totalEnEfectivo(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.metodoPago?.nombre?.toLowerCase() === 'efectivo')
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
+  get cantidadTransaccionesHoy(): number {
+    return this.transaccionesDeHoy.length;
+  }
+  get totalVentasYape(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.tipo.id === 1 && t.id_venta != null && t.metodoPago?.id_metodo_pago === 1)
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
+  get totalVentasPlin(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.tipo.id === 1 && t.id_venta != null && t.metodoPago?.id_metodo_pago === 12)
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
+  get totalVentasTarjeta(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.tipo.id === 1 && t.id_venta != null && t.metodoPago?.id_metodo_pago === 13)
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
+  get totalVentasEfectivo(): number {
+    return this.transaccionesDeHoy
+      .filter(t => t.tipo.id === 1 && t.id_venta != null && t.metodoPago?.id_metodo_pago === 16)
+      .reduce((sum, t) => sum + t.montoTransaccion, 0);
+  }
+  
   constructor(private cajaService: CajaService, private router: Router) {}
 
   ngOnInit() {

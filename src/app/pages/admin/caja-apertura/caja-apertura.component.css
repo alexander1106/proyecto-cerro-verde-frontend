@@ -196,3 +196,28 @@ select.form-select:focus {
   font-size: 13px !important;
   height: auto !important;
 }
+
+.card .card-body h6 {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.card .card-body h5 {
+  font-weight: bold;
+}
+
+.card .card-subtitle {
+  font-size: 0.875rem;
+}
+
+.card .card-title {
+  margin: 0;
+}
+
+.card i.bi {
+  opacity: 0.9;
+}
+
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
