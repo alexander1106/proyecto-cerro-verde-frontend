@@ -29,6 +29,7 @@ export class CheckinCheckoutFormComponent implements OnInit {
   loading = false;
   error = '';
   reservas: any[] = [];
+private estadosAnteriores: { [id: number]: number } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -61,6 +62,7 @@ export class CheckinCheckoutFormComponent implements OnInit {
     });
   }
 
+
   loadCheckData(): void {
     this.loading = true;
     if (this.id) {
@@ -75,8 +77,6 @@ export class CheckinCheckoutFormComponent implements OnInit {
 
           console.log('Check data cargado:', check);
           console.log('Formulario después del patch:', this.checkForm.value);
-
-
           // Deshabilitar fecha_checkin
           this.checkForm.get('fecha_checkin')?.disable();
 
@@ -88,7 +88,6 @@ export class CheckinCheckoutFormComponent implements OnInit {
         }
       });
     }
-
   }
 
 
@@ -178,7 +177,7 @@ saveCheck(checkData: CheckinCheckout): void {
       Swal.fire({
         icon: 'success',
         title: this.isEditing ? 'Actualizado' : 'Registrado',
-        text: `Checkin/Checkout ${this.isEditing ? 'actualizado' : 'registrado'} correctamente`,
+        text: `Check ${this.isEditing ? 'actualizado' : 'registrado'} correctamente`,
         showConfirmButton: false,
         timer: 1500
       }).then(() => {
@@ -194,13 +193,13 @@ saveCheck(checkData: CheckinCheckout): void {
             .join(', ') || 'desconocidas';
 
           this.notificationService.agregar(
-            `La habitacion # {habitaciones} fueron liberada y están lista para mantenimiento`
+            `La habitacion ${habitaciones} fue liberada y está lista para su mantenimiento`
           );
 
           Swal.fire({
             icon: 'info',
             title: 'Habitaciones liberadas',
-            text: `La habitacion # {habitaciones} fueron liberada y están lista para mantenimiento`,
+            text: `La habitacion ${habitaciones} fue liberada y esta lista para su mantenimiento`,
             confirmButtonText: 'Aceptar'
           });
         }

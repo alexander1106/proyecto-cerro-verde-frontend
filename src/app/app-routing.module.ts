@@ -63,6 +63,7 @@ import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-r
 import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
 import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
 import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
+import { IaComponent } from './pages/admin/ia/ia.component';
 
 const routes: Routes = [
   {
@@ -374,6 +375,9 @@ const routes: Routes = [
       {
         path: 'recepcion/pisos/editar/:id',
         component: PisosFormComponent,
+      }, {
+        path: 'ia',
+        component: IaComponent,
       },
     ],
   },

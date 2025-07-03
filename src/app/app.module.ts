@@ -111,6 +111,7 @@ import { RegistrarPersonalLimpiezaComponent } from './pages/admin/registrar-pers
 import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
 import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
 import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+import { IaComponent } from './pages/admin/ia/ia.component';
 
 @NgModule({
   declarations: [
@@ -187,6 +188,7 @@ import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/lis
     RegistrarLimpiezaComponent,
     RegistrarPersonalLimpiezaComponent,
     ListarPersonalLimpiezaComponent,
+    IaComponent,
 
   ],
 

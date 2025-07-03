@@ -26,10 +26,13 @@ export class ChecksListComponent implements OnInit {
     this.error = '';
 
     this.checkService.buscarTodos().subscribe({
-      next: (data) => {
-        this.checks = data;
-        this.loading = false;
-      },
+      next: (data: CheckinCheckout[]) => {
+      this.checks = data.sort((a: CheckinCheckout, b: CheckinCheckout) => {
+  return new Date(b.fecha_checkin).getTime() - new Date(a.fecha_checkin).getTime();
+});
+
+      this.loading = false;
+    },
       error: (err) => {
         this.error = 'Error al cargar los checks. Intente nuevamente.';
         this.loading = false;
@@ -71,7 +74,7 @@ export class ChecksListComponent implements OnInit {
             const mensaje = err?.error?.message || 'Ocurrió un error al eliminar el check. Tiene un recojo activo';
             Swal.fire('Error', mensaje, 'error');
           }
-          
+
         });
       }
     });
@@ -94,10 +97,14 @@ export class ChecksListComponent implements OnInit {
     });
   }
 
-
   get checkActivos() {
-    return this.checks?.filter(h => h.estado === 1) || [];
-  }
+  return this.checks
+    ?.filter(h => h.estado === 1)
+    .sort((a, b) => (b.id_check ?? 0) - (a.id_check ?? 0)) || [];
+}
+
+
+
 
     currentPage: number = 1;
   itemsPerPage: number = 10;

@@ -1,0 +1,74 @@
+<div class="container">
+      <app-header></app-header>
+
+  <div class="card">
+    <h2>🔮 Consultar Predicción de Pedidos</h2>
+
+    <!-- Fecha individual -->
+           <label for="fecha">Selecciona una fecha:</label>
+
+    <div class="form-group">
+      <input type="date" id="fecha" [(ngModel)]="fecha" />
+      <button (click)="consultar()">Consultar</button>
+    </div>
+
+    <div class="resultado" *ngIf="resultado">
+      <h3>Resultados para {{ resultado.fecha }}</h3>
+      <p><strong>Clima:</strong> {{ resultado.clima }}</p>
+      <p><strong>Evento:</strong> {{ resultado.evento }}</p>
+      <p><strong>Reservas estimadas:</strong> {{ resultado.reservas_estimadas }}</p>
+    </div>
+
+    <!-- Rango de fechas -->
+    <div class="form-group vertical">
+      <h3>📅 Predicción de reservas en rango de fechas</h3>
+      <div class="date-range">
+        <div>
+          <label for="fechaInicio">Fecha inicio:</label>
+          <input type="date" id="fechaInicio" [(ngModel)]="fechaInicio" />
+        </div>
+        <div>
+          <label for="fechaFin">Fecha fin:</label>
+          <input type="date" id="fechaFin" [(ngModel)]="fechaFin" />
+        </div>
+      </div>
+      <div class="button-group">
+        <button (click)="consultarRango()">Consultar rango</button>
+      </div>
+    </div>
+
+    <!-- Resultado rango de fechas -->
+    <div class="resultado" *ngIf="resultadoRango?.length">
+      <h3>Resultados del {{ fechaInicio }} al {{ fechaFin }}</h3>
+
+  <div class="flex">
+        <div class="contenedor-resultados">
+           <div *ngFor="let r of resultadoRango" class="resultado-item">
+            <p>
+              <strong>{{ r.fecha }}</strong><br>
+              Clima: {{ r.clima }}<br>
+              Evento: {{ r.evento }}<br>
+              Reservas estimadas: {{ r.reservas_estimadas }}
+            </p>
+      </div>
+
+      </div>
+      <!-- Gráfico -->
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="{
+            labels: chartLabels,
+            datasets: [
+              { data: chartData, label: 'Reservas Estimadas' }
+            ]
+          }"
+          [options]="chartOptions"
+          [type]="'line'"
+          [legend]="true">
+        </canvas>
+      </div>
+  </div>
+    </div>
+
+  </div>
+</div>
