@@ -37,6 +37,37 @@ export class CajaService {
     return this.http.get(`${this.baseUrl}/${id}`);
   }
 
+  descargarResumenCaja(idCaja: number): void {
+    const url = `http://localhost:8080/cerro-verde/resumencaja/reporte-pdf?idCaja=${idCaja}`;
+  
+    this.http.get(url, { responseType: 'blob' }).subscribe(blob => {
+      const file = new Blob([blob], { type: 'application/pdf' });
+  
+      // 👉 Generar fecha actual como yyyy-MM-dd_HH-mm
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+  
+      const timestamp = `${yyyy}-${mm}-${dd}_${hh}-${mi}`;
+  
+      // 👇 Nombre dinámico
+      const fileName = `cierre_caja_${timestamp}.pdf`;
+  
+      // 🔽 Descargar archivo
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(file);
+      link.download = fileName;
+      link.click();
+  
+      window.URL.revokeObjectURL(link.href);
+    }, error => {
+      console.error('❌ Error al descargar el resumen de caja:', error);
+    });
+  }  
+
   // 🔹 ARQUEO CAJA
   obtenerDenominaciones() {
     return this.http.get<any[]>(`${this.baseUrl}/arqueo/denominaciones`);

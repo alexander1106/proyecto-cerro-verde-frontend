@@ -350,5 +350,27 @@ export class CajaAperturaComponent implements OnInit {
       }
     });
   }
+
+  descargarResumenYActualizarCaja() {
+    this.verificarEstadoCaja(); // recarga estado y transacciones
+  
+    // Espera un poquito a que cajaAperturada se actualice (por si acaso es asíncrono)
+    setTimeout(() => {
+      if (this.cajaAperturada?.id) {
+        this.cajaService.descargarResumenCaja(this.cajaAperturada.id);
+      } else {
+        console.warn('No se pudo descargar el resumen: cajaAperturada no encontrada');
+      }
+    }, 1000); // puedes ajustar el tiempo si lo necesitas más o menos
+  }
+  
+  descargarManualResumenCaja() {
+    if (!this.cajaAperturada?.id) {
+      console.warn('No hay caja aperturada para descargar resumen');
+      return;
+    }
+  
+    this.cajaService.descargarResumenCaja(this.cajaAperturada.id);
+  }  
   
 }

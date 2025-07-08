@@ -14,6 +14,9 @@
         <button *ngIf="cajaAperturada.estadoCaja === 'abierta'" class="btn btn-success me-2" (click)="mostrarModalTransaccion = true">
           <i class="bi bi-plus-circle me-1"></i> Registrar Transacción
         </button>
+          <button class="btn btn-primary" (click)="descargarManualResumenCaja()">
+            <i class="bi bi-download me-1"></i> Descargar Resumen de ventas del dia
+          </button>
       </div>
     </div>
 
@@ -33,6 +36,7 @@
   <p><strong>Fecha Apertura:</strong> {{ cajaAperturada.fechaApertura | date:'medium' }}</p>
   <p><strong>Monto Apertura:</strong> S/. {{ cajaAperturada.montoApertura?.toFixed(2) || '—' }}</p>
   <p><strong>Cantidad de transacciones del dia:</strong> {{ cantidadTransaccionesHoy  || '—' }}</p>
+
 
   <!-- 🟢 Cards solo visibles si caja está abierta -->
 <!-- 🟢 Cards solo visibles si caja está abierta -->
@@ -63,6 +67,8 @@
       </div>
     </div>
   </div>
+
+  
 </div>
 
 
@@ -329,7 +335,7 @@
   <button type="button" class="btn-close" (click)="mostrarModalArqueo = false"></button>
 </div>
 <div class="modal-body">
-  <app-arqueo-caja (onCerrarModal)="mostrarModalArqueo = false" (onCajaCerrada)="verificarEstadoCaja()"></app-arqueo-caja>
+  <app-arqueo-caja (onCerrarModal)="mostrarModalArqueo = false" (onCajaCerrada)="descargarResumenYActualizarCaja()"></app-arqueo-caja>
 </div>
 </div>
 </div>
