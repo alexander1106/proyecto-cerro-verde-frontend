@@ -4,7 +4,8 @@
       <h5 class="modal-title">
         {{ modoEdicion ? 'Editar Área' : 'Registrar Nueva Área' }}
       </h5>
-      <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar()"></button>
+      <!-- Botón "X" solo si es modo edición -->
+      <button *ngIf="modoEdicion" type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar()"></button>
     </div>
     <div class="modal-body">
       <form [formGroup]="areaForm">
@@ -23,3 +24,5 @@
     </div>
   </div>
 </div>
+
+

@@ -1,7 +1,9 @@
 <div class="custom-modal-backdrop">
   <div class="custom-modal">
     <div class="modal-header">
-      <h5 class="modal-title">Registrar Tipo Incidencia</h5>
+      <h5 class="modal-title">
+        {{ modoEdicion ? 'Editar Tipo de Incidencia' : 'Registrar Tipo de Incidencia' }}
+      </h5>
       <button type="button" class="btn-close" (click)="cancelar()"></button>
     </div>
     <div class="modal-body">
@@ -18,8 +20,13 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-      <button class="btn btn-primary" [disabled]="loading" (click)="guardar()">Registrar</button>
+      <button class="btn btn-primary" [disabled]="loading" (click)="guardar()">
+        {{ modoEdicion ? 'Actualizar' : 'Registrar' }}
+      </button>
     </div>
   </div>
 </div>
+
+
+
 

@@ -619,9 +619,9 @@ export class VentasComponent {
     }
 
     // Configurar fecha
-    const hoy = new Date();
-    const fechaFormateada = hoy.toISOString().split('T')[0];
-    this.venta.fecha = fechaFormateada;
+    const ahora = new Date();
+    const fechaHoraFormateada = ahora.toISOString().slice(0, 19).replace('T', ' ');
+    this.venta.fecha = fechaHoraFormateada; // "2025-07-09 14:39:00"    
 
     // Para productos, el estado inicial es pendiente
     if (this.titulo === 'Productos') {

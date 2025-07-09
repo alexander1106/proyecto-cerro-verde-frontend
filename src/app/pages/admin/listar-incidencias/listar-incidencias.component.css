@@ -191,4 +191,10 @@
     font-size: 13px !important;
     height: auto !important;
   }
+  .scroll-cell {
+  max-width: 120px; /* Ajusta a tu gusto */
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
   

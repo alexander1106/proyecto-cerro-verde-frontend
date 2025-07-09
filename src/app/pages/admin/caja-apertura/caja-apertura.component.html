@@ -193,6 +193,7 @@
           <th class="col-fecha">Fecha y Hora</th>
           <th class="col-monto">Monto</th>
           <th class="col-tipo">Tipo</th>
+          <th class="col-tipo">Motivo</th>
         </tr>
       </thead>
       <tbody>
@@ -217,6 +218,7 @@
               {{ t.tipo.nombre | uppercase }}
             </span>
           </td>
+          <td class="col-tipo">{{ t.motivo }} </td>
         </tr>
       </tbody>
     </table>
@@ -416,7 +418,6 @@
 
 <!-- Backdrop para detalle -->
 <div class="modal-backdrop fade show" *ngIf="mostrarModalDetalleArqueo"></div>
-
 <!-- Modal Transacción -->
 <div class="modal fade show" tabindex="-1" [ngStyle]="{ display: mostrarModalTransaccion ? 'block' : 'none' }" role="dialog">
   <div class="modal-dialog modal-dialog-centered">
@@ -431,6 +432,7 @@
             <label class="form-label">Monto</label>
             <input type="number" class="form-control" [(ngModel)]="nuevaTransaccion.montoTransaccion" name="montoTransaccion" required step="0.01" />
           </div>
+
           <div class="mb-3">
             <label class="form-label">Tipo</label>
             <select class="form-select" [(ngModel)]="nuevaTransaccion.tipo" name="tipo" required>
@@ -438,6 +440,27 @@
               <option [ngValue]="{ id: 2, nombre: 'Egreso' }">Egreso</option>
             </select>
           </div>
+
+          <div class="mb-3">
+            <label class="form-label">Motivo</label>
+            <select class="form-select" [(ngModel)]="nuevaTransaccion.motivo" name="motivo" required (change)="onMotivoChange()">
+              <option value="">Seleccione un motivo</option>
+              <option *ngFor="let motivo of motivosDisponibles" [value]="motivo">
+                {{ motivo }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3" *ngIf="nuevaTransaccion.motivo === 'Devolución'">
+            <label class="form-label">Reserva asociada a la devolución</label>
+            <select class="form-select" [(ngModel)]="nuevaTransaccion.reservaDevueltaId" name="reservaDevueltaId" required>
+              <option value="">Seleccione una reserva cancelada</option>
+              <option *ngFor="let reserva of reservasCanceladas" [value]="reserva.id_reserva">
+                Reserva #{{ reserva.id_reserva }} - {{ reserva.cliente.nombre }} ({{ reserva.fecha_inicio | date:'shortDate' }})
+              </option>
+            </select>
+          </div>
+
           <div class="d-grid">
             <button class="btn btn-primary" type="submit">
               <i class="bi bi-check-circle me-1"></i> Guardar Transacción
@@ -448,6 +471,8 @@
     </div>
   </div>
 </div>
+
+
 
 <!-- Backdrop -->
 <div class="modal-backdrop fade show" *ngIf="mostrarModalTransaccion"></div>
