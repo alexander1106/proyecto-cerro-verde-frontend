@@ -17,25 +17,94 @@
                 </div>
 
                 <section class="ventas-buttons">
-                    <button (click)="esAbierto()" class="btn-agregar">
-                        + Venta Hospedaje
+                    <button (click)="abrirVentaHospedaje()" class="btn-agregar">
+                        🏨 + Venta Hospedaje
                     </button>
-                    <button (click)="esAbierto()" class="btn-agregar">
-                        + Venta Productos
+                    <button (click)="abrirVentaProductos()" class="btn-agregar">
+                        🛍️ + Venta Productos
                     </button>
                 </section>
             </div>
         </div>
-        <div>
-            <button type="button"
-                [ngClass]="estadoSeleccionado == 'Pendiente' ? 'btn btn-warning me-3' : 'btn btn-outline-warning me-3'"
-                (click)="filtrarPorEstado('Pendiente')">Pendiente</button>
-            <button type="button"
-                [ngClass]="estadoSeleccionado == 'Completado' ? 'btn btn-success me-3' : 'btn btn-outline-success me-3'"
-                (click)="filtrarPorEstado('Completado')">Completado</button>
-            <button type="button"
-                [ngClass]="estadoSeleccionado == 'Cancelado' ? 'btn btn-danger' : 'btn btn-outline-danger'"
-                (click)="filtrarPorEstado('Cancelado')">Cancelado</button>
+        <div class="filtros-section mb-3">
+            <!-- Header -->
+            <div class="filtros-header">
+                <mat-icon>filter_list</mat-icon>
+                <h6>Filtros de Búsqueda</h6>
+            </div>
+
+            <!-- Filtros principales -->
+            <div class="row">
+                <!-- Tipo de Venta -->
+                <div class="col-lg-3 col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Tipo de Venta</mat-label>
+                        <mat-select [(value)]="tipoVentaSeleccionado" (selectionChange)="onTipoVentaChange()">
+                            <mat-option value="hospedaje">🏨 Hospedaje</mat-option>
+                            <mat-option value="productos">🛍️ Productos</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <!-- Estado -->
+                <div class="col-lg-3 col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Estado</mat-label>
+                        <mat-select [(value)]="estadoSeleccionado" (selectionChange)="aplicarFiltros()">
+                            <!-- Estados para Productos -->
+                            <ng-container *ngIf="tipoVentaSeleccionado === 'productos'">
+                                <mat-option value="todos">Todos los estados</mat-option>
+                                <mat-option value="Pendiente">⏳ Pendiente</mat-option>
+                                <mat-option value="Completado">✅ Completado</mat-option>
+                            </ng-container>
+
+                            <!-- Estados para Hospedaje -->
+                            <ng-container *ngIf="tipoVentaSeleccionado === 'hospedaje'">
+                                <mat-option value="todos">Todos los estados</mat-option>
+                                <mat-option value="Completado">✅ Completado</mat-option>
+                                <mat-option value="Cancelado">❌ Cancelado</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <!-- Fecha Desde -->
+                <div class="col-lg-3 col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Fecha Desde</mat-label>
+                        <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="fechaDesde"
+                            (dateChange)="aplicarFiltros(); validarRangoFechas()" placeholder="dd/mm/aaaa">
+                        <mat-datepicker-toggle matIconSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerDesde></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <!-- Fecha Hasta -->
+                <div class="col-lg-3 col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Fecha Hasta</mat-label>
+                        <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="fechaHasta"
+                            (dateChange)="aplicarFiltros(); validarRangoFechas()" placeholder="dd/mm/aaaa">
+                        <mat-datepicker-toggle matIconSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerHasta></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Acciones y resumen -->
+            <div class="filtros-acciones">
+                <div class="filtros-info" *ngIf="infoResultados">
+                    <mat-icon>info</mat-icon>
+                    <span>{{ infoResultados }}</span>
+                </div>
+
+                <div class="acciones-buttons">
+                    <button type="button" mat-stroked-button class="btn-filtro btn-limpiar" (click)="limpiarFiltros()">
+                        <mat-icon>clear</mat-icon>
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
         </div>
 
 
@@ -52,37 +121,53 @@
             </thead>
             <tbody>
                 <tr *ngFor="let venta of ventasPaginados">
-                    <td>{{ venta.comprobantePago.numComprobante }} - {{venta.comprobantePago.numComprobante == 'B001' ?
-                        venta.comprobantePago.numSerieBoleta : venta.comprobantePago.numSerieFactura}}</td>
+                    <td>
+                        <span *ngIf="venta.comprobantePago?.numComprobante; else pendiente">
+                            {{ venta.comprobantePago.numComprobante }} -
+                            {{venta.comprobantePago.numComprobante == 'B001' ?
+                            venta.comprobantePago.numSerieBoleta :
+                            venta.comprobantePago.numSerieFactura}}
+                        </span>
+                        <ng-template #pendiente>
+                            <span class="text-muted">Sin comprobante</span>
+                        </ng-template>
+                    </td>
                     <td>{{ venta.fecha | date: 'dd/MM/yyyy'}}</td>
                     <td>{{ venta.cliente.nombre }}</td>
                     <td>S/. {{ venta.total }}</td>
                     <td>{{venta.estadoVenta}}</td>
                     <td class="acciones">
-                        <!-- Siempre visible -->
+                        <!-- Ver detalle (siempre visible) -->
                         <button class="btn-accion ver" (click)="verModal(venta.idVenta)">
                             <mat-icon color="accent">visibility</mat-icon>
                         </button>
 
-                        <!-- Solo para estado "Completado" -->
-                        <button class="btn-accion" *ngIf="venta.estadoVenta === 'Completado'"
+                        <!-- Descargar comprobante (solo completadas) -->
+                        <button class="btn-accion"
+                            *ngIf="venta.estadoVenta === 'Completado' || venta.estadoVenta === 'Completado'"
                             (click)="generarComprobante(venta.idVenta)">
                             <mat-icon color="primary">download</mat-icon>
                         </button>
 
-                        <div *ngIf="venta.estadoVenta === 'Cancelado'">
-                            <button (click)="descargarNotaCredito(venta.idVenta)" class="btn btn-primary">
-                              Descargar Nota de Crédito
-                            </button>
-                          </div>
-                          
+                        <!-- Confirmar venta (solo productos pendientes) -->
+                        <button class="btn-accion confirmar"
+                            *ngIf="venta.tipoVenta === 'productos' && venta.estadoVenta === 'Pendiente'"
+                            (click)="confirmarVentaProductos(venta.idVenta)" title="Confirmar y generar comprobante">
+                            <mat-icon>check</mat-icon>
+                        </button>
 
-                        <!-- Solo para estado "Pendiente" -->
-                        <button class="btn-accion editar" *ngIf="venta.estadoVenta === 'Pendiente'"
+                        <!-- Editar (solo productos pendientes) -->
+                        <button class="btn-accion editar"
+                            *ngIf="venta.tipoVenta === 'productos' && venta.estadoVenta === 'Pendiente'"
                             (click)="editarVenta(venta.idVenta)">
                             <mat-icon class="edit" color="primary">edit</mat-icon>
                         </button>
 
+                        <!-- Nota de crédito (solo canceladas) -->
+                        <button *ngIf="venta.estadoVenta === 'Cancelado'" (click)="descargarNotaCredito(venta.idVenta)"
+                            class="btn btn-sm btn-primary">
+                            Nota Crédito
+                        </button>
                     </td>
                 </tr>
                 <tr *ngIf="ventasFiltrados.length === 0">
@@ -105,132 +190,278 @@
     <div *ngIf="mostrarModal" class="modal">
         <div class="modal-content">
             <span class="close" (click)="cerrarModal()">&times;</span>
-            <h3 class="h3">Detalle de la Venta</h3>
-            <span class="auxiliar">
-                <span>
-                    <p><strong>Número:</strong> {{ ventaSeleccionada?.comprobantePago.numComprobante }} -
-                        {{ventaSeleccionada.comprobantePago.numComprobante == 'B001' ?
-                        ventaSeleccionada.comprobantePago.numSerieBoleta :
-                        ventaSeleccionada.comprobantePago.numSerieFactura}}</p>
-                    <p><strong>Fecha:</strong> {{ ventaSeleccionada?.fecha | date: 'dd/MM/yyyy'}}</p>
-                    <p><strong>Cliente:</strong> {{ ventaSeleccionada?.cliente?.nombre }}</p>
-                </span>
-                <span>
-                    <p><strong>Descuento:</strong> S/. {{ ventaSeleccionada?.descuento }}</p>
-                    <p><strong>IGV:</strong> {{ ventaSeleccionada?.igv }}%</p>
-                    <p><strong>Cargo:</strong> S/. {{ ventaSeleccionada?.cargo }}</p>
-                    <p><strong>Total:</strong> S/. {{ ventaSeleccionada?.total }}</p>
-                </span>
-            </span>
-            <h3 class="h3 mt-3">Reservas</h3>
-            <section style="min-height: 12rem; overflow-y: auto;">
-                <table class="tabla" style="min-width: 100%; border-collapse: collapse;">
-                    <thead style="position: sticky; top: 0; background: #f0f0f0;">
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Tipo</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let reserva of ventaSeleccionada.ventaXReserva">
-                            <td>{{ reserva.reserva?.cliente.nombre }}</td>
-                            <td>{{ reserva.reserva?.tipo }}</td>
-                            <td>{{ reserva.reserva?.fecha_inicio | date: 'dd-MM-yyyy' }}</td>
-                            <td>{{ reserva.reserva?.fecha_fin | date: 'dd-MM-yyyy' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <h3 class="h3 mt-3">Habitaciones</h3>
-            <section style="min-height: 12rem; overflow-y: auto;">
-                <table class="tabla" style="min-width: 100%; border-collapse: collapse;">
-                    <thead style="position: sticky; top: 0; background: #f0f0f0;">
-                        <tr>
-                            <th>N° Habitación</th>
-                            <th>Tipo</th>
-                            <th>Piso</th>
-                            <th>Dias</th>
-                            <th>Precio</th>
-                            <th>Sub Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let h of ventaSeleccionada.ventaHabitacion">
-                            <td>{{ h.habitacion?.numero }}</td>
-                            <td>{{ h.habitacion?.tipo_habitacion.nombre }}</td>
-                            <td>Piso {{ h.habitacion?.piso.numero }}</td>
-                            <td>{{ h.dias }}</td>
-                            <td>S/. {{ h.habitacion?.tipo_habitacion.precio }}</td>
-                            <td>S/. {{ h.subTotal }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <h3 class="h3 mt-3">Salones de Evento</h3>
-            <section style="min-height: 12rem; overflow-y: auto;">
-                <table class="tabla" style="min-width: 100%; border-collapse: collapse;">
-                    <thead style="position: sticky; top: 0; background: #f0f0f0;">
-                        <tr>
-                            <th>Salón</th>
-                            <th>Tipo Tarifa</th>
-                            <th>Dias</th>
-                            <th>Precio</th>
-                            <th>Sub Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let s of ventaSeleccionada.ventaSalon">
-                            <td>{{ s.salon?.nombre }}</td>
-                            <td>Día</td>
-                            <td>{{ s.dias }}</td>
-                            <td>S/. {{ s.salon?.precio_diario }}</td>
-                            <td>S/. {{ s.subTotal }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <h3 class="h3 mt-3">Productos</h3>
-            <section style="min-height: 12rem; overflow-y: auto;">
-                <table class="tabla" style="min-width: 100%; border-collapse: collapse;">
-                    <thead style="position: sticky; top: 0; background: #f0f0f0;">
-                        <tr>
-                            <th>Categoria</th>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unitario</th>
-                            <th>Sub Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let producto of ventaSeleccionada.detalleVenta">
-                            <td>{{ producto.producto.categoriaproducto.nombre }}</td>
-                            <td>{{ producto.producto.nombre }}</td>
-                            <td>{{ producto.cantidad }}</td>
-                            <td>S/. {{ producto.producto.precioVenta }}</td>
-                            <td>S/. {{ producto.subTotal }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <h3 class="h3 mt-3">Métodos de Pago</h3>
-            <section style="min-height: 12rem; overflow-y: auto;">
-                <table class="tabla" style="min-width: 100%; border-collapse: collapse;">
-                    <thead style="position: sticky; top: 0; background: #f0f0f0;">
-                        <tr>
-                            <th>Método de Pago</th>
-                            <th>Pago</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let m of ventaSeleccionada.ventaMetodoPago">
-                            <td>{{ m.metodoPago?.nombre }}</td>
-                            <td>S/. {{ m.pago }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+
+            <!-- Header mejorado -->
+            <div class="modal-header-info">
+                <div class="header-title">
+                    <mat-icon class="header-icon">receipt_long</mat-icon>
+                    <h3 class="h3">Detalle de la Venta</h3>
+                </div>
+                <div class="tipo-venta-badge" [ngClass]="'badge-' + ventaSeleccionada?.tipoVenta">
+                    <mat-icon>{{ventaSeleccionada?.tipoVenta === 'hospedaje' ? 'hotel' : 'inventory_2'}}</mat-icon>
+                    {{ventaSeleccionada?.tipoVenta === 'hospedaje' ? 'Hospedaje' : 'Productos'}}
+                </div>
+            </div>
+
+            <!-- Información principal mejorada -->
+            <div class="info-principal">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <mat-icon>confirmation_number</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Número de Comprobante</span>
+                            <span class="info-value"
+                                *ngIf="ventaSeleccionada?.comprobantePago?.numComprobante; else sinComprobante">
+                                {{ ventaSeleccionada.comprobantePago.numComprobante }} -
+                                {{ventaSeleccionada.comprobantePago.numComprobante == 'B001' ?
+                                ventaSeleccionada.comprobantePago.numSerieBoleta :
+                                ventaSeleccionada.comprobantePago.numSerieFactura}}
+                            </span>
+                            <ng-template #sinComprobante>
+                                <span class="info-value sin-comprobante">Sin comprobante</span>
+                            </ng-template>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <mat-icon>event</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Fecha</span>
+                            <span class="info-value">{{ ventaSeleccionada?.fecha | date: 'dd/MM/yyyy'}}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <mat-icon>person</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Cliente</span>
+                            <span class="info-value">{{ ventaSeleccionada?.cliente?.nombre }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <mat-icon>verified</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Estado</span>
+                            <span class="estado-badge" [ngClass]="{
+                                'estado-completado': ventaSeleccionada?.estadoVenta === 'Completado',
+                                'estado-pendiente': ventaSeleccionada?.estadoVenta === 'Pendiente',
+                                'estado-cancelado': ventaSeleccionada?.estadoVenta === 'Cancelado'
+                              }">
+                                {{ ventaSeleccionada?.estadoVenta }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen de totales -->
+                <div class="totales-resumen">
+                    <div class="total-item">
+                        <span class="total-label">Descuento</span>
+                        <span class="total-value">S/. {{ ventaSeleccionada?.descuento }}</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="total-label">IGV</span>
+                        <span class="total-value">{{ ventaSeleccionada?.igv }}%</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="total-label">Cargo</span>
+                        <span class="total-value">S/. {{ ventaSeleccionada?.cargo }}</span>
+                    </div>
+                    <div class="total-item total-principal">
+                        <span class="total-label">Total</span>
+                        <span class="total-value total-final">S/. {{ ventaSeleccionada?.total }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secciones con tabs mejorados -->
+            <div class="secciones-container">
+                <!-- Reservas - Solo para hospedaje -->
+                <div class="seccion-detalle" *ngIf="ventaSeleccionada?.tipoVenta === 'hospedaje'">
+                    <div class="seccion-header">
+                        <mat-icon class="seccion-icon">book_online</mat-icon>
+                        <h3 class="h3">Reservas</h3>
+                    </div>
+                    <div class="tabla-container">
+                        <table class="tabla-elegante" *ngIf="ventaSeleccionada.ventaXReserva?.length > 0; else noData">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let reserva of ventaSeleccionada.ventaXReserva">
+                                    <td>{{ reserva.reserva?.cliente.nombre }}</td>
+                                    <td>{{ reserva.reserva?.tipo }}</td>
+                                    <td>{{ reserva.reserva?.fecha_inicio | date: 'dd-MM-yyyy' }}</td>
+                                    <td>{{ reserva.reserva?.fecha_fin | date: 'dd-MM-yyyy' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ng-template #noData>
+                            <div class="no-data">
+                                <mat-icon>event_available</mat-icon>
+                                <p>No hay reservas registradas</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <!-- Habitaciones - Solo para hospedaje -->
+                <div class="seccion-detalle" *ngIf="ventaSeleccionada?.tipoVenta === 'hospedaje'">
+                    <div class="seccion-header">
+                        <mat-icon class="seccion-icon">hotel</mat-icon>
+                        <h3 class="h3">Habitaciones</h3>
+                    </div>
+                    <div class="tabla-container">
+                        <table class="tabla-elegante"
+                            *ngIf="ventaSeleccionada.ventaHabitacion?.length > 0; else noHabitaciones">
+                            <thead>
+                                <tr>
+                                    <th>N° Habitación</th>
+                                    <th>Tipo</th>
+                                    <th>Piso</th>
+                                    <th>Días</th>
+                                    <th>Precio</th>
+                                    <th>Sub Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let h of ventaSeleccionada.ventaHabitacion">
+                                    <td><strong>{{ h.habitacion?.numero }}</strong></td>
+                                    <td>{{ h.habitacion?.tipo_habitacion.nombre }}</td>
+                                    <td>Piso {{ h.habitacion?.piso.numero }}</td>
+                                    <td>{{ h.dias }}</td>
+                                    <td class="precio">S/. {{ h.habitacion?.tipo_habitacion.precio }}</td>
+                                    <td class="precio-total">S/. {{ h.subTotal }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ng-template #noHabitaciones>
+                            <div class="no-data">
+                                <mat-icon>hotel_class</mat-icon>
+                                <p>No hay habitaciones registradas</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <!-- Salones - Solo para hospedaje -->
+                <div class="seccion-detalle" *ngIf="ventaSeleccionada?.tipoVenta === 'hospedaje'">
+                    <div class="seccion-header">
+                        <mat-icon class="seccion-icon">meeting_room</mat-icon>
+                        <h3 class="h3">Salones de Evento</h3>
+                    </div>
+                    <div class="tabla-container">
+                        <table class="tabla-elegante" *ngIf="ventaSeleccionada.ventaSalon?.length > 0; else noSalones">
+                            <thead>
+                                <tr>
+                                    <th>Salón</th>
+                                    <th>Tipo Tarifa</th>
+                                    <th>Días</th>
+                                    <th>Precio</th>
+                                    <th>Sub Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let s of ventaSeleccionada.ventaSalon">
+                                    <td>{{ s.salon?.nombre }}</td>
+                                    <td>Día</td>
+                                    <td>{{ s.dias }}</td>
+                                    <td class="precio">S/. {{ s.salon?.precio_diario }}</td>
+                                    <td class="precio-total">S/. {{ s.subTotal }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ng-template #noSalones>
+                            <div class="no-data">
+                                <mat-icon>event_seat</mat-icon>
+                                <p>No hay salones registrados</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <!-- Productos - Para ambos tipos -->
+                <div class="seccion-detalle">
+                    <div class="seccion-header">
+                        <mat-icon class="seccion-icon">inventory_2</mat-icon>
+                        <h3 class="h3">Productos</h3>
+                    </div>
+                    <div class="tabla-container">
+                        <table class="tabla-elegante"
+                            *ngIf="ventaSeleccionada.detalleVenta?.length > 0; else noProductos">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Sub Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let producto of ventaSeleccionada.detalleVenta">
+                                    <td>{{ producto.producto.categoriaproducto.nombre }}</td>
+                                    <td>{{ producto.producto.nombre }}</td>
+                                    <td class="cantidad">{{ producto.cantidad }}</td>
+                                    <td class="precio">S/. {{ producto.producto.precioVenta }}</td>
+                                    <td class="precio-total">S/. {{ producto.subTotal }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ng-template #noProductos>
+                            <div class="no-data">
+                                <mat-icon>shopping_basket</mat-icon>
+                                <p>No hay productos registrados</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <!-- Métodos de Pago - Para ambos tipos -->
+                <div class="seccion-detalle">
+                    <div class="seccion-header">
+                        <mat-icon class="seccion-icon">payment</mat-icon>
+                        <h3 class="h3">Métodos de Pago</h3>
+                    </div>
+                    <div class="tabla-container">
+                        <table class="tabla-elegante">
+                            <thead>
+                                <tr>
+                                    <th>Método de Pago</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let m of ventaSeleccionada.ventaMetodoPago">
+                                    <td>
+                                        <div class="metodo-pago">
+                                            <mat-icon [ngClass]="'icono-' + (m.metodoPago?.nombre | lowercase)">
+                                                {{m.metodoPago?.nombre === 'Efectivo' ? 'payments' : 'credit_card'}}
+                                            </mat-icon>
+                                            {{ m.metodoPago?.nombre }}
+                                        </div>
+                                    </td>
+                                    <td class="precio-total">S/. {{ m.pago }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -239,33 +470,44 @@
     <div *ngIf="modalRegistroHospedaje" class="modalRegistro">
         <div class="modal-content-registro">
             <span class="close" (click)="cerrarMordalRegistro()">&times;</span>
-            <h2 class="mb-3">Venta {{titulo}}</h2>
+            <h2 class="mb-3">Venta de Hospedaje</h2>
 
-            <form (ngSubmit)="venta.idVenta ? actualizarVenta() : formSubmit()" #formulario="ngForm">
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
 
-                <mat-form-field class="w-25 me-5">
-                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="boletaOFactura(tipo)" required>
-                        <option value="Boleta">Boleta</option>
-                        <option value="Factura">Factura</option>
-                    </select>
-                </mat-form-field>
+                <!-- Tipo de Comprobante y Correlativo -->
+                <div class="comprobante-section mb-3">
+                    <mat-form-field class="w-25 me-5">
+                        <mat-label>Tipo de Comprobante</mat-label>
+                        <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="boletaOFactura(tipo)"
+                            required>
+                            <option value="Boleta">Boleta</option>
+                            <option value="Factura">Factura</option>
+                        </select>
+                    </mat-form-field>
 
-                <mat-form-field class="w-25 me-2">
-                    <input type="text" name="numSerie" id="numSerie" [(ngModel)]="venta.comprobantePago.numComprobante"
-                        #numSerie="ngModel" required matInput disabled="true">
-                </mat-form-field> -
+                    <mat-form-field class="w-25 me-2">
+                        <mat-label>Serie</mat-label>
+                        <input type="text" name="numSerie" id="numSerie"
+                            [(ngModel)]="venta.comprobantePago.numComprobante" #numSerie="ngModel" required matInput
+                            disabled="true">
+                    </mat-form-field>
 
-                <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'B001')">
-                    <input type="text" name="numComprobante" id="numComprobante"
-                        [(ngModel)]="venta.comprobantePago.numSerieBoleta" #numComprobante="ngModel" required matInput
-                        disabled="true">
-                </mat-form-field>
+                    <span class="mx-1">-</span>
 
-                <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'F001')">
-                    <input type="text" name="numComprobante" id="numComprobante"
-                        [(ngModel)]="venta.comprobantePago.numSerieFactura" #numComprobante="ngModel" required matInput
-                        disabled="true">
-                </mat-form-field>
+                    <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'B001')">
+                        <mat-label>Correlativo</mat-label>
+                        <input type="text" name="numComprobante" id="numComprobante"
+                            [(ngModel)]="venta.comprobantePago.numSerieBoleta" #numComprobante="ngModel" required
+                            matInput disabled="true">
+                    </mat-form-field>
+
+                    <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'F001')">
+                        <mat-label>Correlativo</mat-label>
+                        <input type="text" name="numComprobante" id="numComprobante"
+                            [(ngModel)]="venta.comprobantePago.numSerieFactura" #numComprobante="ngModel" required
+                            matInput disabled="true">
+                    </mat-form-field>
+                </div>
 
                 <h3 class="h3 mt-3">Reserva</h3>
 
@@ -276,18 +518,22 @@
                         [matAutocomplete]="autoCliente" [ngModelOptions]="{standalone: true}">
                     <mat-autocomplete #autoCliente="matAutocomplete"
                         (optionSelected)="seleccionarReserva($event.option.value)" [displayWith]="mostrarReserva">
-                        <mat-option *ngFor=" let reserva of reservasFiltrado" [value]="reserva">
+                        <mat-option *ngFor="let reserva of reservasFiltrado" [value]="reserva">
                             {{reserva.cliente.dniRuc}} | {{reserva.cliente.nombre}} | {{reserva.tipo}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
 
-                <div class="tabla-scrollable">
-                    <table mat-table [dataSource]="dataReserva" class="mat-elevation-z8 w-100"
-                        *ngIf="venta.ventaXReserva.length > 0">
+                <div *ngIf="venta.ventaXReserva.length === 0" class="alert alert-warning mt-2">
+                    <mat-icon>warning</mat-icon> Debe seleccionar una reserva
+                </div>
+
+                <!-- Tabla de Reservas Seleccionadas -->
+                <div class="tabla-scrollable" *ngIf="venta.ventaXReserva.length > 0">
+                    <table mat-table [dataSource]="dataReserva" class="mat-elevation-z8 w-100">
 
                         <ng-container matColumnDef="cliente">
-                            <th mat-header-cell *matHeaderCellDef> Reserva </th>
+                            <th mat-header-cell *matHeaderCellDef> Cliente </th>
                             <td mat-cell *matCellDef="let item"> {{ item.reserva?.cliente.nombre }} </td>
                         </ng-container>
 
@@ -322,110 +568,117 @@
                     </table>
                 </div>
 
-                <h3 class="h3 mt-3">Cliente</h3>
+                <!-- Información del Cliente (auto-completado desde reserva) -->
+                <h3 class="h3 mt-3">Cliente para Facturación</h3>
 
-                <mat-form-field class="w-100 form-field-small" appearance="outline">
-                    <mat-label>Selecciona Cliente</mat-label>
-                    <input type="text" id="searchInput" [name]="venta.cliente.dniRuc" placeholder="Seleccione cliente"
-                        matInput (input)="filtrarClientes()" [(ngModel)]="venta.cliente" [required]="true"
-                        [matAutocomplete]="auto" [ngModelOptions]="{standalone: true}">
-                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarCliente($event.option.value)"
+                <!-- Checkbox para mismo cliente -->
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="mismoCliente"
+                        [(ngModel)]="mismoClienteFacturacion" [ngModelOptions]="{standalone: true}"
+                        (change)="onMismoClienteChange($event)">
+                    <label class="form-check-label" for="mismoCliente">
+                        Facturar al mismo cliente de la reserva
+                    </label>
+                </div>
+
+                <!-- Selector de cliente para facturación (solo si no es el mismo) -->
+                <mat-form-field class="w-100 form-field-small" appearance="outline" *ngIf="!mismoClienteFacturacion">
+                    <mat-label>Cliente para Facturación</mat-label>
+                    <input type="text" id="searchInput" placeholder="Seleccione cliente para facturación" matInput
+                        (input)="filtrarClientes()" [(ngModel)]="clienteFacturacion" [matAutocomplete]="auto"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #auto="matAutocomplete"
+                        (optionSelected)="seleccionarClienteFacturacion($event.option.value)"
                         [displayWith]="mostrarCliente">
-                        <mat-option *ngFor=" let cliente of clientesFiltrado" [value]="cliente">
+                        <mat-option *ngFor="let cliente of clientesFiltrado" [value]="cliente">
                             {{cliente.dniRuc}} | {{cliente.nombre}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
 
-                <h3 class="h3 mt-3">Habitación</h3>
+                <!-- Mostrar información del cliente seleccionado -->
+                <div *ngIf="venta.cliente?.nombre" class="cliente-info alert alert-info mt-2">
+                    <strong>Facturar a:</strong> {{venta.cliente.nombre}} - {{venta.cliente.dniRuc}}
+                </div>
+
+                <h3 class="h3 mt-3">Habitaciones</h3>
 
                 <table mat-table [dataSource]="dataHabitacion" class="mat-elevation-z8"
                     *ngIf="dataHabitacion.data.length > 0">
 
-                    <!-- Número de habitación -->
                     <ng-container matColumnDef="numero">
                         <th mat-header-cell *matHeaderCellDef>N° Habitación</th>
                         <td mat-cell *matCellDef="let element">{{ element.habitacion.numero }}</td>
                     </ng-container>
 
-                    <!-- Tipo de habitación -->
                     <ng-container matColumnDef="tipo">
                         <th mat-header-cell *matHeaderCellDef>Tipo</th>
-                        <td mat-cell *matCellDef="let element">{{ element.habitacion.tipo_habitacion?.nombre
-                            }}</td>
+                        <td mat-cell *matCellDef="let element">{{ element.habitacion.tipo_habitacion?.nombre }}</td>
                     </ng-container>
 
-                    <!-- Piso -->
                     <ng-container matColumnDef="piso">
                         <th mat-header-cell *matHeaderCellDef>Piso</th>
                         <td mat-cell *matCellDef="let element">Piso {{ element.habitacion.piso.numero }}</td>
                     </ng-container>
 
-                    <!-- Días -->
                     <ng-container matColumnDef="dias">
                         <th mat-header-cell *matHeaderCellDef>Días</th>
                         <td mat-cell *matCellDef="let element">{{ element.dias }}</td>
                     </ng-container>
 
-                    <!-- Precio -->
                     <ng-container matColumnDef="precio">
-                        <th mat-header-cell *matHeaderCellDef>Precio</th>
-                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio
-                            }}</td>
+                        <th mat-header-cell *matHeaderCellDef>Precio por Noche</th>
+                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio |
+                            number:'1.2-2' }}</td>
                     </ng-container>
 
-                    <!-- Total -->
                     <ng-container matColumnDef="subtotal">
                         <th mat-header-cell *matHeaderCellDef>Sub Total</th>
-                        <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
-                            element.habitacion.tipo_habitacion?.precio * element.dias }}</td>
+                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio *
+                            element.dias | number:'1.2-2' }}</td>
                     </ng-container>
 
-                    <!-- Encabezados y filas -->
                     <tr mat-header-row *matHeaderRowDef="tablaHabitacion"></tr>
                     <tr mat-row *matRowDef="let row; columns: tablaHabitacion;"></tr>
                 </table>
 
-                <h3 class="h3 mt-3"> Salones de Evento</h3>
+                <h3 class="h3 mt-3">Salones de Evento</h3>
 
                 <table mat-table [dataSource]="dataSalon" class="mat-elevation-z8" *ngIf="dataSalon.data.length > 0">
 
-                    <!-- Nombre de salón -->
                     <ng-container matColumnDef="nombre">
                         <th mat-header-cell *matHeaderCellDef>Salón</th>
                         <td mat-cell *matCellDef="let element">{{ element.salon.nombre }}</td>
                     </ng-container>
 
-                    <!-- Tipo de Tarifa -->
                     <ng-container matColumnDef="tarifa">
                         <th mat-header-cell *matHeaderCellDef>Tipo Tarifa</th>
-                        <td mat-cell *matCellDef="let element">Dia</td>
+                        <td mat-cell *matCellDef="let element">Diario</td>
                     </ng-container>
 
-                    <!-- Dias -->
                     <ng-container matColumnDef="dias/horas">
-                        <th mat-header-cell *matHeaderCellDef>Dias</th>
+                        <th mat-header-cell *matHeaderCellDef>Días</th>
                         <td mat-cell *matCellDef="let element">{{ element.dias }}</td>
                     </ng-container>
 
-                    <!-- Días -->
                     <ng-container matColumnDef="precio">
-                        <th mat-header-cell *matHeaderCellDef>Precio</th>
-                        <td mat-cell *matCellDef="let element">S/. {{ element.salon.precio_diario }}</td>
+                        <th mat-header-cell *matHeaderCellDef>Precio por Día</th>
+                        <td mat-cell *matCellDef="let element">S/. {{ element.salon.precio_diario | number:'1.2-2' }}
+                        </td>
                     </ng-container>
 
-                    <!-- Precio -->
                     <ng-container matColumnDef="subtotal">
                         <th mat-header-cell *matHeaderCellDef>Sub Total</th>
-                        <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
-                            element.salon.precio_diario * element.dias}}</td>
+                        <td mat-cell *matCellDef="let element">S/. {{ element.salon.precio_diario * element.dias |
+                            number:'1.2-2' }}</td>
                     </ng-container>
 
-
-                    <!-- Encabezados y filas -->
                     <tr mat-header-row *matHeaderRowDef="tablaSalon"></tr>
                     <tr mat-row *matRowDef="let row; columns: tablaSalon;"></tr>
                 </table>
+
+                <!-- Validación: debe seleccionar una reserva -->
+
 
                 <h3 class="h3 mt-3">Método de Pago</h3>
 
@@ -436,7 +689,7 @@
                         [ngModelOptions]="{standalone: true}">
                     <mat-autocomplete #autoMetodo="matAutocomplete"
                         (optionSelected)="agregarMetodo($event.option.value)" [displayWith]="mostrarMetodo">
-                        <mat-option *ngFor=" let metodo of metodosFiltrado" [value]="metodo">
+                        <mat-option *ngFor="let metodo of metodosFiltrado" [value]="metodo">
                             {{metodo.nombre}}
                         </mat-option>
                     </mat-autocomplete>
@@ -462,7 +715,7 @@
                         <ng-container matColumnDef="acciones">
                             <th mat-header-cell *matHeaderCellDef> Acciones </th>
                             <td mat-cell *matCellDef="let item; let i = index">
-                                <button mat-icon-button color="warn" (click)="eliminarMetodo(i)">
+                                <button type="button" mat-icon-button color="warn" (click)="eliminarMetodo(i)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </td>
@@ -473,16 +726,13 @@
                     </table>
                 </div>
 
-                <!-- <div class="mt-3" *ngIf="venta.ventaMetodoPago.length > 0 && soloEfectivo && vuelto > 0">
-                    <mat-form-field class="w-10">
-                        <mat-label>Vuelto</mat-label>
-                        <input matInput type="number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="vuelto">
-                        <span matTextPrefix>S/.&nbsp;</span>
-                    </mat-form-field>
-                </div> -->
+                <!-- Validación: debe tener método de pago -->
+                <div *ngIf="venta.ventaMetodoPago.length === 0" class="alert alert-warning mt-2">
+                    <mat-icon>warning</mat-icon> Debe agregar al menos un método de pago
+                </div>
 
-                <div class="text-left mt-3"
-                    *ngIf="venta.ventaHabitacion.length > 0 || venta.ventaSalon.length > 0 || venta.detalleVenta.length > 0">
+                <!-- Totales -->
+                <div class="text-left mt-3" *ngIf="venta.ventaHabitacion.length > 0 || venta.ventaSalon.length > 0">
                     <span class="ultimos">
                         <mat-form-field class="descuento w-10">
                             <mat-label>Descuento</mat-label>
@@ -512,14 +762,26 @@
                             <mat-label>Total</mat-label>
                             <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="venta.total" required
                                 readonly min="0.01">
+                            <span matTextPrefix>S/.&nbsp;</span>
                         </mat-form-field>
                     </span>
                 </div>
 
+                <!-- Info sobre el proceso -->
+                <div class="alert alert-info mt-3">
+                    <mat-icon>info</mat-icon>
+                    El pago de hospedaje se registrará inmediatamente y se generará el comprobante.
+                </div>
+
                 <div class="form-actions mt-3">
-                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
-                        class="btn-primary">
-                        Guardar
+                    <button type="submit" mat-raised-button
+                        [disabled]="venta.ventaXReserva.length === 0 || venta.ventaMetodoPago.length === 0"
+                        color="primary" class="btn-primary">
+                        Registrar Pago de Hospedaje
+                    </button>
+                    <button type="button" mat-raised-button color="warn" class="btn-secondary ms-2"
+                        (click)="cerrarMordalRegistro()">
+                        Cancelar
                     </button>
                 </div>
 
@@ -534,183 +796,35 @@
 
     <!-- MODAL DE VENTA PRODUCTOS -->
 
-    <div>
+    <div *ngIf="modalRegistroProductos" class="modalRegistro">
         <div class="modal-content-registro">
             <span class="close" (click)="cerrarMordalRegistro()">&times;</span>
-            <h2 class="mb-3">Venta {{titulo}}</h2>
+            <h2 class="mb-3">Venta de Productos</h2>
 
-            <form (ngSubmit)="venta.idVenta ? actualizarVenta() : formSubmit()" #formulario="ngForm">
+            <form (ngSubmit)="formSubmit()" #formulario="ngForm">
 
-                <mat-form-field class="w-25 me-5">
-                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="boletaOFactura(tipo)" required>
-                        <option value="Boleta">Boleta</option>
-                        <option value="Factura">Factura</option>
-                    </select>
-                </mat-form-field>
+                <!-- Solo mostrar tipo de comprobante para información, no editable -->
+                <div class="info-proceso mb-3">
+                    <div class="alert alert-info">
+                        <mat-icon>info</mat-icon>
+                        La venta quedará pendiente. El comprobante se generará al confirmar la venta.
+                    </div>
+                </div>
 
-                <mat-form-field class="w-25 me-2">
-                    <input type="text" name="numSerie" id="numSerie" [(ngModel)]="venta.comprobantePago.numComprobante"
-                        #numSerie="ngModel" required matInput disabled="true">
-                </mat-form-field> -
-
-                <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'B001')">
-                    <input type="text" name="numComprobante" id="numComprobante"
-                        [(ngModel)]="venta.comprobantePago.numSerieBoleta" #numComprobante="ngModel" required matInput
-                        disabled="true">
-                </mat-form-field>
-
-                <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'F001')">
-                    <input type="text" name="numComprobante" id="numComprobante"
-                        [(ngModel)]="venta.comprobantePago.numSerieFactura" #numComprobante="ngModel" required matInput
-                        disabled="true">
-                </mat-form-field>
-
-                <h3 class="h3 mt-3">Reserva</h3>
+                <h3 class="h3 mt-3">Cliente</h3>
 
                 <mat-form-field class="w-100 form-field-small" appearance="outline">
-                    <mat-label>Selecciona Reserva</mat-label>
-                    <input type="text" id="searchReservas" name="reservaCliente" placeholder="Selecciona la reserva"
-                        matInput (input)="filtrarReservas()" [(ngModel)]="reservaSeleccionada"
-                        [matAutocomplete]="autoCliente" [ngModelOptions]="{standalone: true}">
-                    <mat-autocomplete #autoCliente="matAutocomplete"
-                        (optionSelected)="seleccionarReserva($event.option.value)" [displayWith]="mostrarReserva">
-                        <mat-option *ngFor=" let reserva of reservasFiltrado" [value]="reserva">
-                            {{reserva.cliente.dniRuc}} | {{reserva.cliente.nombre}} | {{reserva.tipo}}
+                    <mat-label>Selecciona Cliente</mat-label>
+                    <input type="text" id="searchInput" [name]="venta.cliente.dniRuc" placeholder="Seleccione cliente"
+                        matInput (input)="filtrarClientes()" [(ngModel)]="venta.cliente" [required]="true"
+                        [matAutocomplete]="auto" [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarCliente($event.option.value)"
+                        [displayWith]="mostrarCliente">
+                        <mat-option *ngFor="let cliente of clientesFiltrado" [value]="cliente">
+                            {{cliente.dniRuc}} | {{cliente.nombre}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
-
-                <div class="tabla-scrollable">
-                    <table mat-table [dataSource]="dataReserva" class="mat-elevation-z8 w-100"
-                        *ngIf="venta.ventaXReserva.length > 0">
-
-                        <ng-container matColumnDef="cliente">
-                            <th mat-header-cell *matHeaderCellDef> Reserva </th>
-                            <td mat-cell *matCellDef="let item"> {{ item.reserva?.cliente.nombre }} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="tipo">
-                            <th mat-header-cell *matHeaderCellDef> Tipo </th>
-                            <td mat-cell *matCellDef="let item">{{ item.reserva?.tipo }} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="fechaInicio">
-                            <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
-                            <td mat-cell *matCellDef="let item">{{ item.reserva?.fecha_inicio | date: 'dd-MM-yyyy
-                                HH:mm'}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="fechaFin">
-                            <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
-                            <td mat-cell *matCellDef="let item">{{ item.reserva?.fecha_fin | date: 'dd-MM-yyyy HH:mm'}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="acciones">
-                            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-                            <td mat-cell *matCellDef="let item; let i = index">
-                                <button type="button" mat-icon-button color="warn" (click)="eliminarReserva(i)">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="tablaReserva"></tr>
-                        <tr mat-row *matRowDef="let row; columns: tablaReserva;"></tr>
-                    </table>
-                </div>
-
-
-
-                <h3 class="h3 mt-3">Habitación</h3>
-
-                <table mat-table [dataSource]="dataHabitacion" class="mat-elevation-z8"
-                    *ngIf="dataHabitacion.data.length > 0">
-
-                    <!-- Número de habitación -->
-                    <ng-container matColumnDef="numero">
-                        <th mat-header-cell *matHeaderCellDef>N° Habitación</th>
-                        <td mat-cell *matCellDef="let element">{{ element.habitacion.numero }}</td>
-                    </ng-container>
-
-                    <!-- Tipo de habitación -->
-                    <ng-container matColumnDef="tipo">
-                        <th mat-header-cell *matHeaderCellDef>Tipo</th>
-                        <td mat-cell *matCellDef="let element">{{ element.habitacion.tipo_habitacion?.nombre
-                            }}</td>
-                    </ng-container>
-
-                    <!-- Piso -->
-                    <ng-container matColumnDef="piso">
-                        <th mat-header-cell *matHeaderCellDef>Piso</th>
-                        <td mat-cell *matCellDef="let element">Piso {{ element.habitacion.piso.numero }}</td>
-                    </ng-container>
-
-                    <!-- Días -->
-                    <ng-container matColumnDef="dias">
-                        <th mat-header-cell *matHeaderCellDef>Días</th>
-                        <td mat-cell *matCellDef="let element">{{ element.dias }}</td>
-                    </ng-container>
-
-                    <!-- Precio -->
-                    <ng-container matColumnDef="precio">
-                        <th mat-header-cell *matHeaderCellDef>Precio</th>
-                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio
-                            }}</td>
-                    </ng-container>
-
-                    <!-- Total -->
-                    <ng-container matColumnDef="subtotal">
-                        <th mat-header-cell *matHeaderCellDef>Sub Total</th>
-                        <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
-                            element.habitacion.tipo_habitacion?.precio * element.dias }}</td>
-                    </ng-container>
-
-                    <!-- Encabezados y filas -->
-                    <tr mat-header-row *matHeaderRowDef="tablaHabitacion"></tr>
-                    <tr mat-row *matRowDef="let row; columns: tablaHabitacion;"></tr>
-                </table>
-
-                <h3 class="h3 mt-3"> Salones de Evento</h3>
-
-                <table mat-table [dataSource]="dataSalon" class="mat-elevation-z8" *ngIf="dataSalon.data.length > 0">
-
-                    <!-- Nombre de salón -->
-                    <ng-container matColumnDef="nombre">
-                        <th mat-header-cell *matHeaderCellDef>Salón</th>
-                        <td mat-cell *matCellDef="let element">{{ element.salon.nombre }}</td>
-                    </ng-container>
-
-                    <!-- Tipo de Tarifa -->
-                    <ng-container matColumnDef="tarifa">
-                        <th mat-header-cell *matHeaderCellDef>Tipo Tarifa</th>
-                        <td mat-cell *matCellDef="let element">Dia</td>
-                    </ng-container>
-
-                    <!-- Dias -->
-                    <ng-container matColumnDef="dias/horas">
-                        <th mat-header-cell *matHeaderCellDef>Dias</th>
-                        <td mat-cell *matCellDef="let element">{{ element.dias }}</td>
-                    </ng-container>
-
-                    <!-- Días -->
-                    <ng-container matColumnDef="precio">
-                        <th mat-header-cell *matHeaderCellDef>Precio</th>
-                        <td mat-cell *matCellDef="let element">S/. {{ element.salon.precio_diario }}</td>
-                    </ng-container>
-
-                    <!-- Precio -->
-                    <ng-container matColumnDef="subtotal">
-                        <th mat-header-cell *matHeaderCellDef>Sub Total</th>
-                        <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
-                            element.salon.precio_diario * element.dias}}</td>
-                    </ng-container>
-
-
-                    <!-- Encabezados y filas -->
-                    <tr mat-header-row *matHeaderRowDef="tablaSalon"></tr>
-                    <tr mat-row *matRowDef="let row; columns: tablaSalon;"></tr>
-                </table>
 
                 <h3 class="h3 mt-3">Productos</h3>
 
@@ -721,8 +835,8 @@
                         [ngModelOptions]="{standalone: true}">
                     <mat-autocomplete #autoProducto="matAutocomplete"
                         (optionSelected)="agregarProducto($event.option.value)" [displayWith]="mostrarNombreProducto">
-                        <mat-option *ngFor=" let producto of productosFiltrados" [value]="producto">
-                            {{producto.nombre}}
+                        <mat-option *ngFor="let producto of productosFiltrados" [value]="producto">
+                            {{producto.nombre}} - Stock: {{producto.stock}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
@@ -737,7 +851,7 @@
                         </ng-container>
 
                         <ng-container matColumnDef="unidad">
-                            <th mat-header-cell *matHeaderCellDef> Stock/Unidad </th>
+                            <th mat-header-cell *matHeaderCellDef> Stock Disponible </th>
                             <td mat-cell *matCellDef="let item"> {{ item.producto?.stock }} </td>
                         </ng-container>
 
@@ -745,14 +859,15 @@
                             <th mat-header-cell *matHeaderCellDef> Cantidad </th>
                             <td mat-cell *matCellDef="let item">
                                 <input type="number" [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"
-                                    (ngModelChange)="actualizarSubtotal(item)" min="1" class="w-50">
+                                    (ngModelChange)="actualizarSubtotal(item)" min="1" [max]="item.producto?.stock"
+                                    class="w-50">
                             </td>
                         </ng-container>
 
                         <ng-container matColumnDef="precio">
                             <th mat-header-cell *matHeaderCellDef> Precio </th>
                             <td mat-cell *matCellDef="let item">
-                                S/. {{item.producto?.precioVenta}}
+                                S/. {{item.producto?.precioVenta | number:'1.2-2'}}
                             </td>
                         </ng-container>
 
@@ -764,7 +879,7 @@
                         <ng-container matColumnDef="acciones">
                             <th mat-header-cell *matHeaderCellDef> Acciones </th>
                             <td mat-cell *matCellDef="let item; let i = index">
-                                <button mat-icon-button color="warn" (click)="eliminarProducto(i)">
+                                <button type="button" mat-icon-button color="warn" (click)="eliminarProducto(i)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </td>
@@ -773,6 +888,11 @@
                         <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
                         <tr mat-row *matRowDef="let row; columns: columnasTabla;"></tr>
                     </table>
+                </div>
+
+                <!-- Validación: debe tener al menos un producto -->
+                <div *ngIf="venta.detalleVenta.length === 0" class="alert alert-warning mt-2">
+                    <mat-icon>warning</mat-icon> Debe agregar al menos un producto
                 </div>
 
                 <h3 class="h3 mt-3">Método de Pago</h3>
@@ -784,7 +904,7 @@
                         [ngModelOptions]="{standalone: true}">
                     <mat-autocomplete #autoMetodo="matAutocomplete"
                         (optionSelected)="agregarMetodo($event.option.value)" [displayWith]="mostrarMetodo">
-                        <mat-option *ngFor=" let metodo of metodosFiltrado" [value]="metodo">
+                        <mat-option *ngFor="let metodo of metodosFiltrado" [value]="metodo">
                             {{metodo.nombre}}
                         </mat-option>
                     </mat-autocomplete>
@@ -810,7 +930,7 @@
                         <ng-container matColumnDef="acciones">
                             <th mat-header-cell *matHeaderCellDef> Acciones </th>
                             <td mat-cell *matCellDef="let item; let i = index">
-                                <button mat-icon-button color="warn" (click)="eliminarMetodo(i)">
+                                <button type="button" mat-icon-button color="warn" (click)="eliminarMetodo(i)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </td>
@@ -821,16 +941,13 @@
                     </table>
                 </div>
 
-                <!-- <div class="mt-3" *ngIf="venta.ventaMetodoPago.length > 0 && soloEfectivo && vuelto > 0">
-                    <mat-form-field class="w-10">
-                        <mat-label>Vuelto</mat-label>
-                        <input matInput type="number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="vuelto">
-                        <span matTextPrefix>S/.&nbsp;</span>
-                    </mat-form-field>
-                </div> -->
+                <!-- Validación: debe tener al menos un método de pago -->
+                <div *ngIf="venta.ventaMetodoPago.length === 0" class="alert alert-warning mt-2">
+                    <mat-icon>warning</mat-icon> Debe agregar al menos un método de pago
+                </div>
 
-                <div class="text-left mt-3"
-                    *ngIf="venta.ventaHabitacion.length > 0 || venta.ventaSalon.length > 0 || venta.detalleVenta.length > 0">
+                <!-- Totales simplificados -->
+                <div class="text-left mt-3" *ngIf="venta.detalleVenta.length > 0">
                     <span class="ultimos">
                         <mat-form-field class="descuento w-10">
                             <mat-label>Descuento</mat-label>
@@ -860,14 +977,27 @@
                             <mat-label>Total</mat-label>
                             <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="venta.total" required
                                 readonly min="0.01">
+                            <span matTextPrefix>S/.&nbsp;</span>
                         </mat-form-field>
                     </span>
                 </div>
 
+                <!-- Info sobre el comprobante -->
+                <div class="alert alert-info mt-3" *ngIf="!venta.idVenta">
+                    <mat-icon>info</mat-icon>
+                    La venta quedará pendiente. El tipo de comprobante (Boleta/Factura) se seleccionará al confirmar la
+                    venta.
+                </div>
+
                 <div class="form-actions mt-3">
-                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
-                        class="btn-primary">
-                        Guardar
+                    <button type="submit" mat-raised-button
+                        [disabled]="venta.detalleVenta.length === 0 || venta.ventaMetodoPago.length === 0"
+                        color="primary" class="btn-primary">
+                        {{venta.idVenta ? 'Actualizar' : 'Guardar'}} Venta
+                    </button>
+                    <button type="button" mat-raised-button color="warn" class="btn-secondary ms-2"
+                        (click)="cerrarMordalRegistro()">
+                        Cancelar
                     </button>
                 </div>
 
