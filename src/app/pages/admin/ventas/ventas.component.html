@@ -145,7 +145,7 @@
                         <!-- Descargar comprobante (solo completadas) -->
                         <button class="btn-accion"
                             *ngIf="venta.estadoVenta === 'Completado' || venta.estadoVenta === 'Completado'"
-                            (click)="generarComprobante(venta.idVenta)">
+                            (click)="generarYImprimirComprobante(venta.idVenta)">
                             <mat-icon color="primary">download</mat-icon>
                         </button>
 

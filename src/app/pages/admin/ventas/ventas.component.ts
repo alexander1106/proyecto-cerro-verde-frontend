@@ -719,6 +719,14 @@ export class VentasComponent {
         );
         this.listarVentas();
         this.cerrarMordalRegistro();
+
+        // 🔁 Usar el ID correcto de la venta
+        const idVenta = response.ventaId;
+        if (idVenta) {
+          this.generarYImprimirComprobante(idVenta);
+        } else {
+          console.error('La respuesta no contiene ventaId:', response);
+        }
       },
       error: (error) => {
         console.error(error);
@@ -794,6 +802,9 @@ export class VentasComponent {
             'success'
           );
           this.listarVentas();
+
+          // 🔁 Generar e imprimir comprobante después de confirmar
+          this.generarYImprimirComprobante(ventaId);
         },
         error: (error) => {
           console.error(error);
@@ -952,16 +963,23 @@ export class VentasComponent {
   }
 
   //GENERAR PDF
-  generarComprobante(idVenta: number) {
+  generarYImprimirComprobante(idVenta: number) {
     this.ventasService.descargarComprobante(idVenta).subscribe(
       (pdfBlob) => {
         const blob = new Blob([pdfBlob], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `comprobante_${idVenta}.pdf`;
-        link.click();
-        window.URL.revokeObjectURL(url);
+
+        // Abrir nueva ventana para imprimir
+        const printWindow = window.open(url, '_blank');
+
+        if (printWindow) {
+          printWindow.focus();
+          printWindow.onload = () => {
+            printWindow.print();
+          };
+        } else {
+          console.error('No se pudo abrir una nueva ventana para imprimir.');
+        }
       },
       (error) => {
         console.error('Error al descargar el comprobante:', error);
