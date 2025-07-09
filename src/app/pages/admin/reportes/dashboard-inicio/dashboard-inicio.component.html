@@ -5,30 +5,47 @@
 <!-- Mostrar dashboard cuando los datos estén listos -->
 <div *ngIf="kpis" class="dashboard-grid">
 
-  <!-- KPIs -->
+  <!-- KPI: Ingresos Hoy -->
   <mat-card class="kpi-card">
-  <mat-card-title>Ingresos Hoy</mat-card-title>
-  <mat-card-content class="kpi-value">
-    {{ kpis.ingresosHoy | currency:'S/ ':'symbol':'1.2-2' }}
-  </mat-card-content>
-</mat-card>
+    <mat-card-title>Ingresos Hoy</mat-card-title>
+    <mat-card-content class="kpi-value">
+      {{ kpis.ingresosHoy | currency:'S/ ':'symbol':'1.2-2' }}
+    </mat-card-content>
+  </mat-card>
 
-<mat-card class="kpi-card">
-  <mat-card-title>Egresos Hoy</mat-card-title>
-  <mat-card-content class="kpi-value">
-    {{ kpis.egresosHoy | currency:'S/ ':'symbol':'1.2-2' }}
-  </mat-card-content>
-</mat-card>
+  <!-- KPI: Egresos Hoy -->
+  <mat-card class="kpi-card">
+    <mat-card-title>Egresos Hoy</mat-card-title>
+    <mat-card-content class="kpi-value">
+      {{ kpis.egresosHoy | currency:'S/ ':'symbol':'1.2-2' }}
+    </mat-card-content>
+  </mat-card>
 
+  <!-- KPI: Reservas Habitaciones Hoy -->
+  <mat-card class="kpi-card">
+    <mat-card-title>Reservas Habitaciones Hoy</mat-card-title>
+    <mat-card-content class="kpi-value">
+      {{ kpis.reservasHoy }}
+    </mat-card-content>
+  </mat-card>
+
+  <!-- KPI: Reservas Salones Hoy -->
+  <mat-card class="kpi-card">
+    <mat-card-title>Reservas Salones Hoy</mat-card-title>
+    <mat-card-content class="kpi-value">
+      {{ kpis.salonesHoy }}
+    </mat-card-content>
+  </mat-card>
 
   <!-- Reservas de Habitaciones por Mes -->
   <mat-card class="chart-card">
     <mat-card-title>Habitaciones Reservadas por Mes</mat-card-title>
     <div class="chart-container">
-      <canvas baseChart
-              [data]="habChartData"
-              [options]="chartOptions"
-              chartType="bar">
+      <canvas
+        baseChart
+        [data]="habChartData"
+        [options]="chartOptions"
+        chartType="bar">
       </canvas>
     </div>
   </mat-card>
@@ -37,24 +54,25 @@
   <mat-card class="chart-card">
     <mat-card-title>Salones Reservados por Mes</mat-card-title>
     <div class="chart-container">
-      <canvas baseChart
-              [data]="salonChartData"
-              [options]="chartOptions"
-              chartType="bar">
+      <canvas
+        baseChart
+        [data]="salonChartData"
+        [options]="chartOptions"
+        chartType="bar">
       </canvas>
     </div>
   </mat-card>
 
-  <!-- Top 5 Productos Más Vendidos -->
+  <!-- Top 5 Productos Más Vendidos (ocupa ancho completo) -->
   <mat-card class="list-card span-2">
-  <mat-card-title>Top 5 Productos Más Vendidos</mat-card-title>
-  <mat-list>
-    <mat-list-item *ngFor="let p of topProductos">
-      <span class="producto">{{ p.producto }}</span>
-      <span class="cantidad">({{ p.cantidad }})</span>
-    </mat-list-item>
-  </mat-list>
-</mat-card>
+    <mat-card-title>Top 5 Productos Más Vendidos</mat-card-title>
+    <mat-list>
+      <mat-list-item *ngFor="let p of topProductos">
+        <span class="producto">{{ p.producto }}</span>
+        <span class="cantidad">({{ p.cantidad }})</span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card>
 
 </div>
 
