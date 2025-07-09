@@ -67,7 +67,58 @@
       </div>
     </div>
   </div>
-
+    <!-- Efectivo -->
+    <div class="col-md-3 mb-3">
+      <div class="card bg-success shadow h-100">
+        <div class="card-body d-flex align-items-center">
+          <i class="bi bi-cash-coin display-6 me-3 text-white"></i>
+          <div>
+            <h6 class="card-title mb-1 text-white fw-semibold">Ventas en efectivo del dia</h6>
+            <h5 class="card-title text-white">S/. {{ resumenMetodoPago.efectivo.toFixed(2) }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Yape -->
+    <div class="col-md-3 mb-3">
+      <div class="card bg-info shadow h-100">
+        <div class="card-body d-flex align-items-center">
+          <i class="bi bi-phone display-6 me-3"></i>
+          <div>
+            <h6 class="mb-1 text-white fw-semibold">Ventas Yape del dia</h6>
+            <h5 class="card-title text-white">S/. {{ resumenMetodoPago.yape.toFixed(2) }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Plin -->
+    <div class="col-md-3 mb-3">
+      <div class="card bg-primary shadow h-100">
+        <div class="card-body d-flex align-items-center">
+          <i class="bi bi-credit-card display-6 me-3"></i>
+          <div>
+            <h6 class="mb-1 text-white fw-semibold">Ventas Plin del dia</h6>
+            <h5 class="card-title text-white">S/. {{ resumenMetodoPago.plin.toFixed(2) }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Tarjeta -->
+    <div class="col-md-3 mb-3">
+      <div class="card bg-dark shadow h-100">
+        <div class="card-body d-flex align-items-center">
+          <i class="bi bi-credit-card-2-front display-6 text-white me-3"></i>
+          <div>
+            <h6 class="mb-1 fw-semibold text-white">Ventas Tarjeta del dia</h6>
+            <h5 class="text-white">S/. {{ resumenMetodoPago.tarjeta.toFixed(2) }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  
   
 </div>
 

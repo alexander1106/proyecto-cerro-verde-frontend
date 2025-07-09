@@ -66,6 +66,12 @@ export class CajaService {
     }, error => {
       console.error('❌ Error al descargar el resumen de caja:', error);
     });
+  }
+
+  obtenerResumenPorMetodoPago(idCaja: number): Observable<any> {
+    return this.http.get<any>(
+      `http://localhost:8080/cerro-verde/resumencaja/resumen-ventas-tipo-pago?idCaja=${idCaja}`
+    );
   }  
 
   // 🔹 ARQUEO CAJA

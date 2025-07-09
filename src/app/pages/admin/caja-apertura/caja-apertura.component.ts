@@ -17,6 +17,14 @@ export class CajaAperturaComponent implements OnInit {
     montoTransaccion: null,
     tipo: { id: 1 } // 1: ingreso, 2: egreso
   };
+
+  resumenMetodoPago = {
+    efectivo: 0,
+    yape: 0,
+    plin: 0,
+    tarjeta: 0
+  };
+  
   mostrarModalApertura = false;
   tabActivo: 'transacciones' | 'arqueo' = 'transacciones';
   arqueo: any[] = [];
@@ -150,7 +158,7 @@ export class CajaAperturaComponent implements OnInit {
   constructor(private cajaService: CajaService, private router: Router) {}
 
   ngOnInit() {
-    this.verificarEstadoCaja();
+    this.verificarEstadoCaja();   
   }
 
   limpiarFiltros() {
@@ -197,17 +205,22 @@ export class CajaAperturaComponent implements OnInit {
         } else {
           this.requiereMontoInicial = false;
           this.cajaAperturada = response.body;
+  
           this.cargarTransacciones();
           this.cargarArqueo();
+  
+          // ✅ LLAMA AQUÍ el resumen de métodos de pago
+          this.cajaService.obtenerResumenPorMetodoPago(this.cajaAperturada.id).subscribe(resumen => {
+            this.resumenMetodoPago = resumen;
+          });
         }
       },
       error: (error: any) => {
         this.cajaAperturada = null;
-        console.log(error)
+        console.log(error);
       }
     });
   }
-  
   
 
   aperturarDesdeModal() {
