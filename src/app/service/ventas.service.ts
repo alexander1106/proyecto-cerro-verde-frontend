@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -32,4 +33,14 @@ export class VentasService {
       responseType: 'blob',
     });
   }
+
+  descargarNotaCredito(id: number): Observable<Blob> {
+    const url = `http://localhost:8080/cerro-verde/notaCredito/${id}/descargar`;
+    return this.http.get(url, { responseType: 'blob' }); // 'blob' indica que estamos esperando un archivo
+  }
+
+  obtenerNotaCreditoPorVenta(idVenta: number): Observable<any> {
+    return this.http.get(`http://localhost:8080/cerro-verde/notaCredito/porVenta/${idVenta}`);
+  }
+  
 }

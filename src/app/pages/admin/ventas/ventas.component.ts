@@ -1163,4 +1163,51 @@ export class VentasComponent {
   mostrarMetodo(metodo: any): string {
     return metodo ? `` : '';
   }
+  
+  
+  descargarNotaCredito(idVenta: number) {
+    if (!idVenta || isNaN(idVenta)) {
+      this.snack.open('No se ha especificado un ID de venta válido.', 'Cerrar', {
+        duration: 3000,
+      });
+      return;
+    }
+  
+    // Paso 1: Obtener la nota de crédito por ID de venta
+    this.ventasService.obtenerNotaCreditoPorVenta(idVenta).subscribe({
+      next: (notaCredito) => {
+        const idNotaCredito = notaCredito.id;
+  
+        // Paso 2: Descargar el PDF usando el ID de la nota
+        this.ventasService.descargarNotaCredito(idNotaCredito).subscribe({
+          next: (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+  
+            link.href = url;
+            link.download = `nota_credito_${idNotaCredito}.pdf`;
+            link.click();
+            window.URL.revokeObjectURL(url);
+          },
+          error: (err) => {
+            console.error('Error al descargar la nota de crédito', err);
+            this.snack.open(
+              'Hubo un problema al descargar la nota de crédito.',
+              'Cerrar',
+              { duration: 3000 }
+            );
+          },
+        });
+      },
+      error: (err) => {
+        console.error('No se encontró nota de crédito para esta venta', err);
+        this.snack.open('No se encontró nota de crédito para esta venta.', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+  
+  
 }
