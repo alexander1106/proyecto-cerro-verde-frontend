@@ -58,7 +58,6 @@ export class HabitacionReservaFormComponent implements OnInit {
     this.nuevoClienteForm = this.fb.group({
       dniRuc: ['', [Validators.required, Validators.pattern(/^\d{8}$|^\d{11}$/)]],
       nombre: ['', Validators.required],
-      correo: ['', [Validators.required, Validators.email]],
       telefono: ['', Validators.compose([
         Validators.required,
         Validators.pattern(/^\d{9}$/)
@@ -80,7 +79,7 @@ export class HabitacionReservaFormComponent implements OnInit {
       cliente: [null, Validators.required],
       fecha_inicio: ['', [Validators.required, fechaNoPasada()]],
       fecha_fin: ['', Validators.required],
-      nro_persona: [1, [Validators.required, Validators.min(1)]],
+      nro_persona: [1],
       estado_reserva: ['Pendiente', Validators.required],
       comentarios: [''],
       tipos: this.fb.group({}),
@@ -103,49 +102,47 @@ export class HabitacionReservaFormComponent implements OnInit {
   }
 
   buscarDni() {
-    const dni = this.nuevoClienteForm.get('dniRuc')?.value;
-    if (!dni || dni.length !== 8) {
-      Swal.fire('DNI inválido', 'Debe tener 8 dígitos.', 'warning');
+    const dniRuc = this.nuevoClienteForm.get('dniRuc')?.value;
+  
+    if (!dniRuc || !(dniRuc.length === 8 || dniRuc.length === 11)) {
+      Swal.fire('Documento inválido', 'Debe tener 8 (DNI) o 11 (RUC) dígitos.', 'warning');
       return;
     }
   
-    const yaExiste = this.clientes.some(c => c.dniRuc === dni);
+    const yaExiste = this.clientes.some(c => c.dniRuc === dniRuc);
     if (yaExiste) {
-      Swal.fire('DNI duplicado', 'Este DNI ya está registrado.', 'error');
+      Swal.fire('Documento duplicado', 'Este DNI o RUC ya está registrado.', 'error');
       return;
     }
   
     this.buscandoDni = true;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   
-    this.clientesService.buscarDni(dni, headers).subscribe({
+    this.clientesService.buscarDni(dniRuc, headers).subscribe({
       next: (data) => {
         try {
-          const datos = JSON.parse(data.datos); // 👈 Deserializa el string JSON
-  
-          console.log('Datos parseados:', datos);
+          const datos = JSON.parse(data.datos);
   
           this.nuevoClienteForm.patchValue({
-            nombre: datos.nombreCompleto || '',
+            nombre: dniRuc.length === 8 ? (datos.nombreCompleto || '') : (datos.razonSocial || ''),
             pais: 'Perú'
           });
   
         } catch (e) {
-          console.error('Error al parsear datos del DNI:', e);
-          Swal.fire('Error', 'No se pudo procesar la respuesta del DNI.', 'error');
+          console.error('Error al parsear datos:', e);
+          Swal.fire('Error', 'No se pudo procesar la respuesta.', 'error');
         }
   
         this.buscandoDni = false;
       },
       error: (err) => {
-        console.error('Error al buscar DNI:', err);
-        Swal.fire('Error', 'No se pudo buscar el DNI.', 'error');
+        console.error('Error al buscar:', err);
+        Swal.fire('Error', 'No se pudo buscar el documento.', 'error');
         this.buscandoDni = false;
       }
     });
   }
   
-
 
   cerrarModalCliente(): void {
     this.mostrarModalCliente = false;
@@ -210,6 +207,10 @@ export class HabitacionReservaFormComponent implements OnInit {
       next: () => console.log(`Estado actualizado: ${habitacion.numero} => ${habitacion.estado_habitacion}`),
       error: err => console.error(`Error actualizando habitación: ${err.message}`)
     });
+
+    this.actualizarConteoPorTipo();
+    this.actualizarNumeroPersonas(); // <----
+
   }
 
   loadClientes(): void {
@@ -314,11 +315,6 @@ export class HabitacionReservaFormComponent implements OnInit {
     if (this.reservaForm.invalid || this.habitacionesArray.length === 0) {
       this.markFormGroupTouched(this.reservaForm);
       this.error = 'Complete todos los campos requeridos y seleccione al menos una habitación.';
-      return;
-    }
-  
-    if (!this.verificarCapacidadHabitaciones()) {
-      this.error = 'Una o más habitaciones no tienen capacidad suficiente para el número de personas.';
       return;
     }
   
@@ -494,12 +490,12 @@ if (control instanceof FormGroup || control instanceof FormArray) {
     this.filtroTipo = '';
     this.filtroPiso = '';
   }
-  
 
   customSearch(term: string, item: any): boolean {
     term = term.toLowerCase();
-    return item.nombre.toLowerCase().includes(term) || (item.dniRuc?.toLowerCase().includes(term));
-  }
+    return (item.nombre?.toLowerCase().includes(term) ||
+            item.dniRuc?.toString().toLowerCase().includes(term));
+  }  
 
   redirigirACrearCliente(): void {
     this.router.navigate(['/admin/recepcion/clientes/crear']);
@@ -574,9 +570,12 @@ if (control instanceof FormGroup || control instanceof FormArray) {
         }
       }
     }
+
   }
 
-  this.actualizarConteoPorTipo(); // <- importante mantener actualizado
+  this.actualizarConteoPorTipo();
+  this.actualizarNumeroPersonas(); // <----
+ // <- importante mantener actualizado
 }
   
   
@@ -586,6 +585,9 @@ if (control instanceof FormGroup || control instanceof FormArray) {
       this.habitacionesArray.removeAt(index);
       habitacion.estado_habitacion = 'Disponible';
     }
+    this.actualizarConteoPorTipo();
+    this.actualizarNumeroPersonas(); // <----
+
   }
   
   toggleHabitacionDesdeTabla(habitacion: Habitacion): void {
@@ -599,9 +601,11 @@ if (control instanceof FormGroup || control instanceof FormArray) {
       habitacion.estado_habitacion = 'Disponible';
     }
   
-    this.habitacionesService.updateHabitacion(habitacion).subscribe(); // opcional
+    this.habitacionesService.updateHabitacion(habitacion).subscribe();
     this.actualizarConteoPorTipo();
+    this.actualizarNumeroPersonas(); // <---- suma autom.
   }
+  
   
   
   actualizarConteoPorTipo(): void {
@@ -613,6 +617,13 @@ if (control instanceof FormGroup || control instanceof FormArray) {
     this.habitacionesSeleccionadasPorTipo = conteo;
   }
   
+  actualizarNumeroPersonas(): void {
+    let totalPersonas = 0;
+    this.habitacionesArray.value.forEach((h: Habitacion) => {
+      totalPersonas += h.tipo_habitacion?.cantidadtipo || 0;
+    });
+    this.reservaForm.patchValue({ nro_persona: totalPersonas });
+  }
   
   
 }

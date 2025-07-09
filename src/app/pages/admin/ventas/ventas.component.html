@@ -70,6 +70,13 @@
                             <mat-icon color="primary">download</mat-icon>
                         </button>
 
+                        <div *ngIf="venta.estadoVenta === 'Cancelado'">
+                            <button (click)="descargarNotaCredito(venta.idVenta)" class="btn btn-primary">
+                              Descargar Nota de Crédito
+                            </button>
+                          </div>
+                          
+
                         <!-- Solo para estado "Pendiente" -->
                         <button class="btn-accion editar" *ngIf="venta.estadoVenta === 'Pendiente'"
                             (click)="editarVenta(venta.idVenta)">
