@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { ReservasService } from '../../../service/reserva.service';
 import { MetodoPagoService } from '../../../service/metodo-pago.service';
 import { ComprobantePagoService } from '../../../service/comprobante-pago.service';
+import { ClientesService } from '../../../service/clientes.service';
 
 @Component({
   selector: 'app-ventas',
@@ -17,12 +18,15 @@ import { ComprobantePagoService } from '../../../service/comprobante-pago.servic
   styleUrl: './ventas.component.css',
 })
 export class VentasComponent {
+
   //Comprobantes
   comprobantes: any[] = [];
+
   //Ventas
   ventas: any[] = [];
   ventasFiltrados: any[] = [];
   filtroBusqueda: string = '';
+
   //Productos
   productos: any[] = [];
   productosFiltrados: any[] = [];
@@ -36,10 +40,12 @@ export class VentasComponent {
     'acciones',
   ];
   dataSource = new MatTableDataSource<any>();
+
   //clientes
   clientes: any[] = [];
   clientesFiltrado: any[] = [];
   clienteBusqueda: string = '';
+
   //reservas
   reservas: any[] = [];
   reservasFiltrado: any[] = [];
@@ -53,6 +59,7 @@ export class VentasComponent {
     'acciones',
   ];
   dataReserva = new MatTableDataSource<any>();
+
   //metodos de pago
   metodos: any[] = [];
   metodosFiltrado: any[] = [];
@@ -60,6 +67,7 @@ export class VentasComponent {
   metodoSeleccionada: any = null;
   tablaMetodo: string[] = ['nombre', 'pago', 'acciones'];
   dataMetodo = new MatTableDataSource<any>();
+
   //habitaciones
   habitaciones: any[] = [];
   habitacionesFiltrado: any[] = [];
@@ -73,6 +81,7 @@ export class VentasComponent {
     'subtotal',
   ];
   dataHabitacion = new MatTableDataSource<any>();
+
   //salones
   salones: any[] = [];
   salonesFiltrado: any[] = [];
@@ -85,14 +94,18 @@ export class VentasComponent {
     'subtotal',
   ];
   dataSalon = new MatTableDataSource<any>();
+
   //Modal
   mostrarModal: boolean = false;
-  modalRegistro: boolean = false;
+  modalRegistroHospedaje: boolean = false;
   ventaSeleccionada: any = null;
+
   //Caja Abierta
   cajaAbierta: boolean = false;
+
   //Registrar cliente
   esNuevo: boolean = false;
+
   //Objeto Cliente
   public cliente = {
     idCliente: '',
@@ -103,6 +116,7 @@ export class VentasComponent {
     pais: '',
     estado: 1,
   };
+
   //Objeto Venta
   public venta = {
     idVenta: '',
@@ -213,6 +227,7 @@ export class VentasComponent {
       fechaEmision: '',
     },
   };
+
   customers: any;
   paginaActual = 1;
   elementosPorPagina = 5;
@@ -240,7 +255,8 @@ export class VentasComponent {
     private router: Router,
     private reservaService: ReservasService,
     private metodosService: MetodoPagoService,
-    private comprobanteService: ComprobantePagoService
+    private comprobanteService: ComprobantePagoService,
+    private clienteService: ClientesService
   ) {}
 
   ngOnInit(): void {
@@ -259,6 +275,7 @@ export class VentasComponent {
     this.venta.igv = this.tipoIgv;
   }
 
+  //Boleta o Factura
   boletaOFactura(auxiliar: string) {
     if (auxiliar === 'Boleta') {
       this.tipo = 'Boleta';
@@ -271,6 +288,7 @@ export class VentasComponent {
     this.correlativo();
   }
 
+  //Generar correlativo de la boleta o factura
   correlativo() {
     console.log(this.tipo);
     this.comprobanteService.numeroCorrelativo(this.tipo).subscribe(
@@ -299,7 +317,7 @@ export class VentasComponent {
         if (estadoCaja === 'abierta') {
           this.cajaAbierta = true;
           console.log('✅ La caja está abierta');
-          this.abrirModalRegistro();
+          this.abrirModalRegistroHospedaje();
         } else {
           console.log('🚫 Caja cerrada');
           Swal.fire({
@@ -350,15 +368,17 @@ export class VentasComponent {
     this.mostrarModal = false;
   }
 
-  //MODAL DE REGISTRO O EDICION
+  //MODAL DE REGISTRO
   abrirModalEditar() {
     this.modalEditar = true;
   }
   cerrarModalEditar() {
     this.modalEditar = false;
   }
-  abrirModalRegistro() {
-    this.modalRegistro = true;
+
+  //MODAL DE EDICION
+  abrirModalRegistroHospedaje() {
+    this.modalRegistroHospedaje = true;
   }
   cerrarMordalRegistro() {
     this.venta = {
@@ -393,7 +413,7 @@ export class VentasComponent {
         fechaEmision: '',
       },
     };
-    this.modalRegistro = false;
+    this.modalRegistroHospedaje = false;
     this.esNuevo = false;
     this.cliente.dniRuc = '';
     this.cliente.nombre = '';
@@ -426,37 +446,6 @@ export class VentasComponent {
     this.estadoSeleccionado = estado;
     this.aplicarFiltros(); // aplica también el filtro por búsqueda
   }
-
-  //MOSTRAR VUELTO
-  // mostrarVuelto(): void {
-  //   const totalVenta = Number(this.venta.total);
-  //   const totalPagado = Number(
-  //     this.venta.ventaMetodoPago.reduce(
-  //       (acc, metodo) => acc + Number(metodo.pago || 0),
-  //       0
-  //     )
-  //   );
-
-  //   console.log("xddd")
-
-  //   const soloEfectivo =
-  //     this.venta.ventaMetodoPago.length === 1 &&
-  //     this.venta.ventaMetodoPago[0].metodoPago.nombre === 'Efectivo';
-
-  //   if (soloEfectivo && totalPagado > totalVenta) {
-  //     // Aplicar redondeo (puedes ajustar la precisión)
-  //     this.vuelto = +(totalPagado - totalVenta).toFixed(2);
-  //     console.log(this.vuelto)
-  //   } else {
-  //     this.vuelto = 0;
-  //   }
-  // }
-  // get soloEfectivo(): boolean {
-  //   return (
-  //     this.venta.ventaMetodoPago.length === 1 &&
-  //     this.venta.ventaMetodoPago[0].metodoPago.nombre === 'Efectivo'
-  //   );
-  // }
 
   //REGISTRAR VENTA
   formSubmit() {
@@ -536,11 +525,6 @@ export class VentasComponent {
       return;
     }
 
-    // Verificar si solo se usó EFECTIVO
-    // const soloEfectivo =
-    //   this.venta.ventaMetodoPago.length === 1 &&
-    //   this.venta.ventaMetodoPago[0].metodoPago.nombre === 'EFECTIVO';
-
     if (totalPagado > totalVenta) {
       this.snack.open(
         'El monto pagado excede el total de la venta.',
@@ -553,9 +537,6 @@ export class VentasComponent {
       return;
     }
 
-    // if (soloEfectivo && totalPagado > totalVenta) {
-    //   this.vuelto = totalPagado - totalVenta;
-    // }
     // Buscar el método de pago que sea 'Efectivo'
     const efectivoPago = this.venta.ventaMetodoPago.find(
       (m) => m.metodoPago.nombre === 'Efectivo'
@@ -567,29 +548,6 @@ export class VentasComponent {
       this.venta.ventaXReserva.length > 0
         ? this.venta.ventaXReserva[0].reserva
         : null;
-
-    // Si existe y tiene un monto válido, generar la transacción
-    // if (
-    //   efectivoPago &&
-    //   efectivoPago.pago > 0 &&
-    //   reserva?.estado_reserva == ''
-    // ) {
-    //   const nuevaTransaccion = {
-    //     montoTransaccion: efectivoPago.pago,
-    //     tipo: { id: 1 }, // 1: ingreso
-    //   };
-
-    //   console.log('NUEVA TRANSACCION', nuevaTransaccion);
-
-    //   this.cajaService.guardarTransaccion(nuevaTransaccion).subscribe({
-    //     next: () => {
-    //       console.log('Transacción guardada correctamente');
-    //     },
-    //     error: (err) => {
-    //       console.error('Error al guardar transacción', err);
-    //     },
-    //   });
-    // }
 
     this.ventasService.registrarVenta(this.venta).subscribe(
       (data) => {
@@ -729,7 +687,7 @@ export class VentasComponent {
         this.dataMetodo.data = this.venta.ventaMetodoPago;
         this.dataReserva.data = this.venta.ventaXReserva;
         this.dataSalon.data = this.venta.ventaSalon;
-        this.abrirModalRegistro();
+        this.abrirModalRegistroHospedaje();
         this.tipoIgv = this.venta.igv;
         console.log(data);
       },
@@ -1163,4 +1121,42 @@ export class VentasComponent {
   mostrarMetodo(metodo: any): string {
     return metodo ? `` : '';
   }
+
+
+  //CARGAR CLIENTES
+  cargarClientes() {
+    this.clienteService.getClientes().subscribe((data) => {
+      this.clientes = data;
+      this.clientesFiltrado = [...this.clientes];
+    })
+  }
+  filtrarClientes() {
+    const filtro = String(this.venta.cliente).trim().toLowerCase();
+    if (filtro === '') {
+      this.clientesFiltrado = [...this.clientes];
+      this.cargarClientes();
+    } else {
+      this.clientesFiltrado = this.clientes.filter(
+        (c) =>
+          c.dniRuc.toLowerCase().includes(filtro) ||
+          c.nombre.toLowerCase().includes(filtro)
+      );
+    }
+  }
+  seleccionarCliente(clienteSeleccionado: string) {
+    const seleccionada = this.clientes.find(
+      (c) => c.dniRuc === clienteSeleccionado
+    );
+    if (seleccionada) {
+      this.venta.cliente.dniRuc = seleccionada.dniRuc;
+      this.venta.cliente.nombre = seleccionada.nombre;
+    }
+    console.log(seleccionada);
+  }
+  mostrarCliente = (cliente: any): string => {
+    if (!cliente || !cliente.dniRuc || !cliente.nombre) {
+      return '';
+    }
+    return `${cliente.dniRuc} | ${cliente.nombre}`;
+  };
 }

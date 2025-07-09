@@ -16,9 +16,14 @@
                     </div>
                 </div>
 
-                <button (click)="esAbierto()" class="btn-agregar">
-                    + Venta
-                </button>
+                <section class="ventas-buttons">
+                    <button (click)="esAbierto()" class="btn-agregar">
+                        + Venta Hospedaje
+                    </button>
+                    <button (click)="esAbierto()" class="btn-agregar">
+                        + Venta Productos
+                    </button>
+                </section>
             </div>
         </div>
         <div>
@@ -222,7 +227,9 @@
         </div>
     </div>
 
-    <div *ngIf="modalRegistro" class="modalRegistro">
+    <!-- MODAL DE VENTA HOSPEDAJE -->
+
+    <div *ngIf="modalRegistroHospedaje" class="modalRegistro">
         <div class="modal-content-registro">
             <span class="close" (click)="cerrarMordalRegistro()">&times;</span>
             <h2 class="mb-3">Venta {{titulo}}</h2>
@@ -308,6 +315,21 @@
                     </table>
                 </div>
 
+                <h3 class="h3 mt-3">Cliente</h3>
+
+                <mat-form-field class="w-100 form-field-small" appearance="outline">
+                    <mat-label>Selecciona Cliente</mat-label>
+                    <input type="text" id="searchInput" [name]="venta.cliente.dniRuc" placeholder="Seleccione cliente"
+                        matInput (input)="filtrarClientes()" [(ngModel)]="venta.cliente" [required]="true"
+                        [matAutocomplete]="auto" [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarCliente($event.option.value)"
+                        [displayWith]="mostrarCliente">
+                        <mat-option *ngFor=" let cliente of clientesFiltrado" [value]="cliente">
+                            {{cliente.dniRuc}} | {{cliente.nombre}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
                 <h3 class="h3 mt-3">Habitación</h3>
 
                 <table mat-table [dataSource]="dataHabitacion" class="mat-elevation-z8"
@@ -357,7 +379,292 @@
                     <tr mat-row *matRowDef="let row; columns: tablaHabitacion;"></tr>
                 </table>
 
-                <h3 class="h3 mt-3" *ngIf="salones.length > 0"> Salones de Evento</h3>
+                <h3 class="h3 mt-3"> Salones de Evento</h3>
+
+                <table mat-table [dataSource]="dataSalon" class="mat-elevation-z8" *ngIf="dataSalon.data.length > 0">
+
+                    <!-- Nombre de salón -->
+                    <ng-container matColumnDef="nombre">
+                        <th mat-header-cell *matHeaderCellDef>Salón</th>
+                        <td mat-cell *matCellDef="let element">{{ element.salon.nombre }}</td>
+                    </ng-container>
+
+                    <!-- Tipo de Tarifa -->
+                    <ng-container matColumnDef="tarifa">
+                        <th mat-header-cell *matHeaderCellDef>Tipo Tarifa</th>
+                        <td mat-cell *matCellDef="let element">Dia</td>
+                    </ng-container>
+
+                    <!-- Dias -->
+                    <ng-container matColumnDef="dias/horas">
+                        <th mat-header-cell *matHeaderCellDef>Dias</th>
+                        <td mat-cell *matCellDef="let element">{{ element.dias }}</td>
+                    </ng-container>
+
+                    <!-- Días -->
+                    <ng-container matColumnDef="precio">
+                        <th mat-header-cell *matHeaderCellDef>Precio</th>
+                        <td mat-cell *matCellDef="let element">S/. {{ element.salon.precio_diario }}</td>
+                    </ng-container>
+
+                    <!-- Precio -->
+                    <ng-container matColumnDef="subtotal">
+                        <th mat-header-cell *matHeaderCellDef>Sub Total</th>
+                        <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
+                            element.salon.precio_diario * element.dias}}</td>
+                    </ng-container>
+
+
+                    <!-- Encabezados y filas -->
+                    <tr mat-header-row *matHeaderRowDef="tablaSalon"></tr>
+                    <tr mat-row *matRowDef="let row; columns: tablaSalon;"></tr>
+                </table>
+
+                <h3 class="h3 mt-3">Método de Pago</h3>
+
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Selecciona Método de Pago</mat-label>
+                    <input type="text" id="searchMetodo" placeholder="Seleccione método de pago" matInput
+                        (input)="filtrarMetodos()" [(ngModel)]="metodoSeleccionada" [matAutocomplete]="autoMetodo"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #autoMetodo="matAutocomplete"
+                        (optionSelected)="agregarMetodo($event.option.value)" [displayWith]="mostrarMetodo">
+                        <mat-option *ngFor=" let metodo of metodosFiltrado" [value]="metodo">
+                            {{metodo.nombre}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <div class="tabla-scrollable">
+                    <table mat-table [dataSource]="dataMetodo" class="mat-elevation-z8 w-100"
+                        *ngIf="venta.ventaMetodoPago.length > 0">
+
+                        <ng-container matColumnDef="nombre">
+                            <th mat-header-cell *matHeaderCellDef> Método de Pago </th>
+                            <td mat-cell *matCellDef="let item"> {{ item.metodoPago.nombre }} </td>
+                        </ng-container>
+
+                        <ng-container class="pago" matColumnDef="pago">
+                            <th mat-header-cell *matHeaderCellDef> Pago </th>
+                            <td mat-cell *matCellDef="let item">
+                                S/. <input type="number" [(ngModel)]="item.pago" [ngModelOptions]="{standalone: true}"
+                                    min="0.01" class="w-50" step="0.01">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                            <td mat-cell *matCellDef="let item; let i = index">
+                                <button mat-icon-button color="warn" (click)="eliminarMetodo(i)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="tablaMetodo"></tr>
+                        <tr mat-row *matRowDef="let row; columns: tablaMetodo;"></tr>
+                    </table>
+                </div>
+
+                <!-- <div class="mt-3" *ngIf="venta.ventaMetodoPago.length > 0 && soloEfectivo && vuelto > 0">
+                    <mat-form-field class="w-10">
+                        <mat-label>Vuelto</mat-label>
+                        <input matInput type="number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="vuelto">
+                        <span matTextPrefix>S/.&nbsp;</span>
+                    </mat-form-field>
+                </div> -->
+
+                <div class="text-left mt-3"
+                    *ngIf="venta.ventaHabitacion.length > 0 || venta.ventaSalon.length > 0 || venta.detalleVenta.length > 0">
+                    <span class="ultimos">
+                        <mat-form-field class="descuento w-10">
+                            <mat-label>Descuento</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="venta.descuento"
+                                (ngModelChange)="actualizarTotales()" placeholder="0" value="0">
+                            <span matTextPrefix>S/.&nbsp;</span>
+                        </mat-form-field>
+
+                        <mat-form-field class="cargo w-10">
+                            <mat-label>Cargo</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="venta.cargo"
+                                (ngModelChange)="actualizarTotales()" placeholder="0" value="0">
+                            <span matTextPrefix>S/.&nbsp;</span>
+                        </mat-form-field>
+
+                        <mat-form-field class="igv w-10">
+                            <mat-label>IGV</mat-label>
+                            <select matNativeControl [(ngModel)]="tipoIgv" name="tipoIgv"
+                                (ngModelChange)="seleccionarIgv(tipoIgv); actualizarTotales()" required>
+                                <option value="0">0%</option>
+                                <option value="10">10%</option>
+                                <option value="18">18%</option>
+                            </select>
+                        </mat-form-field>
+
+                        <mat-form-field class="w-10">
+                            <mat-label>Total</mat-label>
+                            <input [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="venta.total" required
+                                readonly min="0.01">
+                        </mat-form-field>
+                    </span>
+                </div>
+
+                <div class="form-actions mt-3">
+                    <button type="submit" mat-raised-button [disabled]="formulario.invalid" color="primary"
+                        class="btn-primary">
+                        Guardar
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+
+
+
+    <!-- MODAL DE VENTA PRODUCTOS -->
+
+    <div>
+        <div class="modal-content-registro">
+            <span class="close" (click)="cerrarMordalRegistro()">&times;</span>
+            <h2 class="mb-3">Venta {{titulo}}</h2>
+
+            <form (ngSubmit)="venta.idVenta ? actualizarVenta() : formSubmit()" #formulario="ngForm">
+
+                <mat-form-field class="w-25 me-5">
+                    <select matNativeControl [(ngModel)]="tipo" name="tipo" (change)="boletaOFactura(tipo)" required>
+                        <option value="Boleta">Boleta</option>
+                        <option value="Factura">Factura</option>
+                    </select>
+                </mat-form-field>
+
+                <mat-form-field class="w-25 me-2">
+                    <input type="text" name="numSerie" id="numSerie" [(ngModel)]="venta.comprobantePago.numComprobante"
+                        #numSerie="ngModel" required matInput disabled="true">
+                </mat-form-field> -
+
+                <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'B001')">
+                    <input type="text" name="numComprobante" id="numComprobante"
+                        [(ngModel)]="venta.comprobantePago.numSerieBoleta" #numComprobante="ngModel" required matInput
+                        disabled="true">
+                </mat-form-field>
+
+                <mat-form-field class="w-25 ms-2" *ngIf="(venta.comprobantePago.numComprobante == 'F001')">
+                    <input type="text" name="numComprobante" id="numComprobante"
+                        [(ngModel)]="venta.comprobantePago.numSerieFactura" #numComprobante="ngModel" required matInput
+                        disabled="true">
+                </mat-form-field>
+
+                <h3 class="h3 mt-3">Reserva</h3>
+
+                <mat-form-field class="w-100 form-field-small" appearance="outline">
+                    <mat-label>Selecciona Reserva</mat-label>
+                    <input type="text" id="searchReservas" name="reservaCliente" placeholder="Selecciona la reserva"
+                        matInput (input)="filtrarReservas()" [(ngModel)]="reservaSeleccionada"
+                        [matAutocomplete]="autoCliente" [ngModelOptions]="{standalone: true}">
+                    <mat-autocomplete #autoCliente="matAutocomplete"
+                        (optionSelected)="seleccionarReserva($event.option.value)" [displayWith]="mostrarReserva">
+                        <mat-option *ngFor=" let reserva of reservasFiltrado" [value]="reserva">
+                            {{reserva.cliente.dniRuc}} | {{reserva.cliente.nombre}} | {{reserva.tipo}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <div class="tabla-scrollable">
+                    <table mat-table [dataSource]="dataReserva" class="mat-elevation-z8 w-100"
+                        *ngIf="venta.ventaXReserva.length > 0">
+
+                        <ng-container matColumnDef="cliente">
+                            <th mat-header-cell *matHeaderCellDef> Reserva </th>
+                            <td mat-cell *matCellDef="let item"> {{ item.reserva?.cliente.nombre }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="tipo">
+                            <th mat-header-cell *matHeaderCellDef> Tipo </th>
+                            <td mat-cell *matCellDef="let item">{{ item.reserva?.tipo }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="fechaInicio">
+                            <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
+                            <td mat-cell *matCellDef="let item">{{ item.reserva?.fecha_inicio | date: 'dd-MM-yyyy
+                                HH:mm'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="fechaFin">
+                            <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
+                            <td mat-cell *matCellDef="let item">{{ item.reserva?.fecha_fin | date: 'dd-MM-yyyy HH:mm'}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                            <td mat-cell *matCellDef="let item; let i = index">
+                                <button type="button" mat-icon-button color="warn" (click)="eliminarReserva(i)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="tablaReserva"></tr>
+                        <tr mat-row *matRowDef="let row; columns: tablaReserva;"></tr>
+                    </table>
+                </div>
+
+
+
+                <h3 class="h3 mt-3">Habitación</h3>
+
+                <table mat-table [dataSource]="dataHabitacion" class="mat-elevation-z8"
+                    *ngIf="dataHabitacion.data.length > 0">
+
+                    <!-- Número de habitación -->
+                    <ng-container matColumnDef="numero">
+                        <th mat-header-cell *matHeaderCellDef>N° Habitación</th>
+                        <td mat-cell *matCellDef="let element">{{ element.habitacion.numero }}</td>
+                    </ng-container>
+
+                    <!-- Tipo de habitación -->
+                    <ng-container matColumnDef="tipo">
+                        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                        <td mat-cell *matCellDef="let element">{{ element.habitacion.tipo_habitacion?.nombre
+                            }}</td>
+                    </ng-container>
+
+                    <!-- Piso -->
+                    <ng-container matColumnDef="piso">
+                        <th mat-header-cell *matHeaderCellDef>Piso</th>
+                        <td mat-cell *matCellDef="let element">Piso {{ element.habitacion.piso.numero }}</td>
+                    </ng-container>
+
+                    <!-- Días -->
+                    <ng-container matColumnDef="dias">
+                        <th mat-header-cell *matHeaderCellDef>Días</th>
+                        <td mat-cell *matCellDef="let element">{{ element.dias }}</td>
+                    </ng-container>
+
+                    <!-- Precio -->
+                    <ng-container matColumnDef="precio">
+                        <th mat-header-cell *matHeaderCellDef>Precio</th>
+                        <td mat-cell *matCellDef="let element">S/. {{ element.habitacion.tipo_habitacion?.precio
+                            }}</td>
+                    </ng-container>
+
+                    <!-- Total -->
+                    <ng-container matColumnDef="subtotal">
+                        <th mat-header-cell *matHeaderCellDef>Sub Total</th>
+                        <td mat-cell (ngModelChange)="actualizarSubtotal(element)" *matCellDef="let element">S/. {{
+                            element.habitacion.tipo_habitacion?.precio * element.dias }}</td>
+                    </ng-container>
+
+                    <!-- Encabezados y filas -->
+                    <tr mat-header-row *matHeaderRowDef="tablaHabitacion"></tr>
+                    <tr mat-row *matRowDef="let row; columns: tablaHabitacion;"></tr>
+                </table>
+
+                <h3 class="h3 mt-3"> Salones de Evento</h3>
 
                 <table mat-table [dataSource]="dataSalon" class="mat-elevation-z8" *ngIf="dataSalon.data.length > 0">
 
