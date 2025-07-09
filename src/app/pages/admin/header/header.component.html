@@ -12,13 +12,30 @@
         <input type="text" class="form-control" placeholder="Buscar..." />
       </div>
 
-      <!-- Campana de notificaciones -->
-      <div class="notification-icon position-relative">
-        <i class="fas fa-bell"></i>
-        <span class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          3
-        </span>
-      </div>
+<div class="notification-icon position-relative" (click)="toggleNotificaciones()">
+  <i class="fas fa-bell fa-lg text-dark"></i>
+
+  <span
+    class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+    *ngIf="cantidadNotificaciones() > 0"
+  >
+    {{ cantidadNotificaciones() }}
+  </span>
+
+  <!-- Panel de notificaciones -->
+  <div class="notification-panel" *ngIf="mostrarNotificaciones">
+    <h5>Notificaciones</h5>
+    <ul class="list-unstyled mb-0">
+      <li *ngFor="let n of notificaciones">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ n.mensaje }}
+        <br />
+        <small class="text-muted">{{ n.fecha | date:'short' }}</small>
+      </li>
+    </ul>
+  </div>
+</div>
+
     </div>
   </div>
 

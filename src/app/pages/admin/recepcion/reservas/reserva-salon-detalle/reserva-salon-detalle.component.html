@@ -1,24 +1,60 @@
-<ng-container *ngIf="reserva as r">
-    <div class="reserva-container">
-      <h2>Detalle de Reserva #{{ r.id_reserva }}</h2>
-      <p><strong>Cliente:</strong> {{ r.cliente.nombre }}</p>
-      <p><strong>Fecha Inicio:</strong> {{ r.fecha_inicio | date:'short' }}</p>
-      <p><strong>Fecha Fin:</strong> {{ r.fecha_fin | date:'short' }}</p>
-      <p><strong>Estado:</strong> {{ r.estado_reserva }}</p>
-      <p><strong>Tipo:</strong> {{ r.tipo }}</p>
-      <p><strong>Comentarios:</strong> {{ r.comentarios }}</p>
+<div class="container">
+  <app-header></app-header>
+  <ng-container *ngIf="reserva as r">
+    <div class="reserva-container my-4 align-items-center">
+      <div class="p-4">
+        <div class="row g-4">
+          
+          <!-- Icono de estado -->
+          <div class="col-md-2 text-center">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+            <i 
+              [ngClass]="{
+                'bi bi-check-circle-fill text-success': r.estado_reserva === 'Completada',
+                'bi bi-hourglass-split text-warning': r.estado_reserva === 'Pendiente',
+                'bi bi-x-circle-fill text-danger': r.estado_reserva === 'Cancelado',
+                'bi bi-receipt text-success': r.estado_reserva === 'Pagada',
+                'bi bi-door-open text-primary': r.estado_reserva === 'Check-in',
+                'bi bi-door-closed text-secondary': r.estado_reserva === 'Check-out'
+              }"
+              style="font-size: 4rem;">
+            </i>
+            <div class="mt-2 text-muted">{{ r.estado_reserva }}</div>
+          </div>
 
-      <h3>Salones Reservados</h3>
-      <div *ngIf="r.salonesXReserva && r.salonesXReserva.length > 0; else noSalones">
-        <ul>
-          <li *ngFor="let hr of r.salonesXReserva">
-            Salón {{ hr.salon.nombre }} - Precio: {{ hr.salon.precio_diario }}
-          </li>
-        </ul>
+          <!-- Detalle de reserva -->
+          <div class="detalle col-md-4 border-end">
+            <h2 class="mb-3 text-primary">Reserva #{{ r.id_reserva }}</h2>
+            <p><strong>Cliente:</strong> {{ r.cliente.nombre }}</p>
+            <p><strong>Fecha Inicio:</strong> {{ r.fecha_inicio | date:'short' }}</p>
+            <p><strong>Fecha Fin:</strong> {{ r.fecha_fin | date:'short' }}</p>
+            <p><strong>Tipo:</strong> {{ r.tipo }}</p>
+            <p><strong>Comentarios:</strong> {{ r.comentarios }}</p>
+          </div>
+  
+          <!-- Salones reservados -->
+          <div class="right col-md-6">
+            <h3 class="mb-3">Salones Reservados</h3>
+            <div *ngIf="r.salonesXReserva && r.salonesXReserva.length > 0; else noSalones">
+              <ul class="list-group">
+                <li *ngFor="let hr of r.salonesXReserva" class="list-group-item">
+                  <span class="fs-6">
+                  {{ hr.salon.nombre }}</span> 
+                  - <span class="badge bg-success ms-2">S/. {{ hr.salon.precio_diario }}</span>
+                </li>
+              </ul>
+            </div>
+            <ng-template #noSalones>
+              <p class="mt-2">No hay salones asociados a esta reserva.</p>
+            </ng-template>
+            
+            <div class="text-end mt-4">
+              <a routerLink="/admin/reservas" class="btn btn-secondary">Volver</a>
+            </div>
+          </div>
+          
+        </div>
       </div>
-      <button routerLink='/admin/reservas'>Volver</button>
-      <ng-template #noSalones>
-        <p>No hay salones asociados a esta reserva.</p>
-      </ng-template>
     </div>
   </ng-container>
+</div>

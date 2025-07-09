@@ -5,8 +5,8 @@
 
 .menu {
   width: 19%;
-  background-color: rgba(38, 59, 90, 0.918);
-  min-height: 100vh; /* Esto garantiza que como mínimo tenga la altura de la ventana */
+  background-color: #016048;
+  min-height: 100vh; 
 }
 
 .contenido {

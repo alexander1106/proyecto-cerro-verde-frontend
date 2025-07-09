@@ -24,11 +24,11 @@ export class MantenimientoService {
   }
 
   actualizarAreaHotel(id: number, data: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/areashotel/actualizar/${id}`, data);
+    return this.http.put(`${this.baseUrl}/areashotel/actualizar/${id}`, data);
   }
 
   eliminarAreaHotel(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/areashotel/eliminar/${id}`);
+    return this.http.delete(`${this.baseUrl}/areashotel/eliminar/${id}`);
   }
 
   // ---------- Incidencias ----------
@@ -45,11 +45,11 @@ export class MantenimientoService {
   }
 
   actualizarIncidencia(id: number, data: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/incidencias/actualizar/${id}`, data);
+    return this.http.put(`${this.baseUrl}/incidencias/actualizar/${id}`, data);
   }
 
   eliminarIncidencia(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/incidencias/eliminar/${id}`);
+    return this.http.delete(`${this.baseUrl}/incidencias/eliminar/${id}`);
   }
 
   // ---------- Limpiezas ----------
@@ -66,11 +66,11 @@ export class MantenimientoService {
   }
 
   actualizarLimpieza(id: number, data: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/limpiezas/actualizar/${id}`, data);
+    return this.http.put(`${this.baseUrl}/limpiezas/actualizar/${id}`, data);
   }
 
   eliminarLimpieza(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/limpiezas/eliminar/${id}`);
+    return this.http.delete(`${this.baseUrl}/limpiezas/eliminar/${id}`);
   }
 
   // ---------- TipoIncidencia ----------
@@ -87,10 +87,31 @@ export class MantenimientoService {
   }
 
   actualizarTipoIncidencia(id: number, data: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/tipoincidencia/actualizar/${id}`, data);
+    return this.http.put(`${this.baseUrl}/tipoincidencia/actualizar/${id}`, data);
   }
 
   eliminarTipoIncidencia(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/tipoincidencia/eliminar/${id}`);
+    return this.http.delete(`${this.baseUrl}/tipoincidencia/eliminar/${id}`);
   }
+
+    // ---------- Personal Limpieza ----------
+    getPersonalLimpieza(): Observable<any> {
+      return this.http.get(`${this.baseUrl}/personallimpieza/ver`);
+    }
+  
+    getPersonalLimpiezaById(id: number): Observable<any> {
+      return this.http.get(`${this.baseUrl}/personallimpieza/personallimpieza/${id}`);
+    }
+  
+    registrarPersonalLimpieza(data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/personallimpieza/registrar`, data);
+    }
+  
+    actualizarPersonalLimpieza(id: number, data: any): Observable<any> {
+      return this.http.put(`${this.baseUrl}/personallimpieza/actualizar/${id}`, data);
+    }
+  
+    eliminarPersonalLimpieza(id: number): Observable<any> {
+      return this.http.delete(`${this.baseUrl}/personallimpieza/eliminar/${id}`);
+    }
 }

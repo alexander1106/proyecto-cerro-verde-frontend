@@ -1,23 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Habitacion } from './habitaciones.service';
-import { Salones } from './salones.service';
+import { Habitacion, HabitacionReserva } from './habitaciones.service';
+import { Salones, SalonReserva } from './salones.service';
 import { Cliente } from './clientes.service';
-
-export interface HabitacionReserva {
-  id_hab_reserv?: number;
-  habitacion: Habitacion;
-  reserva: Reserva;
-  estado: number;
-}
-
-export interface SalonReserva {
-  id_salon_reserv?: number;
-  salon: Salones;
-  reserva: Reserva;
-  estado: number;
-}
 
 export interface Reserva {
   id_reserva?: number;
@@ -25,6 +11,7 @@ export interface Reserva {
   fecha_fin: Date | string;
   estado_reserva: string;
   comentarios: string;
+  nro_persona: number;
   estado: number;
   cliente: Cliente;
   tipo: string;
@@ -56,6 +43,10 @@ export class ReservasService {
   updateReserva(id: number, reserva: Reserva): Observable<Reserva> {
     return this.http.put<Reserva>(`${this.apiUrl}/reservas/${id}`, reserva);
   }
+
+  cancelarReserva(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/cancelar/${id}`, null);
+  }  
 
   deleteReserva(id: number): Observable<string> {
     return this.http.delete<string>(`${this.apiUrl}/reservas/eliminar/${id}`, { responseType: 'text' as 'json' })

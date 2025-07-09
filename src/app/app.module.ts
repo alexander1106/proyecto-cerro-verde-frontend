@@ -93,11 +93,25 @@ import { ReportesComprasComponent } from './pages/admin/reportes/reportes-compra
 import { ConsultaVentasComponent } from './pages/admin/reportes/consulta-ventas/consulta-ventas.component';
 import { NgChartsModule } from 'ng2-charts';
 import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+// import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+// import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
 import { ReportesVentasService } from './service/reportes-ventas.service';
 import { RegistrarAreaHotelComponent } from './pages/admin/registrar-areas-hotel/registrar-areas-hotel.component';
 import { CajaReporteComponent } from './pages/admin/reportes/caja-reporte/caja-reporte.component';
 import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inicio/dashboard-inicio.component';
+import { PisosFormComponent } from './pages/admin/recepcion/habitaciones/pisos-form/pisos-form.component';
+import { PisosListComponent } from './pages/admin/recepcion/habitaciones/pisos-list/pisos-list.component';
+import { ListarTipoIncidenciaComponent } from './pages/admin/listar-tipoincidencia/listar-tipoincidencia.component';
+import { RegistrarTipoIncidenciaComponent } from './pages/admin/registrar-tipoincidencia/registrar-tipoincidencia.component';
 
+import { ListarAreasHotelComponent } from './pages/admin/listar-areas-hotel/listar-areas-hotel.component';
+import { ListarLimpiezaComponent } from './pages/admin/listar-limpiezas/listar-limpiezas.component';
+import { RegistrarLimpiezaComponent } from './pages/admin/registrar-limpiezas/registrar-limpiezas.component';
+import { RegistrarPersonalLimpiezaComponent } from './pages/admin/registrar-personal-limpieza/registrar-personal-limpieza.component';
+import { ListarPersonalLimpiezaComponent } from './pages/admin/listar-personal-limpieza/listar-personal-limpieza.component';
+import { RegistrarIncidenciaComponent } from './pages/admin/registrar-incidencias/registrar-incidencias.component';
+import { ListarIncidenciasComponent } from './pages/admin/listar-incidencias/listar-incidencias.component';
+import { IaComponent } from './pages/admin/ia/ia.component';
 
 @NgModule({
   declarations: [
@@ -157,8 +171,25 @@ import { DashboardInicioComponent } from './pages/admin/reportes/dashboard-inici
     ChecksListComponent,
     ReportesComprasComponent,
     ConsultaVentasComponent,
+    RegistrarIncidenciaComponent,
+    ListarIncidenciasComponent,
+    ListarTipoIncidenciaComponent,
+    RegistrarTipoIncidenciaComponent,
+    ListarAreasHotelComponent,
+    RegistrarAreaHotelComponent,
+    RegistrarLimpiezaComponent,
+    PisosFormComponent,
+    PisosListComponent,
     CajaReporteComponent,
     DashboardInicioComponent,
+    ListarAreasHotelComponent,
+    RegistrarAreaHotelComponent,
+    ListarLimpiezaComponent,
+    RegistrarLimpiezaComponent,
+    RegistrarPersonalLimpiezaComponent,
+    ListarPersonalLimpiezaComponent,
+    IaComponent,
+
   ],
 
   imports: [

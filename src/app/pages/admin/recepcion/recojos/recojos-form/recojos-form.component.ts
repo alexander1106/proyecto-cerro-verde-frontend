@@ -86,7 +86,8 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
         new google.maps.LatLng(-5.8, -74.8)   // Norte-Este San Martín aprox
       ),
       strictbound: true,
-      types: ['address']
+      types: ['geocode', 'establishment']
+
     });
 
     this.autocomplete.addListener('place_changed', () => {
@@ -176,7 +177,7 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
 
     this.reservaService.getReservas().subscribe({
       next: (data) => {
-        this.reservas = data.filter((reserva) => reserva.estado === 1);
+        this.reservas = data.filter((reserva) => reserva.estado === 1 && reserva.estado_reserva === "Pendiente" && reserva.tipo === "Habitación"   );
         this.loading = false;
       },
       error: (err) => {
@@ -247,8 +248,16 @@ export class RecojosFormComponent implements OnInit, AfterViewInit {
 
           Swal.fire({
             icon: 'success',
-            title: this.isEditing ? 'Recojo actualizado correctamente' : 'Recojo creado correctamente',
+            title: '¡Registro exitoso',
+            text: this.isEditing ? 'Recojo actualizado correctamente' : 'Recojo creado correctamente',
             showConfirmButton: false,
+          customClass: {
+            popup: 'border shadow rounded-4',
+            confirmButton: 'btn btn-success px-4',
+            title: 'fs-4 text-success',
+            htmlContainer: 'fs-6 text-secondary'
+          },
+          buttonsStyling: false,
             timer: 2000
           });
 

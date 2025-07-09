@@ -13,6 +13,17 @@ export class HabitacionesListComponent implements OnInit {
   loading = true;
   error = '';
 
+  filtroGeneral: string = '';
+  filtroTipo: string = '';
+  filtroEstado: string = '';
+  filtroPiso: string = ''; 
+
+  tiposHabitacion: { id: number; nombre: string }[] = [];
+  estadosHabitacion: string[] = ['Disponible', 'Reservada', 'Limpieza'];
+
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+
   constructor(private habitacionesService: HabitacionesService) {}
 
   ngOnInit(): void {
@@ -22,17 +33,21 @@ export class HabitacionesListComponent implements OnInit {
   cargarHabitaciones(): void {
     this.loading = true;
     this.error = '';
-
+  
     this.habitacionesService.getHabitaciones().subscribe({
       next: (data) => {
-        console.log('🚀 Habitaciones cargadas:', data);
         this.habitaciones = data;
+        this.tiposHabitacion = this.obtenerTiposUnicos(data);
+        this.currentPage = 1; // reinicia a la primera página
         this.loading = false;
       },
-
+      error: () => {
+        this.error = 'No se pudieron cargar las habitaciones.';
+        this.loading = false;
+      }
     });
-
   }
+  
 
   eliminarHabitacion(id: number): void {
     Swal.fire({
@@ -55,11 +70,10 @@ export class HabitacionesListComponent implements OnInit {
               timer: 1500,
               showConfirmButton: false
             }).then(() => {
-              this.cargarHabitaciones(); // recarga lista desde el backend
+              this.cargarHabitaciones();
             });
-          },          
+          },
           error: () => {
-            // @ts-ignore
             Swal.fire('Error', 'No se pudo eliminar la habitación porque está relacionada a una reserva', 'error');
           }
         });
@@ -67,46 +81,74 @@ export class HabitacionesListComponent implements OnInit {
     });
   }
 
-  filtroGeneral: string = '';
 
-  get habitacionesActivasFiltradas() {
-    const filtro = this.filtroGeneral.toLowerCase();
-    return this.habitacionesActivas.filter(h => {
-      const tipo = h.tipo_habitacion?.nombre?.toLowerCase() || '';
-      const piso = h.piso?.toString() || '';
-      const estado = h.estado_habitacion?.toLowerCase() || '';
-      const numero = h.numero?.toString() || '';
-      return (
-        tipo.includes(filtro) ||
-        piso.includes(filtro) ||
-        estado.includes(filtro) ||
-        numero.includes(filtro)
-      );
-    });
+  get habitacionesActivas(): Habitacion[] {
+    return this.habitaciones.filter(h => h.estado === 1);
   }
 
-
-  get habitacionesActivas() {
-    return this.habitaciones?.filter(h => h.estado === 1) || [];
-  }
-
-    currentPage: number = 1;
-  itemsPerPage: number = 10;
-
-  get totalPages(): number {
-    return Math.ceil(this.habitacionesActivasFiltradas.length / this.itemsPerPage);
-  }
-
-  get habitacionesPaginadas() {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.habitacionesActivasFiltradas.slice(start, start + this.itemsPerPage);
-  }
-
-  changePage(delta: number) {
+  changePage(delta: number): void {
     const nextPage = this.currentPage + delta;
     if (nextPage >= 1 && nextPage <= this.totalPages) {
       this.currentPage = nextPage;
     }
   }
 
+  obtenerTiposUnicos(habitaciones: Habitacion[]): { id: number; nombre: string }[] {
+    const tiposUnicos: { [key: number]: string } = {};
+
+    for (const h of habitaciones) {
+      if (h.tipo_habitacion && !tiposUnicos[h.tipo_habitacion.id_tipo_habitacion!]) {
+        tiposUnicos[h.tipo_habitacion.id_tipo_habitacion!] = h.tipo_habitacion.nombre;
+      }
+    }
+
+    return Object.entries(tiposUnicos).map(([id, nombre]) => ({
+      id: parseInt(id),
+      nombre
+    }));
+  }
+
+  get habitacionesActivasFiltradas() {
+    const filtro = this.filtroGeneral.toLowerCase();
+    const pisoFiltro = this.filtroPiso.toLowerCase();
+
+    return this.habitacionesActivas.filter(h => {
+      const tipo = h.tipo_habitacion?.nombre?.toLowerCase() || '';
+      const estado = h.estado_habitacion?.toLowerCase() || '';
+      const numero = h.numero?.toString() || '';
+      const piso = h.piso?.numero?.toString() || '';
+
+      const coincideTexto = filtro === '' || tipo.includes(filtro) || estado.includes(filtro) || numero.includes(filtro) || piso.includes(filtro);
+      const coincideTipo = this.filtroTipo === '' || tipo === this.filtroTipo;
+      const coincideEstado = this.filtroEstado === '' || estado === this.filtroEstado;
+      const coincidePiso = this.filtroPiso === '' || piso === this.filtroPiso;
+
+      return coincideTexto && coincideTipo && coincideEstado && coincidePiso;
+    });
+  }
+  
+  get totalPages(): number {
+    return Math.ceil(this.habitacionesActivasFiltradas.length / this.itemsPerPage);
+  }
+  
+  get habitacionesPaginadas(): Habitacion[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.habitacionesActivasFiltradas.slice(start, start + this.itemsPerPage);
+  }
+
+  get pisosUnicos(): string[] {
+    const pisos = this.habitaciones.map(h => h.piso?.numero?.toString() || '');
+    return [...new Set(pisos)].filter(p => p !== '');
+  }
+  
+  
+  limpiarFiltros(): void {
+  this.filtroGeneral = '';
+  this.filtroTipo = '';
+  this.filtroEstado = '';
+  this.filtroPiso = '';
+  this.currentPage = 1; 
+}
+
+  
 }

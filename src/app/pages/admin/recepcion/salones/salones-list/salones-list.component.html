@@ -5,20 +5,38 @@
     <div class="info-trabajadores-linea">
       <h4>Gestión de Salones</h4>
 
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input type="text" placeholder="Buscar salón..." [(ngModel)]="filtroGeneral" />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-
         <button class="btn-agregar">
           <a routerLink="/admin/recepcion/salones/nuevo">+ Nuevo Salón</a>
         </button>
+    </div>
+
+    <div class="filtros-container">
+      <div class="filtros-select">
+        
+
+        <select [(ngModel)]="filtroEstado" >
+          <option value="">Todos los estados</option>
+          <option *ngFor="let estado of estadosSalon" [value]="estado.toLowerCase()">
+            {{ estado }}
+          </option>
+        </select>
+        <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+
       </div>
+
+
+
+      <div class="buscador">
+        <div class="input-wrapper">
+          <input type="text" placeholder="Buscar salones por nombre, precio, capacidad..." [(ngModel)]="filtroGeneral" />
+          <button type="button" class="btn-icono">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+
+      
     </div>
 
     <div *ngIf="loading" class="loading">Cargando salones...</div>
@@ -33,23 +51,26 @@
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Estado</th>
+            <th>Capacidad</th>
             <th>Precio Hora</th>
             <th>Precio Diario</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
+          <!-- Mostrar filas si hay datos filtrados -->
           <tr *ngFor="let salon of salonesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ salon.nombre }}</td>
+            <td>{{ salon.capacidad }}</td>
+            <td>S/. {{ salon.precio_hora }}</td>
+            <td>S/. {{ salon.precio_diario }}</td>
             <td>
               <span class="badge" [ngClass]="'badge-' + salon.estado_salon.toLowerCase()">
                 {{ salon.estado_salon }}
               </span>
             </td>
-            <td>S/. {{ salon.precio_hora }}</td>
-            <td>S/. {{ salon.precio_diario }}</td>
             <td class="acciones">
               <button class="btn-accion editar">
                 <a [routerLink]="['/admin/recepcion/salones/editar', salon.id_salon]">
@@ -61,14 +82,28 @@
               </button>
             </td>
           </tr>
-          <tr *ngIf="salonesActivasFiltradas.length === 0">
-            <td colspan="6" class="text-center text-muted">
-              No hay salones que coincidan con el filtro.
+    
+          <!-- Si hay salones pero el filtro deja vacío -->
+          <tr *ngIf="salones.length > 0 && salonesActivasFiltradas.length === 0">
+            <td colspan="7">
+              <div class="alert alert-info text-center m-0">
+                No hay salones que coincidan con el filtro.
+              </div>
+            </td>
+          </tr>
+    
+          <!-- Si no hay salones en absoluto -->
+          <tr *ngIf="salones.length === 0">
+            <td colspan="7">
+              <div class="alert alert-info text-center m-0">
+                No hay salones registrados. Cree uno nuevo.
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+    
 
     <div class="pagination-controls mt-4 text-center">
       <button class="btn btn-outline-secondary"

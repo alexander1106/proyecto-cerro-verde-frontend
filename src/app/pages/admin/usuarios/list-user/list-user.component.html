@@ -56,7 +56,7 @@
               {{ trabajador.enable ? 'Activo' : 'Inactivo' }}
             </span>
           </td>
-                  
+
           <td>
             <span [ngClass]="{
               'admin': trabajador.rol.nombreRol === 'ADMIN',
@@ -66,7 +66,7 @@
           <td class="acciones">
             <button class="btn btn-editar" [routerLink]="['/admin/edit-user', trabajador.idUsuario]">
               <i class="edit fa-regular fa-pen-to-square"></i>
-            </button>            
+            </button>
           </td>
         </tr>
       </tbody>

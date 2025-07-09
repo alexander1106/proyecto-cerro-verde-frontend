@@ -102,22 +102,6 @@
               <input type="file" (change)="onFileSelected($event)" />
             </div>
             </div>
-            <h3>Permisos del trabajador en el menú</h3>
-
-            <div class="modulos-lista">
-              <div class="modulo-card" *ngFor="let modulo of modulos">
-                <div class="modulo-header">
-                  <mat-checkbox [(ngModel)]="modulo.seleccionado" name="modulo_{{modulo.nombre}}" (change)="onModuloChange(modulo)" class="title-mod">
-                    <p>{{ modulo.nombre }}</p>
-                  </mat-checkbox>
-                </div>
-                <div class="submodulo-lista">
-                  <mat-checkbox *ngFor="let sub of modulo.submodulos" [(ngModel)]="sub.seleccionado" name="sub_{{modulo.nombre}}_{{sub.nombre}}">
-                    <p>{{ sub.nombre }}</p>
-                  </mat-checkbox>
-                </div>
-              </div>
-            </div>
 
             <div class="form-actions">
               <button mat-raised-button color="primary" class="btn-primary">

@@ -1,0 +1,27 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ modoEdicion ? 'Editar Personal de Limpieza' : 'Registrar Personal de Limpieza' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="cancelar()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="personalLimpiezaForm">
+          <div class="mb-2">
+            <label>Nombres</label>
+            <input type="text" class="form-control" formControlName="nombres" />
+          </div>
+        </form>
+        <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-primary" [disabled]="loading" (click)="guardar()">
+          {{ modoEdicion ? 'Actualizar' : 'Registrar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

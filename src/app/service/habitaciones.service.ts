@@ -2,29 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Reserva } from './reserva.service';
+import { Pisos } from './pisos.service';
+import { TipoHabitacion } from './tipo-habitacion.service';
 
 export interface Sucursal {
   id_sucursal?: number;
   nombre: string;
-}
-
-export interface TipoHabitacion {
-  id_tipo_habitacion?: number;
-  nombre: string;
-  precio_publico: number;
-  precio_corporativo: number;
   estado: number;
-}
-
-export interface Imagen {
-  id_imagen?: number;
-  nombre: string;
 }
 
 export interface Habitacion {
   id_habitacion?: number;
   numero: number;
-  piso: number;
+  piso: Pisos;
   estado_habitacion: string;
   estado: number;
   sucursal: Sucursal;
@@ -32,16 +22,11 @@ export interface Habitacion {
   };
 
 
-export interface HabitacionImagen {
-  id_hab_img?: number;
-  habitacion: Habitacion;
-  imagen: Imagen;
-}
-
 export interface HabitacionReserva {
   id_hab_reserv?: number;
   habitacion: Habitacion;
   reserva: Reserva;
+  precio_reserva:number;
   estado: number;
 }
 
@@ -89,19 +74,6 @@ export class HabitacionesService {
 
   deleteHabitacionReserva(id: number) {
     return this.http.delete(`${this.apiUrl}/habitacionreservas/eliminar/${id}`, { responseType: 'text' });
-  }
-
-  // Habitaciones Imagenes endpoints
-  getHabitacionesImagenes(): Observable<HabitacionImagen[]> {
-    return this.http.get<HabitacionImagen[]>(`${this.apiUrl}/habitaciones/imagenes`);
-  }
-
-  createHabitacionImagen(habitacionImagen: HabitacionImagen): Observable<HabitacionImagen> {
-    return this.http.post<HabitacionImagen>(`${this.apiUrl}/habitaciones/imagenes`, habitacionImagen);
-  }
-
-  deleteHabitacionImagen(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/habitaciones/imagenes/${id}`);
   }
 
   getEstadosHabitacion(): string[] {

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HabitacionesService, Habitacion, HabitacionImagen, Imagen } from '../../../../../service/habitaciones.service';
+import { HabitacionesService, Habitacion } from '../../../../../service/habitaciones.service';
 import { TipoHabitacionService, TipoHabitacion } from '../../../../../service/tipo-habitacion.service';
 import { SucursalService, Sucursal } from '../../../../../service/sucursal.service';
-import { ImagenesService } from '../../../../../service/imagen.service';
+import { PisosService, Pisos } from '../../../../../service/pisos.service';
 import Swal from 'sweetalert2';
 
 
@@ -21,13 +21,11 @@ export class HabitacionesFormComponent implements OnInit {
   submitted = false;
   loading = false;
   error = '';
-  pisos: number[] = [1,2,3]
 
   tiposHabitacion: TipoHabitacion[] = [];
   sucursales: Sucursal[] = [];
   estadosHabitacion: string[] = [];
-  imagenes: Imagen[] = [];
-  selectedImagenes: Imagen[] = [];
+  pisos: Pisos[] = [];
   habitaciones: Habitacion[] = [];
   habitacion?: Habitacion;
 
@@ -38,7 +36,7 @@ export class HabitacionesFormComponent implements OnInit {
     private habitacionesService: HabitacionesService,
     private tipoHabitacionService: TipoHabitacionService,
     private sucursalService: SucursalService,
-    private imagenesService: ImagenesService
+    private pisosService: PisosService
   ) {}
 
   ngOnInit(): void {
@@ -120,7 +118,19 @@ export class HabitacionesFormComponent implements OnInit {
       this.loading = false;
       console.error('Error:', err);
     }
-  });
+    });
+
+    this.pisosService.getPisos().subscribe({
+      next: (data) => {
+        this.pisos = data.filter((piso) => piso.estado === 1);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Error al cargar los pisos';
+        this.loading = false;
+        console.error('Error:', err);
+      }
+      });
 
 
     this.sucursalService.getSucursales().subscribe({
@@ -138,16 +148,6 @@ export class HabitacionesFormComponent implements OnInit {
       }
     });
 
-
-    this.imagenesService.getImagen().subscribe({
-      next: (data) => {
-        this.imagenes = data;
-      },
-      error: (err) => {
-        this.error = 'Error al cargar las imágenes';
-        console.error('Error:', err);
-      }
-    });
   }
 
   loadHabitacion(): void {
@@ -159,16 +159,12 @@ export class HabitacionesFormComponent implements OnInit {
         this.habitacion = habitacion;
         const waitForData = () => {
           if(this.tiposHabitacion.length ){
-            console.log('Tipos:', {
-              pisoDesdeAPI: habitacion.piso,
-              tipoDePiso: typeof habitacion.piso,
-              pisosEnSelect: this.pisos,
-            });
             
             this.habitacionForm.patchValue({
-              piso: Number(habitacion.piso),
               numero: habitacion.numero,
               tipo_habitacion: this.tiposHabitacion.find(h => h.id_tipo_habitacion === habitacion.tipo_habitacion.id_tipo_habitacion),
+              piso: this.pisos.find(h => h.id_piso === habitacion.piso.id_piso),
+
             });
             
             this.loading=false;
@@ -186,30 +182,8 @@ export class HabitacionesFormComponent implements OnInit {
         console.error('Error:', err);
       }
       });
-
-        this.habitacionesService.getHabitacionesImagenes().subscribe({
-          next: (data) => {
-            const habitacionImagenes = data.filter(hi => hi.habitacion.id_habitacion === this.id);
-            this.selectedImagenes = habitacionImagenes.map(hi => hi.imagen);
-            this.loading = false;
-          },
-          error: (err) => {
-            this.error = 'Error al cargar las imágenes asociadas';
-            this.loading = false;
-            console.error('Error:', err);
-          }
-        });
       
 
-  }
-
-  toggleImagenSelection(imagen: Imagen): void {
-    const index = this.selectedImagenes.findIndex(i => i.id_imagen === imagen.id_imagen);
-    if (index === -1) {
-      this.selectedImagenes.push(imagen);
-    } else {
-      this.selectedImagenes.splice(index, 1);
-    }
   }
 
   onSubmit(): void {
@@ -241,8 +215,16 @@ export class HabitacionesFormComponent implements OnInit {
   
           Swal.fire({
             icon: 'success',
-            title: msg,
+            title: '¡Registro guardado!',
+            text: msg,
             showConfirmButton: false,
+          customClass: {
+            popup: 'border shadow rounded-4',
+            confirmButton: 'btn btn-success px-4',
+            title: 'fs-4 text-success',
+            htmlContainer: 'fs-6 text-secondary'
+          },
+          buttonsStyling: false,
             timer: 2000
           }).then(() => {
             this.router.navigate(['/admin/habitaciones']);
@@ -275,47 +257,6 @@ export class HabitacionesFormComponent implements OnInit {
     } else {
       guardar(); // Si no es edición, guardar directamente
     }
-  }
-  
-
-
-
-  saveImagenes(habitacion: Habitacion): void {
-    this.habitacionesService.getHabitacionesImagenes().subscribe({
-      next: (data) => {
-        const habitacionImagenes = data.filter(hi => hi.habitacion.id_habitacion === habitacion.id_habitacion);
-
-        const deletionPromises = habitacionImagenes
-          .filter(hi => !this.selectedImagenes.some(img => img.id_imagen === hi.imagen.id_imagen))
-          .map(hi => this.habitacionesService.deleteHabitacionImagen(hi.id_hab_img!).toPromise());
-
-        const creationPromises = this.selectedImagenes
-          .filter(img => !habitacionImagenes.some(hi => hi.imagen.id_imagen === img.id_imagen))
-          .map(img => {
-            const newAssociation: HabitacionImagen = {
-              habitacion: habitacion,
-              imagen: img
-            };
-            return this.habitacionesService.createHabitacionImagen(newAssociation).toPromise();
-          });
-
-        Promise.all([...deletionPromises, ...creationPromises])
-          .then(() => {
-            this.loading = false;
-            this.router.navigate(['/habitaciones']);
-          })
-          .catch(err => {
-            this.error = 'Error al guardar las asociaciones de imágenes';
-            this.loading = false;
-            console.error('Error:', err);
-          });
-      },
-      error: (err) => {
-        this.error = 'Error al obtener las asociaciones de imágenes actuales';
-        this.loading = false;
-        console.error('Error:', err);
-      }
-    });
   }
 
   volver(): void {

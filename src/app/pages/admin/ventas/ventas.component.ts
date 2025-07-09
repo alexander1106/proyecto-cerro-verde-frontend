@@ -4,16 +4,12 @@ import { ProductosService } from '../../../service/productos.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2';
-import { ClientesService } from '../../../service/clientes.service';
 import { CajaService } from '../../../service/caja.service';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReservasService } from '../../../service/reserva.service';
-import { HttpHeaders } from '@angular/common/http';
-import { ProveedoresService } from '../../../service/proveedores.service';
-import { HabitacionesService } from '../../../service/habitaciones.service';
-import { SalonesService } from '../../../service/salones.service';
 import { MetodoPagoService } from '../../../service/metodo-pago.service';
 import { ComprobantePagoService } from '../../../service/comprobante-pago.service';
+import { ClientesService } from '../../../service/clientes.service';
 
 @Component({
   selector: 'app-ventas',
@@ -24,10 +20,12 @@ import { ComprobantePagoService } from '../../../service/comprobante-pago.servic
 export class VentasComponent {
   //Comprobantes
   comprobantes: any[] = [];
+
   //Ventas
   ventas: any[] = [];
   ventasFiltrados: any[] = [];
   filtroBusqueda: string = '';
+
   //Productos
   productos: any[] = [];
   productosFiltrados: any[] = [];
@@ -41,10 +39,12 @@ export class VentasComponent {
     'acciones',
   ];
   dataSource = new MatTableDataSource<any>();
+
   //clientes
   clientes: any[] = [];
   clientesFiltrado: any[] = [];
   clienteBusqueda: string = '';
+
   //reservas
   reservas: any[] = [];
   reservasFiltrado: any[] = [];
@@ -58,6 +58,7 @@ export class VentasComponent {
     'acciones',
   ];
   dataReserva = new MatTableDataSource<any>();
+
   //metodos de pago
   metodos: any[] = [];
   metodosFiltrado: any[] = [];
@@ -65,6 +66,7 @@ export class VentasComponent {
   metodoSeleccionada: any = null;
   tablaMetodo: string[] = ['nombre', 'pago', 'acciones'];
   dataMetodo = new MatTableDataSource<any>();
+
   //habitaciones
   habitaciones: any[] = [];
   habitacionesFiltrado: any[] = [];
@@ -78,6 +80,7 @@ export class VentasComponent {
     'subtotal',
   ];
   dataHabitacion = new MatTableDataSource<any>();
+
   //salones
   salones: any[] = [];
   salonesFiltrado: any[] = [];
@@ -90,14 +93,18 @@ export class VentasComponent {
     'subtotal',
   ];
   dataSalon = new MatTableDataSource<any>();
+
   //Modal
   mostrarModal: boolean = false;
-  modalRegistro: boolean = false;
+  modalRegistroHospedaje: boolean = false;
   ventaSeleccionada: any = null;
+
   //Caja Abierta
   cajaAbierta: boolean = false;
+
   //Registrar cliente
   esNuevo: boolean = false;
+
   //Objeto Cliente
   public cliente = {
     idCliente: '',
@@ -108,15 +115,18 @@ export class VentasComponent {
     pais: '',
     estado: 1,
   };
+
   //Objeto Venta
   public venta = {
     idVenta: '',
     fecha: '',
     total: '',
+    tipoVenta: '',
     descuento: 0,
     cargo: 0,
     igv: 0,
     estado: 1,
+    estadoVenta: '',
     cliente: {
       idCliente: '',
       dniRuc: '',
@@ -151,7 +161,7 @@ export class VentasComponent {
       idDetalleVenta: any;
       cantidad: any;
       precioUnit: any;
-      subtotal: any;
+      subTotal: any;
       estado: 1;
       producto?: {
         id_producto: any;
@@ -179,7 +189,7 @@ export class VentasComponent {
         tipo_habitacion: {
           id_tipo_habitacion: any;
           nombre: any;
-          precio_publico: any;
+          precio: any;
           precio_corporativo: any;
           estado: 1;
         };
@@ -217,6 +227,7 @@ export class VentasComponent {
       fechaEmision: '',
     },
   };
+
   customers: any;
   paginaActual = 1;
   elementosPorPagina = 5;
@@ -233,7 +244,13 @@ export class VentasComponent {
   fechaInicio = '';
   fechaFin = '';
   tipoIgv: number = 0;
-
+  estadoSeleccionado: string = 'Pendiente';
+  modalEditar: boolean = false;
+  tipoVentaSeleccionado: string = 'todos';
+  modalRegistroProductos = false; // Nueva propiedad
+  esVentaProductos = false;
+  fechaDesde: Date | null = null;
+  fechaHasta: Date | null = null;
   constructor(
     private ventasService: VentasService,
     private productosService: ProductosService,
@@ -242,7 +259,8 @@ export class VentasComponent {
     private router: Router,
     private reservaService: ReservasService,
     private metodosService: MetodoPagoService,
-    private comprobanteService: ComprobantePagoService
+    private comprobanteService: ComprobantePagoService,
+    private clienteService: ClientesService
   ) {}
 
   ngOnInit(): void {
@@ -253,6 +271,39 @@ export class VentasComponent {
     this.cargarReservas();
     this.cargarMetodos();
     this.seleccionarIgv(this.tipoIgv);
+    // Inicializar filtros
+    this.tipoVentaSeleccionado = 'hospedaje'; // Valor por defecto
+    this.estadoSeleccionado = 'Completado';
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.cargarClientes();
+  }
+
+  // Nuevo método para manejar cambio de tipo de venta
+  onTipoVentaChange(): void {
+    // Resetear el estado cuando cambie el tipo de venta
+    this.estadoSeleccionado = 'todos';
+    this.aplicarFiltros();
+  }
+
+  // Propiedades adicionales
+  mismoClienteFacturacion: boolean = true;
+  clienteFacturacion: any = null;
+
+  // Método para manejar cambio de "mismo cliente"
+  onMismoClienteChange(event: any): void {
+    this.mismoClienteFacturacion = event.target.checked;
+    if (this.mismoClienteFacturacion && this.reservaSeleccionada) {
+      this.venta.cliente = { ...this.reservaSeleccionada.cliente };
+    } else {
+      this.clienteFacturacion = null;
+    }
+  }
+
+  // Método para seleccionar cliente diferente para facturación
+  seleccionarClienteFacturacion(cliente: any): void {
+    this.clienteFacturacion = cliente;
+    this.venta.cliente = { ...cliente };
   }
 
   //SELECCIONAR IGV
@@ -261,6 +312,7 @@ export class VentasComponent {
     this.venta.igv = this.tipoIgv;
   }
 
+  //Boleta o Factura
   boletaOFactura(auxiliar: string) {
     if (auxiliar === 'Boleta') {
       this.tipo = 'Boleta';
@@ -273,6 +325,7 @@ export class VentasComponent {
     this.correlativo();
   }
 
+  //Generar correlativo de la boleta o factura
   correlativo() {
     console.log(this.tipo);
     this.comprobanteService.numeroCorrelativo(this.tipo).subscribe(
@@ -292,40 +345,71 @@ export class VentasComponent {
   }
 
   //VERIFICAR ESTADO DE CAJA
-  esAbierto(): void {
+  abrirVentaHospedaje(): void {
     this.cajaService.verificarEstadoCajaRaw().subscribe({
       next: (data: any) => {
-        console.log('💡 Respuesta RAW completa: ', data);
         const estadoCaja = data?.estadoCaja ?? 'desconocido';
-
         if (estadoCaja === 'abierta') {
           this.cajaAbierta = true;
-          console.log('✅ La caja está abierta');
-          this.abrirModalRegistro();
+          this.titulo = 'Hospedaje';
+          this.abrirModalRegistroHospedaje();
         } else {
-          console.log('🚫 Caja cerrada');
-          Swal.fire({
-            title: 'Caja Cerrada',
-            text: '¿Deseas aperturar caja?',
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, aperturar',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.router.navigate(['/admin/caja']);
-            } else {
-              this.router.navigate(['/admin/venta']);
-            }
-          });
+          this.mostrarModalCajaCerrada();
         }
       },
       error: (error) => {
         console.error('Error al obtener estado caja:', error);
-        this.cajaAbierta = false; // manejar error marcando como cerrada
+        this.cajaAbierta = false;
       },
     });
+  }
+
+  abrirVentaProductos(): void {
+    this.cajaService.verificarEstadoCajaRaw().subscribe({
+      next: (data: any) => {
+        const estadoCaja = data?.estadoCaja ?? 'desconocido';
+        if (estadoCaja === 'abierta') {
+          this.cajaAbierta = true;
+          this.titulo = 'Productos';
+          this.abrirModalRegistroProductos();
+        } else {
+          this.mostrarModalCajaCerrada();
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener estado caja:', error);
+        this.cajaAbierta = false;
+      },
+    });
+  }
+
+  private mostrarModalCajaCerrada(): void {
+    Swal.fire({
+      title: 'Caja Cerrada',
+      text: '¿Deseas aperturar caja?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, aperturar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/admin/caja']);
+      }
+    });
+  }
+
+  // Nuevo método para abrir modal de productos
+  abrirModalRegistroProductos(): void {
+    this.modalRegistroProductos = true; // Activar modal de productos
+    this.titulo = 'Productos';
+    // Limpiar datos que no corresponden a productos
+    this.venta.ventaXReserva = [];
+    this.venta.ventaHabitacion = [];
+    this.venta.ventaSalon = [];
+    this.dataReserva.data = [];
+    this.dataHabitacion.data = [];
+    this.dataSalon.data = [];
   }
 
   //MODAL DE DETALLE VENTA
@@ -352,19 +436,31 @@ export class VentasComponent {
     this.mostrarModal = false;
   }
 
-  //MODAL DE REGISTRO O EDICION
-  abrirModalRegistro() {
-    this.modalRegistro = true;
+  //MODAL DE REGISTRO
+  abrirModalEditar() {
+    this.modalEditar = true;
   }
+  cerrarModalEditar() {
+    this.modalEditar = false;
+  }
+
+  //MODAL DE EDICION
+  abrirModalRegistroHospedaje() {
+    this.modalRegistroHospedaje = true;
+  }
+  // Modificar el método cerrarMordalRegistro para cerrar ambos modales
   cerrarMordalRegistro() {
+    // Resetear venta
     this.venta = {
       idVenta: '',
       fecha: '',
       total: '',
+      tipoVenta: '',
       descuento: 0,
       cargo: 0,
       igv: 0,
       estado: 1,
+      estadoVenta: '',
       cliente: {
         idCliente: '',
         dniRuc: '',
@@ -388,7 +484,12 @@ export class VentasComponent {
         fechaEmision: '',
       },
     };
-    this.modalRegistro = false;
+
+    // Cerrar ambos modales
+    this.modalRegistroHospedaje = false;
+    this.modalRegistroProductos = false; // Cerrar modal de productos
+
+    // Resetear otras variables
     this.esNuevo = false;
     this.cliente.dniRuc = '';
     this.cliente.nombre = '';
@@ -396,6 +497,8 @@ export class VentasComponent {
     this.reservaSeleccionada = false;
     this.dataHabitacion.data = [];
     this.dataSalon.data = [];
+    this.dataSource.data = []; // Limpiar productos
+    this.dataMetodo.data = [];
     this.tipoIgv = 0;
     this.cargarReservas();
     this.boletaOFactura('Boleta');
@@ -403,69 +506,81 @@ export class VentasComponent {
 
   //LISTAR VENTAS
   listarVentas() {
-    this.ventasService.listarVenta().subscribe(
-      (data: any) => {
+    this.ventasService.listarVenta().subscribe({
+      next: (data: any) => {
+        console.log(data);
+        // Agregar este log específico
+        data.forEach((venta: any, index: number) => {
+          console.log(`Venta ${index}:`, {
+            id: venta.idVenta,
+            tipoVenta: venta.tipoVenta,
+            estadoVenta: venta.estadoVenta,
+          });
+        });
         this.ventas = data;
-        this.ventasFiltrados = [...this.ventas];
-        this.actualizarPaginacion();
+        this.filtrarPorEstado(this.estadoSeleccionado);
       },
-      (error) => {
+      error: (error) => {
         Swal.fire('error !!', 'Al cargar el listado de las ventas', 'error');
-      }
-    );
+        console.log(error);
+      },
+    });
   }
 
-  //MOSTRAR VUELTO
-  // mostrarVuelto(): void {
-  //   const totalVenta = Number(this.venta.total);
-  //   const totalPagado = Number(
-  //     this.venta.ventaMetodoPago.reduce(
-  //       (acc, metodo) => acc + Number(metodo.pago || 0),
-  //       0
-  //     )
-  //   );
+  // Modificar el método de filtros
+  filtrarPorTipoVenta(tipo: string) {
+    this.tipoVentaSeleccionado = tipo;
+    this.aplicarFiltros();
+  }
 
-  //   console.log("xddd")
-
-  //   const soloEfectivo =
-  //     this.venta.ventaMetodoPago.length === 1 &&
-  //     this.venta.ventaMetodoPago[0].metodoPago.nombre === 'Efectivo';
-
-  //   if (soloEfectivo && totalPagado > totalVenta) {
-  //     // Aplicar redondeo (puedes ajustar la precisión)
-  //     this.vuelto = +(totalPagado - totalVenta).toFixed(2);
-  //     console.log(this.vuelto)
-  //   } else {
-  //     this.vuelto = 0;
-  //   }
-  // }
-  // get soloEfectivo(): boolean {
-  //   return (
-  //     this.venta.ventaMetodoPago.length === 1 &&
-  //     this.venta.ventaMetodoPago[0].metodoPago.nombre === 'Efectivo'
-  //   );
-  // }
+  //FILTRAR POR ESTADO
+  filtrarPorEstado(estado: string) {
+    this.estadoSeleccionado = estado;
+    this.aplicarFiltros(); // aplica también el filtro por búsqueda
+  }
 
   //REGISTRAR VENTA
+  //REGISTRAR VENTA - CÓDIGO COMPLETO CORREGIDO
   formSubmit() {
+    // Validaciones comunes
     const sumaSubTotales = Number(
-      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subTotal, 0)
     );
     const descuento = Number(this.venta.descuento) || 0;
 
+    // Actualizar subtotales
     this.venta.detalleVenta.forEach((item: any) => {
       item.subTotal = item.cantidad * item.producto.precioVenta;
-      console.log(item.subTotal);
     });
 
-    if (this.venta.ventaXReserva.length === 0) {
-      this.snack.open('Debe seleccionar al menos una reserva.', 'Cerrar', {
-        duration: 3000,
-      });
-      return;
+    // VALIDACIONES ESPECÍFICAS POR TIPO
+    if (this.titulo === 'Hospedaje') {
+      // Validaciones para hospedaje
+      if (this.venta.ventaXReserva.length === 0) {
+        this.snack.open('Debe seleccionar al menos una reserva.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
+    } else if (this.titulo === 'Productos') {
+      // Validaciones para productos
+      if (this.venta.detalleVenta.length === 0) {
+        this.snack.open('Debe seleccionar al menos un producto.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
+
+      // Validar que tenga cliente
+      if (!this.venta.cliente || !this.venta.cliente.idCliente) {
+        this.snack.open('Debe seleccionar un cliente.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
     }
 
-    // Validación: debe haber al menos un método de pago
+    // Validación común: método de pago
     if (this.venta.ventaMetodoPago.length === 0) {
       this.snack.open(
         'Debe seleccionar al menos un método de pago.',
@@ -477,17 +592,21 @@ export class VentasComponent {
       return;
     }
 
-    for (let detalle of this.venta.detalleVenta) {
-      if (detalle.cantidad > detalle.producto?.stock) {
-        this.snack.open(
-          `La cantidad de "${detalle.producto?.nombre}" excede el stock disponible (${detalle.producto?.stock})`,
-          'Cerrar',
-          { duration: 3000 }
-        );
-        return;
+    // Validación de stock para productos
+    if (this.titulo === 'Productos' || this.venta.detalleVenta.length > 0) {
+      for (let detalle of this.venta.detalleVenta) {
+        if (detalle.cantidad > detalle.producto?.stock) {
+          this.snack.open(
+            `La cantidad de "${detalle.producto?.nombre}" excede el stock disponible (${detalle.producto?.stock})`,
+            'Cerrar',
+            { duration: 3000 }
+          );
+          return;
+        }
       }
     }
 
+    // Validación de descuento
     if (descuento > sumaSubTotales) {
       this.snack.open(
         'Error: El descuento no puede ser mayor al total',
@@ -498,12 +617,21 @@ export class VentasComponent {
       );
       return;
     }
+
+    // Configurar fecha
     const hoy = new Date();
     const fechaFormateada = hoy.toISOString().split('T')[0];
     this.venta.fecha = fechaFormateada;
 
-    const totalVenta = Number(this.venta.total);
+    // Para productos, el estado inicial es pendiente
+    if (this.titulo === 'Productos') {
+      this.venta.estadoVenta = 'Pendiente';
+    } else {
+      this.venta.estadoVenta = 'Pendiente';
+    }
 
+    // Validación de pagos
+    const totalVenta = Number(this.venta.total);
     const totalPagado = Number(
       this.venta.ventaMetodoPago.reduce(
         (acc, metodo) => acc + Number(metodo.pago || 0),
@@ -523,75 +651,265 @@ export class VentasComponent {
       return;
     }
 
-    // Verificar si solo se usó EFECTIVO
-    // const soloEfectivo =
-    //   this.venta.ventaMetodoPago.length === 1 &&
-    //   this.venta.ventaMetodoPago[0].metodoPago.nombre === 'EFECTIVO';
-
-    // if (totalPagado > totalVenta) {
-    //   this.snack.open(
-    //     'El monto pagado excede el total de la venta.',
-    //     'Cerrar',
-    //     {
-    //       duration: 3000,
-    //       panelClass: ['snackbar-error'],
-    //     }
-    //   );
-    //   return;
-    // }
-
-    // if (soloEfectivo && totalPagado > totalVenta) {
-    //   this.vuelto = totalPagado - totalVenta;
-    // }
-    // Buscar el método de pago que sea 'Efectivo'
-    const efectivoPago = this.venta.ventaMetodoPago.find(
-      (m) => m.metodoPago.nombre === 'Efectivo'
-    );
-
-    console.log("EFECTIVO PAGO: ", efectivoPago)
-
-    // Si existe y tiene un monto válido, generar la transacción
-    if (efectivoPago && efectivoPago.pago > 0) {
-      const nuevaTransaccion = {
-        montoTransaccion: efectivoPago.pago,
-        tipo:{ id: 1} // 1: ingreso
-      };
-
-      console.log('NUEVA TRANSACCION', nuevaTransaccion);
-
-      this.cajaService.guardarTransaccion(nuevaTransaccion).subscribe({
-        next: () => {
-          console.log('Transacción guardada correctamente');
-        },
-        error: (err) => {
-          console.error('Error al guardar transacción', err);
-        },
-      });
+    if (totalPagado > totalVenta) {
+      this.snack.open(
+        'El monto pagado excede el total de la venta.',
+        'Cerrar',
+        {
+          duration: 3000,
+          panelClass: ['snackbar-error'],
+        }
+      );
+      return;
     }
 
-    this.ventasService.registrarVenta(this.venta).subscribe(
-      (data) => {
-        Swal.fire('Excelente', 'La venta fue registrado con éxito', 'success');
+    // Procesar según el tipo
+    if (this.titulo === 'Hospedaje') {
+      this.registrarVentaHospedaje();
+    } else if (this.titulo === 'Productos') {
+      // Para actualizar productos, usar el método correcto
+      if (this.venta.idVenta) {
+        this.actualizarVentaProductos();
+      } else {
+        this.registrarVentaProductos();
+      }
+    }
+  }
+
+  // Nuevo método para actualizar productos
+  actualizarVentaProductos(): void {
+    const ventaProductos = {
+      ...this.venta,
+      tipoVenta: 'productos',
+      // Asegurar que no tenga datos de reserva
+      ventaXReserva: [],
+      ventaHabitacion: [],
+      ventaSalon: [],
+    };
+
+    this.ventasService.editarVentaProductos(ventaProductos).subscribe({
+      next: (response) => {
+        Swal.fire(
+          'Excelente',
+          'Venta de productos actualizada con éxito',
+          'success'
+        );
         this.listarVentas();
         this.cerrarMordalRegistro();
-        console.log(data);
+      },
+      error: (error) => {
+        console.error(error);
+        this.snack.open('Error al actualizar venta de productos', 'Aceptar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  // Nuevo método para registrar hospedaje
+  registrarVentaHospedaje(): void {
+    this.venta.tipoVenta = 'hospedaje';
+
+    this.ventasService.registrarPagoHospedaje(this.venta).subscribe({
+      next: (response) => {
+        Swal.fire(
+          'Excelente',
+          'Pago de hospedaje registrado con éxito',
+          'success'
+        );
+        this.listarVentas();
+        this.cerrarMordalRegistro();
+      },
+      error: (error) => {
+        console.error(error);
+        this.snack.open('Error al registrar pago de hospedaje', 'Aceptar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  // Nuevo método para registrar productos
+  registrarVentaProductos(): void {
+    // Preparar datos específicos para productos
+    const ventaProductos = {
+      ...this.venta,
+      tipoVenta: 'productos',
+      estadoVenta: 'Pendiente',
+      // Asegurar que no tenga datos de reserva
+      ventaXReserva: [],
+      ventaHabitacion: [],
+      ventaSalon: [],
+    };
+
+    this.ventasService.registrarVentaProductos(ventaProductos).subscribe({
+      next: (response) => {
+        Swal.fire(
+          'Excelente',
+          'Venta de productos registrada con éxito',
+          'success'
+        );
+        this.listarVentas();
+        this.cerrarMordalRegistro();
+      },
+      error: (error) => {
+        console.error(error);
+        const mensaje =
+          error.error?.error || 'Error al registrar venta de productos';
+        this.snack.open(mensaje, 'Aceptar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  // Método para confirmar venta de productos
+  confirmarVentaProductos(ventaId: number): void {
+    Swal.fire({
+      title: 'Confirmar Venta',
+      text: 'Seleccione el tipo de comprobante:',
+      icon: 'question',
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Boleta',
+      denyButtonText: 'Factura',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.procesarConfirmacion(ventaId, 'Boleta');
+      } else if (result.isDenied) {
+        this.procesarConfirmacion(ventaId, 'Factura');
+      }
+    });
+  }
+
+  private procesarConfirmacion(ventaId: number, tipoComprobante: string): void {
+    this.ventasService
+      .confirmarVentaProductos(ventaId, tipoComprobante)
+      .subscribe({
+        next: (response) => {
+          Swal.fire(
+            'Confirmado',
+            `Venta confirmada con ${tipoComprobante}`,
+            'success'
+          );
+          this.listarVentas();
+        },
+        error: (error) => {
+          console.error(error);
+          this.snack.open('Error al confirmar venta', 'Aceptar', {
+            duration: 3000,
+          });
+        },
+      });
+  }
+
+  //ACTUALIZAR VENTA - CORREGIDO
+  actualizarVenta() {
+    const sumaSubTotales = Number(
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subTotal, 0)
+    );
+    const descuento = Number(this.venta.descuento) || 0;
+
+    // Solo validar reservas si es hospedaje
+    if (this.titulo === 'Hospedaje') {
+      if (this.venta.ventaXReserva.length === 0) {
+        this.snack.open('Debe seleccionar al menos una reserva.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
+    } else if (this.titulo === 'Productos') {
+      // Validar productos
+      if (this.venta.detalleVenta.length === 0) {
+        this.snack.open('Debe seleccionar al menos un producto.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
+
+      // Validar cliente
+      if (!this.venta.cliente || !this.venta.cliente.idCliente) {
+        this.snack.open('Debe seleccionar un cliente.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
+    }
+
+    for (let detalle of this.venta.detalleVenta) {
+      if (detalle.cantidad > detalle.producto?.stock) {
+        this.snack.open(
+          `La cantidad de "${detalle.producto?.nombre}" excede el stock disponible (${detalle.producto?.stock})`,
+          'Cerrar',
+          { duration: 3000 }
+        );
+        return;
+      }
+    }
+
+    if (descuento > sumaSubTotales) {
+      this.snack.open(
+        'Error: El descuento no puede ser mayor al total',
+        'Aceptar',
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    const hoy = new Date();
+    const fechaFormateada = hoy.toISOString().split('T')[0];
+    this.venta.fecha = fechaFormateada;
+
+    const totalVenta = Number(this.venta.total);
+    const totalPagado = Number(
+      this.venta.ventaMetodoPago.reduce(
+        (acc, metodo) => acc + Number(metodo.pago || 0),
+        0
+      )
+    );
+
+    if (totalPagado < totalVenta) {
+      this.snack.open(
+        'El monto pagado no cubre el total de la venta.',
+        'Cerrar',
+        {
+          duration: 3000,
+          panelClass: ['snackbar-error'],
+        }
+      );
+      return;
+    }
+
+    this.ventasService.modificarVenta(this.venta).subscribe(
+      (data) => {
+        Swal.fire('Excelente', 'La venta fue modificada con éxito', 'success');
+        this.listarVentas();
+        this.cerrarMordalRegistro();
       },
       (error) => {
         console.log(error);
-        this.snack.open('Rellene el formulario', 'Aceptar', {
+        this.snack.open('Error al modificar la venta', 'Aceptar', {
           duration: 3000,
         });
       }
     );
   }
 
-  //EDITAR VENTA
+  //EDITAR VENTA - SIMPLIFICADO solo para productos
   editarVenta(id: number) {
     this.ventasService.buscarVentaId(id).subscribe({
       next: (data: any) => {
         this.venta = data;
         this.dataSource.data = this.venta.detalleVenta;
-        this.abrirModalRegistro();
+        this.dataMetodo.data = this.venta.ventaMetodoPago;
+
+        // Directamente abrir modal de productos
+        this.titulo = 'Productos';
+        this.modalRegistroProductos = true;
+
+        this.tipoIgv = this.venta.igv;
+        console.log(data);
       },
       error: (error) => {
         console.log(error);
@@ -653,34 +971,27 @@ export class VentasComponent {
 
   //BUSQUEDA DE VENTAS
   buscarVentas() {
-    const filtro = this.filtroBusqueda.toLowerCase();
-    this.ventasFiltrados = this.ventas.filter(
-      (v) =>
-        v.comprobantePago.numSerie.toLowerCase().includes(filtro) ||
-        v.cliente.nombre.toLowerCase().includes(filtro)
-    );
+    this.aplicarFiltros(); // aplica también el filtro por estado
   }
 
-  // Actualiza las ventas por página
-  actualizarPaginacion() {
+  // Obtener productos de la página actual - CORREGIR este método
+  get ventasPaginados() {
     const inicio =
       (this.paginaActualCompra - 1) * this.elementosPorPaginaCompra;
     const fin = inicio + this.elementosPorPaginaCompra;
-    this.ventasFiltrados = this.ventas.slice(inicio, fin);
+    return this.ventasFiltrados.slice(inicio, fin);
   }
-  // Obtener productos de la página actual
-  get ventasPaginados() {
-    return this.ventasFiltrados;
-  }
+  // Corregir el cálculo del total de páginas
   get totalPagina(): number {
-    return Math.ceil(this.ventas.length / this.elementosPorPaginaCompra);
+    return Math.ceil(
+      this.ventasFiltrados.length / this.elementosPorPaginaCompra
+    );
   }
-
-  // Cambiar de página
+  /// Cambiar de página - MANTENER pero simplificar
   cambiarPaginaCompra(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPagina) {
       this.paginaActualCompra = pagina;
-      this.actualizarPaginacion();
+      // Ya no necesitas llamar actualizarPaginacion aquí
     }
   }
 
@@ -707,9 +1018,190 @@ export class VentasComponent {
     }
   }
 
+  // Actualizar el método aplicarFiltros - CORREGIR
+  aplicarFiltros() {
+    let filtrados = this.ventas;
+
+    // Filtro por tipo de venta
+    if (this.tipoVentaSeleccionado !== 'todos') {
+      if (this.tipoVentaSeleccionado === 'hospedaje') {
+        filtrados = filtrados.filter((v) => v.tipoVenta === 'hospedaje');
+      } else if (this.tipoVentaSeleccionado === 'productos') {
+        filtrados = filtrados.filter((v) => v.tipoVenta === 'productos');
+      }
+    }
+
+    // Filtro por estado
+    if (this.estadoSeleccionado !== 'todos') {
+      filtrados = filtrados.filter(
+        (v) => v.estadoVenta === this.estadoSeleccionado
+      );
+    }
+
+    // Filtro por rango de fechas
+    if (this.fechaDesde || this.fechaHasta) {
+      filtrados = filtrados.filter((v) => {
+        const fechaVenta = new Date(v.fecha);
+
+        // Comparar solo fechas (sin horas)
+        const fechaVentaSolo = new Date(
+          fechaVenta.getFullYear(),
+          fechaVenta.getMonth(),
+          fechaVenta.getDate()
+        );
+
+        let cumpleFechaDesde = true;
+        let cumpleFechaHasta = true;
+
+        if (this.fechaDesde) {
+          const fechaDesdeSolo = new Date(
+            this.fechaDesde.getFullYear(),
+            this.fechaDesde.getMonth(),
+            this.fechaDesde.getDate()
+          );
+          cumpleFechaDesde = fechaVentaSolo >= fechaDesdeSolo;
+        }
+
+        if (this.fechaHasta) {
+          const fechaHastaSolo = new Date(
+            this.fechaHasta.getFullYear(),
+            this.fechaHasta.getMonth(),
+            this.fechaHasta.getDate()
+          );
+          cumpleFechaHasta = fechaVentaSolo <= fechaHastaSolo;
+        }
+
+        return cumpleFechaDesde && cumpleFechaHasta;
+      });
+    }
+
+    // Filtro por texto (cliente)
+    if (this.filtroBusqueda.trim() !== '') {
+      const filtroTexto = this.filtroBusqueda.toLowerCase();
+      filtrados = filtrados.filter(
+        (v) =>
+          v.cliente?.nombre?.toLowerCase().includes(filtroTexto) ||
+          v.idVenta?.toString().includes(filtroTexto)
+      );
+    }
+
+    // Asignar los resultados filtrados
+    this.ventasFiltrados = filtrados;
+
+    // Resetear a la primera página cuando se aplican filtros
+    this.paginaActualCompra = 1;
+
+    // Actualizar información de resultados
+    this.actualizarInfoResultados();
+  }
+
+  // Método para filtros de fecha rápidos
+  filtroFechaRapido(periodo: string) {
+    const hoy = new Date();
+
+    switch (periodo) {
+      case 'hoy':
+        this.fechaDesde = new Date(hoy);
+        this.fechaHasta = new Date(hoy);
+        break;
+
+      case 'ayer':
+        const ayer = new Date(hoy);
+        ayer.setDate(ayer.getDate() - 1);
+        this.fechaDesde = new Date(ayer);
+        this.fechaHasta = new Date(ayer);
+        break;
+
+      case 'semana':
+        const inicioSemana = new Date(hoy);
+        inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // Domingo
+        this.fechaDesde = new Date(inicioSemana);
+        this.fechaHasta = new Date(hoy);
+        break;
+
+      case 'mes':
+        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        this.fechaDesde = new Date(inicioMes);
+        this.fechaHasta = new Date(hoy);
+        break;
+    }
+
+    this.aplicarFiltros();
+  }
+
+  // Método para limpiar filtros
+  limpiarFiltros() {
+    this.tipoVentaSeleccionado = 'hospedaje'; // Valor por defecto
+    this.estadoSeleccionado = 'todos';
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.filtroBusqueda = '';
+    this.aplicarFiltros();
+  }
+
+  // Método para actualizar información de resultados
+  actualizarInfoResultados() {
+    let info = `Mostrando ${this.ventasFiltrados.length} de ${this.ventas.length} ventas`;
+
+    if (this.fechaDesde && this.fechaHasta) {
+      const formatoFecha = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      } as const;
+      const fechaDesdeStr = this.fechaDesde.toLocaleDateString(
+        'es-ES',
+        formatoFecha
+      );
+      const fechaHastaStr = this.fechaHasta.toLocaleDateString(
+        'es-ES',
+        formatoFecha
+      );
+      info += ` (${fechaDesdeStr} - ${fechaHastaStr})`;
+    } else if (this.fechaDesde) {
+      const fechaDesdeStr = this.fechaDesde.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+      info += ` (desde ${fechaDesdeStr})`;
+    } else if (this.fechaHasta) {
+      const fechaHastaStr = this.fechaHasta.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+      info += ` (hasta ${fechaHastaStr})`;
+    }
+
+    this.infoResultados = info;
+  }
+
+  // Propiedad para mostrar info de resultados
+  infoResultados: string = '';
+
+  // Método para validar rango de fechas
+  // Agregar método de validación de rango de fechas
+  validarRangoFechas() {
+    if (
+      this.fechaDesde &&
+      this.fechaHasta &&
+      this.fechaDesde > this.fechaHasta
+    ) {
+      this.snack.open(
+        'La fecha "Desde" no puede ser mayor que la fecha "Hasta"',
+        'Aceptar',
+        {
+          duration: 3000,
+        }
+      );
+      this.fechaHasta = null;
+    }
+  }
+
   //CARGAR PRODUCTOS
   cargarProductos() {
-    this.productosService.listarProductosActivos().subscribe((data) => {
+    this.productosService.listarProductos().subscribe((data) => {
       this.productos = data.filter((p) => p.precioVenta != null);
       this.productosFiltrados = [...this.productos];
     });
@@ -734,7 +1226,7 @@ export class VentasComponent {
         idDetalleVenta: null,
         cantidad: 1,
         precioUnit: 0,
-        subtotal: 0,
+        subTotal: 0,
         estado: 1 as const,
         producto: producto,
       };
@@ -759,8 +1251,8 @@ export class VentasComponent {
       });
       return;
     }
-    item.subtotal = item.cantidad * item.producto?.precioVenta || 0;
-    console.log(item.subtotal);
+    item.subTotal = item.cantidad * item.producto?.precioVenta || 0;
+    console.log(item.subTotal);
     this.actualizarTotales();
   }
   eliminarProducto(index: number) {
@@ -775,14 +1267,22 @@ export class VentasComponent {
   //TOTAL
   actualizarTotales() {
     let sumaSubTotalesProductos = Number(
-      this.venta.detalleVenta.reduce((acc, item) => acc + item.subtotal, 0)
+      this.venta.detalleVenta.reduce((acc, item) => acc + item.subTotal, 0)
     );
-    let sumaSubTotalesHabitaciones = Number(
-      this.venta.ventaHabitacion.reduce((acc, item) => acc + item.subTotal, 0)
-    );
-    let sumaSubTotalesSalones = Number(
-      this.venta.ventaSalon.reduce((acc, item) => acc + item.subTotal, 0)
-    );
+
+    let sumaSubTotalesHabitaciones = 0;
+    let sumaSubTotalesSalones = 0;
+
+    // Solo calcular habitaciones y salones si es hospedaje
+    if (this.titulo === 'Hospedaje') {
+      sumaSubTotalesHabitaciones = Number(
+        this.venta.ventaHabitacion.reduce((acc, item) => acc + item.subTotal, 0)
+      );
+      sumaSubTotalesSalones = Number(
+        this.venta.ventaSalon.reduce((acc, item) => acc + item.subTotal, 0)
+      );
+    }
+
     let sumaSubTotales =
       sumaSubTotalesProductos +
       sumaSubTotalesHabitaciones +
@@ -790,6 +1290,7 @@ export class VentasComponent {
     let descuento = this.venta.descuento || 0;
     let cargo = this.venta.cargo || 0;
     let igv = this.venta.igv || 0;
+
     if (Number(descuento) > sumaSubTotales) {
       this.snack.open(
         'Error: El descuento no puede ser mayor al total',
@@ -800,6 +1301,7 @@ export class VentasComponent {
       );
       return;
     }
+
     if (Number(igv) > 0) {
       let conIgv =
         Number(sumaSubTotales - Number(descuento)) * (Number(igv) / 100);
@@ -853,15 +1355,15 @@ export class VentasComponent {
       );
       return;
     }
-  
+
     this.reservaSeleccionada = reservaSeleccionada;
     console.log(reservaSeleccionada);
-  
+
     // Solo agregamos si aún no existe esa reserva
     const yaExiste = this.venta.ventaXReserva.some(
       (vxr) => vxr.reserva.id_reserva === reservaSeleccionada.id_reserva
     );
-  
+
     if (!yaExiste) {
       this.venta.ventaXReserva.push({
         idVentaReserva: '',
@@ -872,7 +1374,7 @@ export class VentasComponent {
     this.cargarReservas();
     this.reservaBusqueda = '';
     this.reservasFiltrado = [];
-  
+
     if (
       reservaSeleccionada.habitacionesXReserva &&
       reservaSeleccionada.habitacionesXReserva.length > 0
@@ -890,14 +1392,14 @@ export class VentasComponent {
             idVentaHabitacion: '',
             dias: dias,
             subTotal:
-              (habitacion.habitacion.tipo_habitacion?.precio_publico || 0) * dias,
+              (habitacion.habitacion.tipo_habitacion?.precio || 0) * dias,
             habitacion: habitacion.habitacion,
           });
           this.actualizarTotales();
           this.dataHabitacion.data = this.venta.ventaHabitacion;
         });
     }
-  
+
     if (
       reservaSeleccionada.salonesXReserva &&
       reservaSeleccionada.salonesXReserva.length > 0
@@ -923,7 +1425,6 @@ export class VentasComponent {
         });
     }
   }
-  
 
   eliminarReserva(index: number) {
     const reservaEliminada: any = this.venta.ventaXReserva[index]?.reserva;
@@ -966,7 +1467,7 @@ export class VentasComponent {
   //METODO DE PAGO
   cargarMetodos() {
     this.metodosService.listarMetodosPago().subscribe((data) => {
-      this.metodos = data;
+      this.metodos = data.filter((metodo: any) => metodo.estadoMetodo == 1);
       this.metodosFiltrado = [...this.metodos];
     });
   }
@@ -1004,5 +1505,95 @@ export class VentasComponent {
   }
   mostrarMetodo(metodo: any): string {
     return metodo ? `` : '';
+  }
+
+  //CARGAR CLIENTES
+  cargarClientes() {
+    this.clienteService.getClientes().subscribe((data) => {
+      this.clientes = data;
+      this.clientesFiltrado = [...this.clientes];
+    });
+  }
+  filtrarClientes() {
+    const filtro = String(this.venta.cliente).trim().toLowerCase();
+    if (filtro === '') {
+      this.clientesFiltrado = [...this.clientes];
+      this.cargarClientes();
+    } else {
+      this.clientesFiltrado = this.clientes.filter(
+        (c) =>
+          c.dniRuc.toLowerCase().includes(filtro) ||
+          c.nombre.toLowerCase().includes(filtro)
+      );
+    }
+  }
+  seleccionarCliente(clienteSeleccionado: string) {
+    const seleccionada = this.clientes.find(
+      (c) => c.dniRuc === clienteSeleccionado
+    );
+    if (seleccionada) {
+      this.venta.cliente.dniRuc = seleccionada.dniRuc;
+      this.venta.cliente.nombre = seleccionada.nombre;
+    }
+    console.log(seleccionada);
+  }
+  mostrarCliente = (cliente: any): string => {
+    if (!cliente || !cliente.dniRuc || !cliente.nombre) {
+      return '';
+    }
+    return `${cliente.dniRuc} | ${cliente.nombre}`;
+  };
+
+  //DESCARGAR NOTA DE CREDITO
+  descargarNotaCredito(idVenta: number) {
+    if (!idVenta || isNaN(idVenta)) {
+      this.snack.open(
+        'No se ha especificado un ID de venta válido.',
+        'Cerrar',
+        {
+          duration: 3000,
+        }
+      );
+      return;
+    }
+
+    // Paso 1: Obtener la nota de crédito por ID de venta
+    this.ventasService.obtenerNotaCreditoPorVenta(idVenta).subscribe({
+      next: (notaCredito) => {
+        const idNotaCredito = notaCredito.id;
+
+        // Paso 2: Descargar el PDF usando el ID de la nota
+        this.ventasService.descargarNotaCredito(idNotaCredito).subscribe({
+          next: (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = `nota_credito_${idNotaCredito}.pdf`;
+            link.click();
+            window.URL.revokeObjectURL(url);
+          },
+          error: (err) => {
+            console.error('Error al descargar la nota de crédito', err);
+            this.snack.open(
+              'Hubo un problema al descargar la nota de crédito.',
+              'Cerrar',
+              { duration: 3000 }
+            );
+          },
+        });
+      },
+      error: (err) => {
+        console.error('No se encontró nota de crédito para esta venta', err);
+        this.snack.open(
+          'No se encontró nota de crédito para esta venta.',
+          'Cerrar',
+          {
+            duration: 3000,
+          }
+        );
+      },
+    });
   }
 }

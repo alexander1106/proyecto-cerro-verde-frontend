@@ -65,10 +65,10 @@
                         </thead>
                         <tbody>
                             <tr class="table-light" *ngFor="let m of movimientosFiltrados">
-                                <td>{{ m.producto.nombre }}</td>
+                                <td>{{ m.producto }}</td>
                                 <td>{{ m.fecha | date: 'dd/MM/yyyy'}}</td>
-                                <td>{{ m.tipo_movimiento }}</td>
-                                <td>{{ m.tipo_movimiento == 'Entrada' ? '+ ' + m.cantidad : '- ' + m.cantidad}}</td>
+                                <td>{{ m.tipoMovimiento }}</td>
+                                <td>{{ m.tipoMovimiento == 'Entrada' ? '+ ' + m.cantidad : '- ' + m.cantidad}}</td>
                             </tr>
                         </tbody>
                     </table>

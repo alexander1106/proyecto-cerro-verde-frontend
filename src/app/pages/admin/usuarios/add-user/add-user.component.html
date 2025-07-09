@@ -1,140 +1,83 @@
-      <div class="container">
-        <app-header></app-header>
+<div class="container">
+  <app-header></app-header>
 
-        <div class="contenido">
-          <h2>Registrar nuevo trabajador</h2>
+  <div class="card-form">
+    <h2>Registrar nuevo trabajador</h2>
 
-          <form #form="ngForm" (ngSubmit)="formSubmit(form)" novalidate>
-            <div class="form">
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Nombre</mat-label>
-                <input
-                  [(ngModel)]="user.nombre"
-                  name="nombre"
-                  required
-                  matInput
-                  placeholder="Digite su nombre"
-                />
-              </mat-form-field>
+    <form #form="ngForm" (ngSubmit)="formSubmit(form)" novalidate>
+      <div class="form-grid-2cols">
 
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Apellido</mat-label>
-                <input
-                  [(ngModel)]="user.apellidos"
-                  name="apellido"
-                  required
-                  matInput
-                  placeholder="Digite sus apellidos"
-                />
-              </mat-form-field>
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Nombre de usuario</mat-label>
-                <input
-                  required
-                  matInput
-                  [(ngModel)]="user.username"
-                  name="username"
-                  placeholder="Digite su usuario"
-                />
-                <mat-hint>El nombre de usuario debe ser único</mat-hint>
-              </mat-form-field>
+        <!-- Columna 1: Imagen -->
+        <div class="form-column">
+          <div class="form-image-upload">
+            <img [src]="imagenPrevia || 'assets/subir.jpg'" alt="Foto del trabajador" />
+            <input type="file" (change)="onFileSelected($event)" />
+          </div>
+        </div>
 
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Contraseña</mat-label>
-                <input
-                  matInput
-                  required
-                  [(ngModel)]="user.password"
-                  name="password"
-                  [type]="mostrarPassword ? 'text' : 'password'"
-                  placeholder="Contraseña"
-                />
-                <button
-                  mat-icon-button
-                  matSuffix
-                  type="button"
-                  (click)="mostrarPassword = !mostrarPassword"
-                  [attr.aria-label]="'Mostrar/ocultar contraseña'"
-                  [attr.aria-pressed]="mostrarPassword"
-                >
-                  <mat-icon>{{ mostrarPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
-                </button>
-                <mat-hint>
-                  Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo
-                </mat-hint>
-              </mat-form-field>
+        <!-- Columna 2: Campos del formulario -->
+        <div class="form-column form-fields">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput required [(ngModel)]="user.nombre" name="nombre" placeholder="Digite su nombre" />
+          </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>Apellido</mat-label>
+            <input matInput required [(ngModel)]="user.apellidos" name="apellido" placeholder="Digite sus apellidos" />
+          </mat-form-field>
 
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Email</mat-label>
-                <input
-                  [(ngModel)]="user.email"
-                  name="email"
-                  type="email"
-                  required
-                  matInput
-                  placeholder="Digite su correo"
-                />
-              </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de usuario</mat-label>
+            <input matInput required [(ngModel)]="user.username" name="username" placeholder="Digite su usuario" />
+            <mat-hint>Debe ser único</mat-hint>
+          </mat-form-field>
 
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Telefono</mat-label>
-                <input
-                  [(ngModel)]="user.telefono"
-                  name="telefono"
-                  matInput
-                  required
-                  placeholder="Digite su teléfono"
-                />
-              </mat-form-field>
-
-              <!-- Campo select para seleccionar el rol -->
-              <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Rol</mat-label>
-                <mat-select name="rol" [(ngModel)]="rolSeleccionado" required>
-                  <mat-option *ngFor="let rol of roles" [value]="rol.id">
-                    {{ rol.nombreRol }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <mat-form-field class="half-width" appearance="outline">
-                <mat-label>Estado</mat-label>
-                <mat-select name="estado" [(ngModel)]="user.enable" required>
-                  <mat-option [value]="true">Activo</mat-option>
-                  <mat-option [value]="false">Inactivo</mat-option>
-                </mat-select>
-              </mat-form-field>
-
-
-            <div class="form-image-upload">
-              <img
-                [src]="imagenPrevia || 'assets/subir.jpg'"
-                alt="Foto del trabajador"
-              />
-              <input type="file" (change)="onFileSelected($event)" />
-            </div>
-            </div>
-
-            <div class="form-actions">
-              <button
-              mat-raised-button
-              color="primary"
-              class="btn-primary"
-              [disabled]="!form.valid">
-              Registrar
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              required
+              [(ngModel)]="user.password"
+              name="password"
+              [type]="mostrarPassword ? 'text' : 'password'"
+              placeholder="Contraseña"
+            />
+            <button mat-icon-button matSuffix type="button" (click)="mostrarPassword = !mostrarPassword">
+              <mat-icon>{{ mostrarPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
             </button>
-              <button
-                mat-raised-button
-                color="accent"
-                type="reset"
-                style="margin-left: 20px"
-              >
-                Limpiar
-              </button>
-            </div>
-          </form>
+            <button mat-icon-button matSuffix type="button" (click)="generarContrasena()" aria-label="Generar contraseña">
+              <mat-icon>autorenew</mat-icon>
+            </button>
+            <mat-hint>Mín. 8 caracteres con mayúscula, minúscula, número y símbolo</mat-hint>
+          </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" required [(ngModel)]="user.email" name="email" placeholder="Digite su correo" />
+          </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>Teléfono</mat-label>
+            <input matInput required [(ngModel)]="user.telefono" name="telefono" placeholder="Digite su teléfono" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Rol</mat-label>
+            <mat-select name="rol" [(ngModel)]="rolSeleccionado" required>
+              <mat-option *ngFor="let rol of roles" [value]="rol.id">
+                {{ rol.nombreRol }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
       </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" [disabled]="!form.valid">Registrar</button>
+        <button mat-stroked-button color="warn" type="button">Cancelar</button>
+        <button mat-flat-button color="accent" type="reset">Limpiar</button>
+      </div>
+    </form>
+  </div>
+</div>

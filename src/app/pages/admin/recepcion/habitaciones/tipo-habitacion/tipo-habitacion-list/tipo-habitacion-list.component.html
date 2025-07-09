@@ -5,20 +5,26 @@
     <div class="info-trabajadores-linea">
       <h4>Gestión de Tipos de Habitación</h4>
 
-      <div class="mover">
-        <div class="buscador">
-          <div class="input-wrapper">
-            <input type="text" placeholder="Buscar habitación..." [(ngModel)]="filtroGeneral" />
-            <button type="button" class="btn-icono">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-
         <button class="btn-agregar">
           <a routerLink="/admin/recepcion/tipos/nuevo">+ Nuevo Tipo</a>
         </button>
+    </div>
+
+    <div class="filtros-container">
+      <div class="buscador">
+        <div class="input-wrapper">
+          <input type="text" placeholder="Buscar tipos por nombre, precio, límite.." [(ngModel)]="filtroGeneral" />
+          <button type="button" class="btn-icono">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
       </div>
+      <div class="filtros-select">
+        
+        <button class="btn-icon secondary fa-solid fa-arrows-rotate" (click)="limpiarFiltros()"></button>
+
+      </div>
+      
     </div>
 
     <div *ngIf="loading" class="loading">Cargando tipos de habitación...</div>
@@ -37,8 +43,8 @@
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Precio Público</th>
-            <th>Precio Corporativo</th>
+            <th>Limite Huespedes</th>
+            <th>Precio</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -46,8 +52,8 @@
           <tr *ngFor="let tipo of tipohabitacionesPaginadas; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ tipo.nombre }}</td>
-            <td class="precio">S/. {{ tipo.precio_publico }}</td>
-            <td class="precio">S/. {{ tipo.precio_corporativo }}</td>
+            <td>{{tipo.cantidadtipo}}</td>
+            <td class="precio">S/. {{ tipo.precio}}</td>
             <td class="acciones">
               <button class="btn-accion editar">
                 <a [routerLink]="['/admin/recepcion/tipos/editar', tipo.id_tipo_habitacion]">

@@ -134,45 +134,61 @@ rolSeleccionado: number | null = null;
         Swal.fire('Usuario guardado', 'Usuario registrado con éxito', 'success');
         this.router.navigate(['/admin/usuarios']);
       },
-      (error) => {
-        if (error.status === 409) {
-          const mensaje = error.error;
+(error) => {
+  if (error.status === 409) {
+    let mensaje = '';
 
-          if (mensaje.includes('correo') || mensaje.includes('Correo')) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Correo ya registrado',
-              text: 'El correo electrónico ya está registrado, por favor intente con otro.',
-              confirmButtonText: 'Aceptar'
-            });
-          } else if (mensaje.includes('usuario') || mensaje.includes('Usuario')) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Usuario ya registrado',
-              text: 'El nombre de usuario ya está en uso, por favor elija otro.',
-              confirmButtonText: 'Aceptar'
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Conflicto',
-              text: mensaje,
-              confirmButtonText: 'Aceptar'
-            });
-          }
-        }
-         else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error en el sistema',
-            text: 'Ha ocurrido un error en el sistema, por favor intente nuevamente.',
-            confirmButtonText: 'Aceptar'
-          });
-        }
-        console.error(error);
-      }
+    // Adaptar según estructura de backend
+    if (typeof error.error === 'string') {
+      mensaje = error.error;
+    } else if (typeof error.error === 'object') {
+      mensaje = error.error.error || JSON.stringify(error.error);
+    }
+
+    if (mensaje.toLowerCase().includes('correo')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Correo ya registrado',
+        text: 'El correo electrónico ya está registrado, por favor intente con otro.',
+        confirmButtonText: 'Aceptar'
+      });
+    } else if (mensaje.toLowerCase().includes('usuario')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Usuario ya registrado',
+        text: 'El nombre de usuario ya está en uso, por favor elija otro.',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Conflicto',
+        text: mensaje,
+        confirmButtonText: 'Aceptar'
+      });
+    }
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error en el sistema',
+      text: 'Ha ocurrido un error en el sistema, por favor intente nuevamente.',
+      confirmButtonText: 'Aceptar'
+    });
+  }
+  console.error(error);
+}
+
     );
   }
+generarContrasena(): void {
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-={}[]|:;<>,.?/~`';
+  let contrasena = '';
+  for (let i = 0; i < 12; i++) {
+    contrasena += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  }
+  this.user.password = contrasena;
+  this.snack.open('Contraseña generada automáticamente', 'Cerrar', { duration: 3000 });
+}
 
   cargarModulos(): void {
     this.modulosService.listarModulos().subscribe(
