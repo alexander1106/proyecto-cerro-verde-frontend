@@ -1,84 +1,198 @@
-/* src/app/pages/admin/reportes/reportes.component.scss */
+/* reportes-compras.component.css */
 
-/* Contenedor general para las pestañas */
-.reportes-container {
-  padding: 16px;
+/* 1) Variables CSS */
+:host {
+  --color-primary: #667eea;
+  --color-primary-dark: #4f46e5;
+  --color-bg-field: #f9fafb;
+  --color-bg-card: #ffffff;
+  --color-text-muted: #6b7280;
+  --border-radius: 8px;
+  --transition-fast: 0.3s;
 }
 
-/* Cada pestaña: padding interno */
-.tab-content {
-  padding: 16px;
-}
-
-/* Título de sección */
+/* 2) Título centrado con subrayado */
 h2 {
-  margin-bottom: 16px;
+  text-align: center;
+  position: relative;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+h2::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 4px;
+  background: var(--color-primary);
+  border-radius: 2px;
 }
 
-/* Formulario de filtros: inputs y selects alineados en fila con gap */
+/* 3) Filtros + acciones en una sola fila */
 .report-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: flex-end;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr)) auto auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: var(--color-bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
 }
 
-/* Cada campo del formulario (inputs y selects) */
-.form-field {
-  flex: 0 1 200px;
-  min-width: 180px;
-}
-
-/* Ajuste específico para el selector de stock */
-.form-field mat-form-field {
+/* 4) Campos compactos */
+.report-form .form-field .mat-form-field {
   width: 100%;
+  max-width: 140px;
+  background: var(--color-bg-field);
+  border-radius: calc(var(--border-radius) / 2);
+}
+.report-form .form-field .mat-form-field .mat-form-field-flex {
+  padding: 0 0.3rem;
+  min-height: 40px;
+}
+.report-form .form-field .mat-form-field .mat-form-field-outline {
+  border-color: transparent;
+}
+.report-form .form-field .mat-form-field:hover .mat-form-field-outline {
+  border-color: var(--color-primary-dark);
 }
 
-/* Estilos para los botones de acción */
-.form-actions {
+/* 5) Generar + PDF + Excel alineados */
+.report-form > .form-actions {
+  grid-column: 5 / span 3;
   display: flex;
-  gap: 12px;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
-/* Separador entre filtros y resultados */
+/* 6) Botones con relieve y tamaño reducido */
+.form-actions button {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+.form-actions button:hover {
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+.form-actions button:active {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
+}
+.form-actions button:disabled {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-text-muted);
+  box-shadow: none;
+}
+
+/* 7) Separador */
 .mat-divider {
-  margin: 24px 0;
+  margin: 2rem 0;
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Contenedor de los KPI cards */
+/* 8) KPI Cards adaptables */
 .kpi-container {
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
-
-/* Cada tarjeta de KPI se expande igual */
-.kpi-card {
-  flex: 1;
+.kpi-container .kpi-card {
+  flex: 0 1 auto;              /* no estiren, sino al contenido */
+  background: var(--color-bg-card);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   text-align: center;
+  min-width: 120px;
+  max-width: 240px;
+}
+.kpi-container .kpi-card mat-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.kpi-container .kpi-card h3 {
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
-/* Contenedor de la tabla y su buscador */
+/* 9) Gráfico centrado y agrandado */
+canvas[baseChart] {
+  display: block;
+  margin: 0 auto 0.5rem;
+  width: 80% !important;
+  max-width: 600px !important;
+  height: auto !important;
+}
+
+/* 10) Contenedor de tabla */
 .table-container {
-  margin-top: 16px;
+  background: var(--color-bg-card);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  margin-top: 0; /* ajustar pegado al gráfico */
 }
 
-/* Input de filtro de tabla */
+/* 11) Filtro de tabla */
 .filter-field {
-  width: 300px;
-  margin-bottom: 8px;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 1rem;
+}
+.filter-field .mat-form-field {
+  background: var(--color-bg-field);
+  border-radius: calc(var(--border-radius) / 2);
 }
 
-/* Tabla con elevación y 100% de ancho */
+/* 12) Estilos de la tabla */
 .mat-elevation-z8 {
   width: 100%;
 }
+.mat-elevation-z8 th {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.mat-elevation-z8 tr:nth-child(even) {
+  background: rgba(102, 126, 234, 0.03);
+}
 
-/* Mensaje cuando no hay datos */
+/* 13) Mensaje “sin datos” */
 .no-data {
-  margin-top: 24px;
+  margin-top: 2rem;
   font-style: italic;
-  color: gray;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* 14) Colorear PDF y Excel */
+.report-form .form-actions > button:nth-child(2) {
+  background: #E53935;
+}
+.report-form .form-actions > button:nth-child(2):hover {
+  background: #d32f2f;
+}
+.report-form .form-actions > button:nth-child(3) {
+  background: #43A047;
+}
+.report-form .form-actions > button:nth-child(3):hover {
+  background: #388E3C;
 }

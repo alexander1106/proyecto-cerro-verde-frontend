@@ -1,9 +1,12 @@
+// src/app/modules/dashboard-inicio/dashboard-inicio.component.ts
+
+import { Component, OnInit } from '@angular/core';
 import {
-  Component,
-  OnInit,
-} from '@angular/core';
-import { DashboardInicioService, Kpis, MesTotal } from '../../../../service/dashboard-inicio.service';
-import { ProductoCantidad } from '../../../../service/dashboard-inicio.service';
+  DashboardInicioService,
+  Kpis,
+  MesTotal,
+  ProductoCantidad
+} from '../../../../service/dashboard-inicio.service';
 
 @Component({
   selector: 'app-dashboard-inicio',
@@ -12,9 +15,11 @@ import { ProductoCantidad } from '../../../../service/dashboard-inicio.service';
   styleUrls: ['./dashboard-inicio.component.css']
 })
 export class DashboardInicioComponent implements OnInit {
+  // Ahora Kpis incluye ingresosHoy, egresosHoy, reservasHoy y salonesHoy
   kpis!: Kpis;
-  habitacionesPorMes: MesTotal[] = [];
-  salonesPorMes:     MesTotal[] = [];
+
+  habitacionesPorMes: MesTotal[]       = [];
+  salonesPorMes:     MesTotal[]       = [];
   topProductos:      ProductoCantidad[] = [];
 
   habChartData: {
@@ -39,11 +44,19 @@ export class DashboardInicioComponent implements OnInit {
     }
   };
 
-  private monthMap: Record<string,string> = {
-    January: 'Enero', February: 'Febrero', March: 'Marzo',
-    April: 'Abril', May: 'Mayo', June: 'Junio',
-    July: 'Julio', August: 'Agosto', September: 'Septiembre',
-    October: 'Octubre', November: 'Noviembre', December: 'Diciembre'
+  private monthMap: Record<string, string> = {
+    January:   'Enero',
+    February:  'Febrero',
+    March:     'Marzo',
+    April:     'Abril',
+    May:       'Mayo',
+    June:      'Junio',
+    July:      'Julio',
+    August:    'Agosto',
+    September: 'Septiembre',
+    October:   'Octubre',
+    November:  'Noviembre',
+    December:  'Diciembre'
   };
 
   private colorPalette = [
@@ -59,10 +72,12 @@ export class DashboardInicioComponent implements OnInit {
 
   ngOnInit(): void {
     const anio = new Date().getFullYear();
+
     this.ds.loadAll(anio).subscribe(result => {
+      // Asignamos todos los KPIs: ingresosHoy, egresosHoy, reservasHoy y salonesHoy
       this.kpis = result.kpis;
 
-      // Habitaciones
+      // Habitaciones por mes
       this.habitacionesPorMes = result.habitaciones;
       this.habChartData = {
         labels: result.habitaciones.map(m => this.monthMap[m.mes] || m.mes),
@@ -75,7 +90,7 @@ export class DashboardInicioComponent implements OnInit {
         }]
       };
 
-      // Salones
+      // Salones por mes
       this.salonesPorMes = result.salones;
       this.salonChartData = {
         labels: result.salones.map(m => this.monthMap[m.mes] || m.mes),
@@ -88,7 +103,7 @@ export class DashboardInicioComponent implements OnInit {
         }]
       };
 
-      // Productos
+      // Top 5 productos
       this.topProductos = result.topProd;
     });
   }

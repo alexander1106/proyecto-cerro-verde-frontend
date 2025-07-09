@@ -1,11 +1,66 @@
-/* Layout principal con CSS Grid */
+/* ============================= */
+/*  Layout principal con CSS Grid (áreas) */
+/* ============================= */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  /* 4 filas: 
+     1) Ingresos/Egresos 
+     2) Reservas Hab / Top5 
+     3) Reservas Sal / Top5 
+     4) Hab Mes / Sal Mes 
+  */
+  grid-template-rows: auto auto auto auto;
+  grid-template-areas:
+    "ingHoy    egHoy"
+    "resHoy    top5"
+    "salHoy    top5"
+    "habMes    salonMes";
   gap: 1.5rem;
   padding: 1.5rem;
 }
+
+/* ============================= */
+/*  Asignación de áreas         */
+/* ============================= */
+/* 1) Ingresos Hoy */
+.dashboard-grid > mat-card.kpi-card:nth-child(1) {
+  grid-area: ingHoy;
+}
+
+/* 2) Egresos Hoy */
+.dashboard-grid > mat-card.kpi-card:nth-child(2) {
+  grid-area: egHoy;
+}
+
+/* 3) Reservas Habitaciones Hoy */
+.dashboard-grid > mat-card.kpi-card:nth-child(3) {
+  grid-area: resHoy;
+}
+
+/* 4) Reservas Salones Hoy */
+.dashboard-grid > mat-card.kpi-card:nth-child(4) {
+  grid-area: salHoy;
+}
+
+/* 5) Top 5 Productos (span 2 filas) */
+.dashboard-grid > mat-card.list-card {
+  grid-area: top5;
+}
+
+/* 6) Habitaciones por Mes */
+.dashboard-grid > mat-card.chart-card:nth-child(5) {
+  grid-area: habMes;
+}
+
+/* 7) Salones por Mes */
+.dashboard-grid > mat-card.chart-card:nth-child(6) {
+  grid-area: salonMes;
+}
+
+/* ============================= */
+/*  Estilos generales            */
+/* ============================= */
 
 /* Tarjetas de KPI */
 .kpi-card {
@@ -17,16 +72,13 @@
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  text-align: left;
 }
-
 .kpi-card .mat-card-title {
   font-size: 1rem;
   font-weight: 500;
-  margin-bottom: 0.25rem;
   color: #555;
+  margin-bottom: 0.25rem;
 }
-
 .kpi-value {
   font-size: 1.8rem;
   font-weight: 600;
@@ -40,22 +92,19 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   padding: 1rem;
 }
-
 .chart-card .mat-card-title {
   font-size: 1rem;
   font-weight: 500;
-  margin-bottom: 0.5rem;
   color: #333;
+  margin-bottom: 0.5rem;
 }
-
-/* Ajuste de tamaño de los canvas */
 .chart-container {
   position: relative;
-  height: 200px; /* reducido de 250px */
   width: 100%;
+  height: 200px;
 }
 
-/* Tarjetas de listas */
+/* Tarjeta Top 5 Productos */
 .list-card {
   background: #fff;
   border-radius: 8px;
@@ -64,61 +113,34 @@
   display: flex;
   flex-direction: column;
 }
-
 .list-card .mat-card-title {
   font-size: 1rem;
   font-weight: 500;
-  margin-bottom: 0.5rem;
   color: #333;
+  margin-bottom: 0.5rem;
 }
-
 .list-card mat-list {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
 }
-
-/* Centrar texto dentro de cada ítem */
 .list-card mat-list-item {
-  justify-content: center; 
-  text-align: center;      
-}
-
-/* Asegura que el span de producto y de cantidad no se estiren */
-.list-card mat-list-item .producto,
-.list-card mat-list-item .cantidad {
-  flex: none; 
-}
-
-/* Opcional: un poco de separación vertical más generosa */
-.list-card mat-list-item {
+  text-align: center;
   padding: 0.75rem 0;
 }
+.list-card mat-list-item:last-child {
+  border-bottom: none;
+}
 
-
-/* Responsive: una sola columna en pantallas pequeñas */
+/* Responsive: una sola columna en móvil */
 @media (max-width: 768px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: repeat(7, auto);
     padding: 1rem;
     gap: 1rem;
   }
-  .kpi-card {
-    text-align: center;
-  }
-}
-
-/* Le decimos que esa tarjeta ocupe dos columnas */
-.span-2 {
-  grid-column: 1 / -1;
-  justify-self: center; /* la centra horizontalmente */
-  max-width: 600px;     /* si quieres limitarle un ancho máximo */
-}
-
-/* Y en responsive quédese también a una columna */
-@media (max-width: 768px) {
-  .span-2 {
-    grid-column: auto;
-    max-width: none;
+  .dashboard-grid > mat-card {
+    grid-column: 1 !important;
   }
 }
