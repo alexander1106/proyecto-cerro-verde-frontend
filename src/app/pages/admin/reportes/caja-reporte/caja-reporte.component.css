@@ -1,84 +1,153 @@
-/* ============================= */
-/*  Grid principal del host      */
-/* ============================= */
-:host {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto /* header */
-                     auto /* form + descargas */
-                     auto /* charts */
-                     auto /* table */;
-  grid-template-areas:
-    "header   header"
-    "form     downloads"
-    "charts   charts"
-    "table    table";
-  gap: 1rem 1.5rem;
-  padding: 1rem;
+
+.reporte-caja-container {
+  margin: 16px auto;
+  max-width: 1200px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.reporte-caja-container h2,
+.reporte-caja-titulo {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
 }
 
 /* ============================= */
-/*  1) Header (tu barra Dashboard) */
+/*  Fila única: filtros + acciones */
 /* ============================= */
-app-header {
-  grid-area: header;
-}
-
-/* ================================== */
-/*  2) Formulario de filtros (izq)    */
-/* ================================== */
 .filtro-form {
-  grid-area: form;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;    /* centra toda la fila */
+  gap: 5rem;
+  margin-bottom: 1.5rem;
 }
 
-/* Asegura que el botón Generar no crezca */
-.filtro-form button[type="submit"] {
+/* Campos (Datepickers y Select) más compactos */
+.filtro-form mat-form-field {
   flex: 0 0 auto;
+  min-width: 120px;
+  max-width: 180px;
+  background: #f9fafb;
+  border-radius: 4px;
+}
+.filtro-form mat-form-field .mat-form-field-flex {
+  padding: 0 0.5rem;
+  min-height: 40px;
+}
+.filtro-form mat-form-field .mat-form-field-outline {
+  border-color: transparent;
+}
+.filtro-form mat-form-field:hover .mat-form-field-outline {
+  border-color: #667eea;
 }
 
-/* ================================== */
-/*  3) Botones de descarga (der)      */
-/* ================================== */
-.descargas {
-  grid-area: downloads;
+/* Botón Generar */
+.filtro-form button.generar-btn {
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background: #667eea;
+  color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  text-transform: none;
+  transition: background 0.3s, transform 0.2s;
+}
+.filtro-form button.generar-btn:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+}
+
+/* Contenedor para iconos de descarga al lado de Generar */
+.descargas-inline {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;               /* más pegados */
+  margin: 0;                 /* eliminar empuje derecho */
 }
 
-/* ================================== */
-/*  4) Gráficas                       */
-/* ================================== */
+/* Iconos de descarga (PDF y Excel) — un poco más grandes */
+.descargas-inline button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  min-width: auto;
+  border-radius: 6px;
+  border: none;
+  background: #f0f4ff;
+  transition: background 0.2s;
+}
+.descargas-inline button mat-icon,
+.descargas-inline button i {
+  font-size: 22px;          /* icono más grande */
+}
+
+/* PDF: rojo */
+.descargas-inline button.pdf-btn mat-icon {
+  color: #E53935;
+}
+.descargas-inline button.pdf-btn:hover {
+  background: rgba(229,57,53,0.1);
+}
+
+/* Excel: verde */
+.descargas-inline button.excel-btn i {
+  color: #43A047;
+}
+.descargas-inline button.excel-btn:hover {
+  background: rgba(67,160,71,0.1);
+}
+
+/* ============================= */
+/*  Gráfica                       */
+/* ============================= */
 .charts {
-  grid-area: charts;
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  max-height: 300px;       /* limita la altura total */
-  overflow: hidden;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
 }
-
 .charts canvas {
-  flex: 1 1 300px;
-  max-width: 500px;
-  width: 100% !important;  /* forzar ancho completo */
-  height: 200px !important;/* altura fija */
+  max-width: 600px;
+  width: 100% !important;
+  height: 300px !important;
 }
 
-/* ================================== */
-/*  5) Tabla                          */
-/* ================================== */
+/* ============================= */
+/*  Tabla de resultados           */
+/* ============================= */
 .tabla-report {
-  grid-area: table;
+  margin-bottom: 1.5rem;
   overflow: auto;
+  background: #fafafa;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 1rem;
+}
+.tabla-report .mat-elevation-z8 {
+  width: 100%;
+}
+.tabla-report th {
+  background: #667eea;
+  color: #fff;
 }
 
-/* Paginador un pelín de margen */
-.mat-paginator {
-  margin-top: 0.5rem;
+/* ============================= */
+/*  Responsive (mobile)           */
+/* ============================= */
+@media (max-width: 768px) {
+  .filtro-form {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .descargas-inline {
+    justify-content: center;
+    width: 100%;
+  }
 }
