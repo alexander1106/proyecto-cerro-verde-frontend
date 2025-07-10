@@ -1,9 +1,8 @@
-import { ReservasService } from './../../../service/reserva.service';
+import { VentasService } from './../../../service/ventas.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CajaService } from '../../../service/caja.service';
 import Swal from 'sweetalert2';
-import { Reserva } from '../../../service/reserva.service';
 
 @Component({
   selector: 'app-caja-apertura',
@@ -19,9 +18,11 @@ export class CajaAperturaComponent implements OnInit {
     montoTransaccion: null,
     tipo: { id: 1 }, // 1: ingreso, 2: egreso
     motivo: '',
-    reservaDevueltaId: null
+    ventaDevueltaId: null
   };
-  reservasCanceladas: Reserva[] = [];
+
+  ventasCanceladas: any[] = [];
+
   resumenMetodoPago = {
     efectivo: 0,
     yape: 0,
@@ -180,7 +181,7 @@ export class CajaAperturaComponent implements OnInit {
       .reduce((sum, t) => sum + t.montoTransaccion, 0);
   }
   
-  constructor(private cajaService: CajaService, private reservaService: ReservasService, private router: Router) {}
+  constructor(private cajaService: CajaService, private ventasService: VentasService, private router: Router) {}
 
   ngOnInit() {
     this.verificarEstadoCaja();   
@@ -220,24 +221,25 @@ export class CajaAperturaComponent implements OnInit {
     this.mostrarModalDetalleArqueo = true;
   }
 
-  cargarReservasCanceladas() {
-    this.reservaService.getReservas().subscribe({
-      next: (reservas: Reserva[]) => {
-        // Filtrar solo las canceladas en el componente
-        this.reservasCanceladas = reservas.filter(r => r.estado_reserva?.toLowerCase() === 'cancelada');
+  cargarVentasCanceladas() {
+    this.ventasService.listarVenta().subscribe({
+      next: (ventas: any[]) => {
+        this.ventasCanceladas = ventas.filter(
+          v => v.estadoVenta?.toLowerCase() === 'cancelado'
+        );
       },
       error: () => {
-        console.error('No se pudieron cargar las reservas');
+        console.error('No se pudieron cargar las ventas canceladas');
       }
     });
-  }
+  }  
 
   onMotivoChange() {
     if (this.nuevaTransaccion.motivo === 'Devolución') {
-      this.cargarReservasCanceladas();
+      this.cargarVentasCanceladas();
     } else {
-      this.nuevaTransaccion.reservaDevueltaId = null;
-    }
+      this.nuevaTransaccion.ventaDevueltaId = null;
+    }    
   }  
   
   verificarEstadoCaja() {
@@ -353,14 +355,14 @@ export class CajaAperturaComponent implements OnInit {
       return;
     }
   
-    if (this.nuevaTransaccion.motivo === 'Devolución' && !this.nuevaTransaccion.reservaDevueltaId) {
+    if (this.nuevaTransaccion.motivo === 'Devolución' && !this.nuevaTransaccion.ventaDevueltaId) {
       Swal.fire({
         icon: 'warning',
-        title: 'Reserva requerida',
-        text: 'Seleccione una reserva asociada a la devolución.',
+        title: 'Venta requerida',
+        text: 'Seleccione una venta asociada a la devolución.',
       });
       return;
-    }
+    }    
   
     this.cajaService.guardarTransaccion(this.nuevaTransaccion).subscribe({
       next: () => {
@@ -368,7 +370,7 @@ export class CajaAperturaComponent implements OnInit {
           montoTransaccion: null,
           tipo: { id: 1 },
           motivo: '',
-          reservaDevueltaId: null
+          ventaDevueltaId: null
         };
         this.cargarTransacciones();
         this.verificarEstadoCaja();

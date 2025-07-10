@@ -452,14 +452,14 @@
           </div>
 
           <div class="mb-3" *ngIf="nuevaTransaccion.motivo === 'Devolución'">
-            <label class="form-label">Reserva asociada a la devolución</label>
-            <select class="form-select" [(ngModel)]="nuevaTransaccion.reservaDevueltaId" name="reservaDevueltaId" required>
-              <option value="">Seleccione una reserva cancelada</option>
-              <option *ngFor="let reserva of reservasCanceladas" [value]="reserva.id_reserva">
-                Reserva #{{ reserva.id_reserva }} - {{ reserva.cliente.nombre }} ({{ reserva.fecha_inicio | date:'shortDate' }})
+            <label class="form-label">Venta asociada a la devolución</label>
+            <select class="form-select" [(ngModel)]="nuevaTransaccion.ventaDevueltaId" name="ventaDevueltaId" required>
+              <option value="">Seleccione una venta cancelada</option>
+              <option *ngFor="let venta of ventasCanceladas" [value]="venta.idVenta">
+                Venta #{{ venta.idVenta }} - {{ venta.cliente?.nombre || 'Cliente sin nombre' }} ({{ venta.fecha | date:'shortDate' }})
               </option>
             </select>
-          </div>
+          </div>          
 
           <div class="d-grid">
             <button class="btn btn-primary" type="submit">
