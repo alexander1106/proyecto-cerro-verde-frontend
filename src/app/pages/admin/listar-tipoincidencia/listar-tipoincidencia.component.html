@@ -27,8 +27,8 @@
             <td>{{ tipo.id_tipo_incidencia }}</td>
             <td>{{ tipo.nombre }}</td>
             <td>
-              <button class="btn btn-sm btn-warning me-2" (click)="editarTipo(tipo)">Editar</button>
-              <button class="btn btn-sm btn-danger" (click)="eliminarTipo(tipo.id_tipo_incidencia)">Eliminar</button>
+              <button class="btn btn-sm" (click)="editarTipo(tipo)"><i class="edit fa-regular fa-pen-to-square"></i></button>
+              <button class="btn btn-sm" (click)="eliminarTipo(tipo.id_tipo_incidencia)"><i class="delete fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
         </tbody>

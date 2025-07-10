@@ -32,11 +32,11 @@
             <td>{{ area.id_area }}</td>
             <td>{{ area.nombre }}</td>
             <td>
-              <button class="btn btn-sm btn-warning me-2" (click)="editarArea(area)">
-                Editar
+              <button class="btn btn-sm me-2" (click)="editarArea(area)">
+                <i class="edit fa-regular fa-pen-to-square"></i>
               </button>
-              <button class="btn btn-sm btn-danger" (click)="eliminarArea(area.id_area)">
-                Eliminar
+              <button class="btn btn-sm" (click)="eliminarArea(area.id_area)">
+                <i class="delete fa-regular fa-trash-can"></i>
               </button>
             </td>
           </tr>
@@ -54,6 +54,4 @@
 ></app-registrar-area-hotel>
 
 
-  <!-- Mensaje debug -->
-  <p *ngIf="mostrarModal">✅ Modal Activo</p>
 </div>
