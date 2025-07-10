@@ -101,7 +101,7 @@ export class CheckinCheckoutFormComponent implements OnInit {
 
   initForm(): void {
     this.checkForm = this.fb.group({
-      reserva: [null, Validators.required],
+      reserva: ['', Validators.required],
       fecha_checkin: [null, Validators.required],
       fecha_checkout: [{ value: null, disabled: true }], // deshabilitado y sin validador
       estado: [1]
@@ -281,7 +281,7 @@ export class CheckinCheckoutFormComponent implements OnInit {
         
             this.habitacionesReserva = (reserva.habitacionesXReserva ?? []).map(hr => ({
               ...hr,
-              huespedes: huespedes.filter(h => h.habres?.id_hab_reserv === hr.id_hab_reserv)
+              huespedes: huespedes.filter(h => h.habres?.id_hab_reserv === hr.id_hab_reserv && h.estado === 1)
             }));
           },
           error: (err) => {
@@ -414,42 +414,71 @@ export class CheckinCheckoutFormComponent implements OnInit {
         return;
       }
     
+      this.huespedService.getHuespedes().subscribe(huespedes => {
+        const yaEsta = huespedes.some(h =>
+          h.cliente?.idCliente === cliente.idCliente && h.estado === 1
+        );
+    
+        if (yaEsta) {
+          Swal.fire(
+            'No permitido',
+            `El cliente ${cliente.nombre} ya está en un checkin en otra habitación o reserva.`,
+            'warning'
+          );
+          return;
+        }
+    
+        this.registrarHuesped(cliente);
+      });
+    }
+    
+    registrarHuesped(cliente: Cliente) {
       Swal.fire({
         title: '¿Asignar cliente?',
-        html: `
-          <b>${cliente.nombre}</b><br>
-          DNI/RUC: ${cliente.dniRuc}<br>
-          Tel: ${cliente.telefono}<br>
-          Habitación: #${this.habitacionActualParaAsignar.habitacion.numero}
-        `,
+        html: `<b>${cliente.nombre}</b><br>
+        DNI/RUC: ${cliente.dniRuc}<br>
+        Tel: ${cliente.telefono}<br>
+        Habitación: #${this.habitacionActualParaAsignar?.habitacion.numero}`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Sí, asignar',
         cancelButtonText: 'Cancelar'
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          // 🚀 Payload con solo IDs
           const huespedData = {
             habres: { id_hab_reserv: this.habitacionActualParaAsignar?.id_hab_reserv },
             cliente: { idCliente: cliente.idCliente },
             estado: 1
           } as unknown as Huespedes;
-          
+    
           this.huespedService.createHuesped(huespedData).subscribe({
-            next: () => {
+            next: nuevoHuesped => {
+              const habitacion = this.habitacionesReserva.find(
+                h => h.id_hab_reserv === this.habitacionActualParaAsignar?.id_hab_reserv
+              );
+              if (habitacion) {
+                nuevoHuesped.cliente = cliente;
+                habitacion.huespedes.push({
+                  ...nuevoHuesped,
+                  cliente: cliente
+                });
+                console.log('Nuevo huésped:', nuevoHuesped);
+
+                
+              }
               Swal.fire('Asignado', 'Cliente asignado correctamente', 'success');
               this.cerrarModalCliente();
             },
-            error: (err) => {
+            error: err => {
               console.error('❌ Error al crear huésped:', err);
               Swal.fire('Error', 'No se pudo asignar el huésped', 'error');
             }
           });
-          
         }
       });
     }
-       
+    
+    
     
     
 }

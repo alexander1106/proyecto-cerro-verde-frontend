@@ -1,147 +1,217 @@
 <div class="container">
   <app-header></app-header>
 
-  <form *ngIf="checkForm"
-        [formGroup]="checkForm"
-        (ngSubmit)="onSubmit()"
-        [class.disabled]="loading"
-        class="form-container shadow rounded bg-white"
-        novalidate>
+  <div class="form-container shadow rounded bg-white">
+      <!-- FORMULARIO -->
+    <form *ngIf="checkForm"
+            [formGroup]="checkForm"
+            (ngSubmit)="onSubmit()"
+            [class.disabled]="loading"
+            novalidate
+            class="flex-container">
 
-    <h3>{{ isEditing ? 'Registrar Checkout' : 'Registrar Checkin' }}</h3>
+      
+        <div class="form-side">
+          <h3>{{ isEditing ? 'Registrar Checkout' : 'Registrar Checkin' }}</h3>
 
-    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+          <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
+        <div class="mb-3">
+          <label for="reserva" class="form-label">Reserva</label>
+          <select id="reserva"
+                  formControlName="reserva"
+                  class="form-control"
+                  (change)="onReservaChange($event)"
+                  [disabled]="isEditing || reservas.length === 0"
+                  [ngClass]="{'is-invalid': submitted && f['reserva'].errors}">
+            <option value="">Seleccione una reserva</option>
+            <option *ngFor="let reserva of reservas" [value]="reserva.id_reserva">
+              Reserva #{{ reserva.id_reserva }} - {{ reserva.cliente?.nombre }}
+            </option>
+          </select>
+          <div *ngIf="submitted && f['reserva'].errors" class="invalid-feedback">
+            <div *ngIf="f['reserva'].errors['required']">Reserva es requerida</div>
+          </div>
+        </div>
 
-    <div class="mb-3">
-      <label for="reserva" class="form-label">Reserva</label>
-      <select id="reserva"
-              formControlName="reserva"
-              class="form-control"
-              (change)="onReservaChange($event)"
-              [disabled]="isEditing || reservas.length === 0"
-              [ngClass]="{'is-invalid': submitted && f['reserva'].errors}">
-        <option value="" *ngIf="reservas.length === 0">Cargando reservas...</option>
-        <option value="" *ngIf="reservas.length > 0">Seleccione una reserva</option>
-        <option *ngFor="let reserva of reservas" [value]="reserva.id_reserva">
-          Reserva #{{ reserva.id_reserva }} - {{ reserva.cliente?.nombre }}
-        </option>
-      </select>
-      <div *ngIf="submitted && f['reserva'].errors" class="invalid-feedback">
-        <div *ngIf="f['reserva'].errors['required']">Reserva es requerida</div>
+        <div class="tabla-vacia"  *ngIf="habitacionesReserva.length === 0">
+          Seleccione una reserva para ver las habitaciones y huéspedes.
+        </div>
+        <!-- LA TABLA AHORA VA AQUÍ DEBAJO DEL SELECT -->
+        <div *ngIf="habitacionesReserva.length > 0" class="mt-4">
+          <h5>Asigne huéspedes a las habitaciones reservadas</h5>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Habitación</th>
+                <th>Tipo</th>
+                <th>Capacidad</th>
+                <th>Huéspedes</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let hr of habitacionesReserva">
+                <td>#{{ hr.habitacion.numero }}</td>
+                <td>{{ hr.habitacion.tipo_habitacion.nombre }}</td>
+                <td>{{ hr.habitacion.tipo_habitacion.cantidadtipo }}</td>
+                <td>
+                  <ul *ngIf="hr.huespedes.length > 0">
+                    <li *ngFor="let huesped of hr.huespedes">
+                      {{ huesped.cliente.nombre }} ({{ huesped.cliente.dniRuc }})
+                      
+                    </li>
+                    
+                  </ul>
+                  
+                  <span *ngIf="!hr.huespedes || hr.huespedes.length === 0">
+                    Sin huéspedes asignados
+                  </span>
+                </td>
+                <td>
+                  <button *ngIf="hr.huespedes.length < hr.habitacion.tipo_habitacion.cantidadtipo"
+                          class="btn btn-sm btn-primary"
+                          (click)="abrirModalClientePara(hr)">
+                    <i class="fa solid fa-user-plus"></i>
+                  </button>
+                  <span *ngIf="hr.huespedes.length >= hr.habitacion.tipo_habitacion.cantidadtipo" class="text-danger">
+                    Capacidad completa
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+
+      <!-- FECHAS Y BOTONES A LA DERECHA -->
+      <div class="table-side">
+        <div class="mb-3">
+          <label for="fecha_checkin" class="form-label">Fecha y Hora de Checkin</label>
+          <input type="datetime-local"
+          id="fecha_checkin"
+          formControlName="fecha_checkin"
+          class="form-control"
+          [ngClass]="{'is-invalid': submitted && f['fecha_checkin'].errors}">
+   
+          <div *ngIf="submitted && f['fecha_checkin'].errors" class="invalid-feedback">
+            <div *ngIf="f['fecha_checkin'].errors['required']">Fecha de checkin es requerida</div>
+          </div>
+        </div>
+    
+        <div class="mb-3">
+          <label for="fecha_checkout" class="form-label">Fecha y Hora de Checkout</label>
+          <input type="datetime-local"
+          id="fecha_checkout"
+          formControlName="fecha_checkout"
+          class="form-control"
+          [ngClass]="{'is-invalid': submitted && f['fecha_checkout'].errors}">
+          <div *ngIf="submitted && f['fecha_checkout'].errors" class="invalid-feedback">
+            <div *ngIf="f['fecha_checkout'].errors['required']">Fecha de checkout es requerida</div>
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-success">
+            {{ isEditing ? 'Registrar Checkout' : 'Registrar Checkin' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="volver()">
+            Cancelar
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
 
-    <div *ngIf="habitacionesReserva.length > 0" class="mt-4">
-      <h5>Habitaciones reservadas</h5>
-    
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th>Habitación</th>
-            <th>Tipo</th>
-            <th>Límite</th>
-            <th>Huéspedes asignados</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let hr of habitacionesReserva">
-            <td>#{{ hr.habitacion.numero }}</td>
-            <td>{{ hr.habitacion.tipo_habitacion.nombre }}</td>
-            <td>{{ hr.habitacion.tipo_habitacion.cantidadtipo }}</td>
-            
-            <!-- Aseguramos existencia con un ngIf -->
-            <td *ngIf="hr.huespedes as huespedes">
-              <ul *ngIf="huespedes.length > 0" class="mb-0">
-                <li *ngFor="let huesped of huespedes">
-                  {{ huesped.cliente.nombre }} ({{ huesped.cliente.dniRuc }})
-                </li>
-              </ul>
-              <span *ngIf="huespedes.length === 0">
-                Sin huéspedes asignados
-              </span>
-            </td>
-          
-            <td *ngIf="hr.huespedes as huespedes">
-              <button 
-                *ngIf="huespedes.length < hr.habitacion.tipo_habitacion.cantidadtipo"
-                class="btn btn-sm btn-primary"
-                (click)="abrirModalClientePara(hr)">
-                Asignar o crear cliente
-              </button>
-              <span *ngIf="huespedes.length >= hr.habitacion.tipo_habitacion.cantidadtipo" class="text-danger">
-                Límite alcanzado
-              </span>
-            </td>
-          </tr>
-          
-        </tbody>
-      </table>
     </div>
-    
-    
+  </div>
 
-    <div class="mb-3">
-      <label for="fecha_checkin" class="form-label">Fecha y Hora de Checkin</label>
-      <input type="datetime-local"
-             id="fecha_checkin"
-             formControlName="fecha_checkin"
-             [readOnly]="isEditing"
-             class="form-control"
-             [ngClass]="{'is-invalid': submitted && f['fecha_checkin'].errors}">
-      <div *ngIf="submitted && f['fecha_checkin'].errors" class="invalid-feedback">
-        <div *ngIf="f['fecha_checkin'].errors['required']">Fecha de checkin es requerida</div>
-      </div>
-    </div>
 
-    <div class="mb-3">
-      <label for="fecha_checkout" class="form-label">Fecha y Hora de Checkout</label>
-      <input type="datetime-local"
-             id="fecha_checkout"
-             formControlName="fecha_checkout"
-             class="form-control"
-             [ngClass]="{'is-invalid': submitted && f['fecha_checkout'].errors}">
-    </div>
-
-    <div class="form-buttons">
-      <button type="submit" class="btn btn-success">
-        {{ isEditing ? 'Registrar Checkout' : 'Registrar Checkin' }}
-      </button>
-      <button type="button" class="btn btn-secondary" (click)="volver()">
-        Cancelar
-      </button>
-    </div>
-  </form>
-</div>
 
 <div class="modal-cliente-backdrop" *ngIf="mostrarModalCliente">
   <div class="modal-cliente">
 
-    <!-- Mostrar buscador si no estamos en modo nuevo -->
+    <!-- Buscar cliente -->
     <div *ngIf="!mostrarFormularioNuevoCliente">
       <h3>Buscar Cliente</h3>
-      <input type="text" [(ngModel)]="busquedaCliente" (input)="buscarClientesExistentes()" placeholder="Buscar por nombre o DNI/RUC">
-      <ul>
+    
+    <div class="busqueda-container">
+      <input type="text"
+             [(ngModel)]="busquedaCliente"
+             (input)="buscarClientesExistentes()"
+             placeholder="Buscar por nombre o DNI/RUC"
+             class="form-control">
+             
+      <button class="btn btn-primary" (click)="abrirFormularioNuevoCliente()">+ Nuevo Cliente</button>
+    </div>
+
+    <div *ngIf="clientesFiltrados.length > 0" class="resultados-clientes">
+      <ul class="cliente-list">
         <li *ngFor="let cliente of clientesFiltrados">
-          {{ cliente.nombre }} ({{ cliente.dniRuc }})
-          <button (click)="asignarClienteAReserva(cliente)">
+          <span>{{ cliente.nombre }} ({{ cliente.dniRuc }})</span>
+          <button (click)="asignarClienteAReserva(cliente)" class="btn btn-sm btn-primary">
             Asignar
           </button>
         </li>
-        
       </ul>
-      <button class="btn btn-primary mt-3" (click)="abrirFormularioNuevoCliente()">+ Nuevo Cliente</button>
     </div>
 
-    <!-- Formulario actual para nuevo cliente -->
-    <div *ngIf="mostrarFormularioNuevoCliente">
-      <h3>Nuevo Cliente</h3>
-      <form [formGroup]="nuevoClienteForm" (ngSubmit)="guardarCliente()">
-        <!-- Los campos actuales -->
-      </form>
+    <div *ngIf="clientesFiltrados.length === 0" class="text-muted" style="margin-top:10px;">
+      No hay resultados.
     </div>
 
     <button class="btn btn-secondary mt-3" (click)="cerrarModalCliente()">Cerrar</button>
+    </div>
+
+    <!-- Nuevo cliente -->
+    <div *ngIf="mostrarFormularioNuevoCliente">
+      <form [formGroup]="nuevoClienteForm" (ngSubmit)="guardarCliente()">
+        <h3>Nuevo Cliente</h3>
+
+        <div class="form-group">
+          <label>DNI o RUC:</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" formControlName="dniRuc" maxlength="11" class="form-control" placeholder="Buscar DNI/RUC">
+            <button type="button" (click)="buscarDni()" class="btn btn-secondary" [disabled]="buscandoDni">
+              Buscar
+            </button>
+            <span *ngIf="buscandoDni" class="spinner-small">Buscando...</span>
+          </div>
+          <div *ngIf="nuevoClienteForm.get('dniRuc')?.invalid && nuevoClienteForm.get('dniRuc')?.touched" class="error">
+            DNI o RUC requerido (8 u 11 dígitos)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input type="text" formControlName="nombre" class="form-control" placeholder="Nombres completos">
+          <div *ngIf="nuevoClienteForm.get('nombre')?.invalid && nuevoClienteForm.get('nombre')?.touched" class="error">
+            Nombre requerido
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono:</label>
+          <input type="text" formControlName="telefono" maxlength="15" class="form-control" placeholder="999000111">
+          <div *ngIf="nuevoClienteForm.get('telefono')?.invalid && nuevoClienteForm.get('telefono')?.touched" class="error">
+            Teléfono inválido
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>País:</label>
+          <input type="text" formControlName="pais" class="form-control" placeholder="Perú">
+          <div *ngIf="nuevoClienteForm.get('pais')?.invalid && nuevoClienteForm.get('pais')?.touched" class="error">
+            País requerido
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="nuevoClienteForm.invalid" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalCliente()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>
 
