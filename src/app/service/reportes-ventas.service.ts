@@ -232,4 +232,11 @@ export class ReportesVentasService {
       { params, responseType: 'blob' }
     );
   }
+  getReservasHoyHabitaciones(): Observable<number> {
+  return this.http.get<number>(`${this.baseUrl}/reservas/hoy/habitaciones`);
+}
+
+getReservasHoySalones(): Observable<number> {
+  return this.http.get<number>(`${this.baseUrl}/reservas/hoy/salones`);
+}
 }

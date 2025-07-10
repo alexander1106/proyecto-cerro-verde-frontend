@@ -1,6 +1,9 @@
 // src/app/modules/dashboard-inicio/dashboard-inicio.component.ts
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription, interval } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
+
 import {
   DashboardInicioService,
   Kpis,
@@ -14,49 +17,32 @@ import {
   templateUrl: './dashboard-inicio.component.html',
   styleUrls: ['./dashboard-inicio.component.css']
 })
-export class DashboardInicioComponent implements OnInit {
-  // Ahora Kpis incluye ingresosHoy, egresosHoy, reservasHoy y salonesHoy
+export class DashboardInicioComponent implements OnInit, OnDestroy {
   kpis!: Kpis;
+  private kpisPollingSub!: Subscription;
 
-  habitacionesPorMes: MesTotal[]       = [];
-  salonesPorMes:     MesTotal[]       = [];
+  habitacionesPorMes: MesTotal[]        = [];
+  salonesPorMes:     MesTotal[]        = [];
   topProductos:      ProductoCantidad[] = [];
 
-  habChartData: {
-    labels: string[];
-    datasets: { label: string; data: number[]; backgroundColor: string[] }[];
-  } = { labels: [], datasets: [] };
+  habChartData: { labels: string[]; datasets: any[] }   = { labels: [], datasets: [] };
+  salonChartData: { labels: string[]; datasets: any[] } = { labels: [], datasets: [] };
 
-  salonChartData: {
-    labels: string[];
-    datasets: { label: string; data: number[]; backgroundColor: string[] }[];
-  } = { labels: [], datasets: [] };
-
-  chartOptions: any = {
+  chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: {
-          boxWidth: 0    // quita el cuadrito de color de la leyenda
-        }
+        labels: { boxWidth: 0 }
       }
     }
   };
 
   private monthMap: Record<string, string> = {
-    January:   'Enero',
-    February:  'Febrero',
-    March:     'Marzo',
-    April:     'Abril',
-    May:       'Mayo',
-    June:      'Junio',
-    July:      'Julio',
-    August:    'Agosto',
-    September: 'Septiembre',
-    October:   'Octubre',
-    November:  'Noviembre',
-    December:  'Diciembre'
+    January: 'Enero',   February: 'Febrero', March: 'Marzo',
+    April: 'Abril',     May: 'Mayo',         June: 'Junio',
+    July: 'Julio',      August: 'Agosto',     September: 'Septiembre',
+    October: 'Octubre', November: 'Noviembre', December: 'Diciembre'
   };
 
   private colorPalette = [
@@ -73,11 +59,8 @@ export class DashboardInicioComponent implements OnInit {
   ngOnInit(): void {
     const anio = new Date().getFullYear();
 
+    // 1) cargar gráficas y top productos una sola vez
     this.ds.loadAll(anio).subscribe(result => {
-      // Asignamos todos los KPIs: ingresosHoy, egresosHoy, reservasHoy y salonesHoy
-      this.kpis = result.kpis;
-
-      // Habitaciones por mes
       this.habitacionesPorMes = result.habitaciones;
       this.habChartData = {
         labels: result.habitaciones.map(m => this.monthMap[m.mes] || m.mes),
@@ -90,7 +73,6 @@ export class DashboardInicioComponent implements OnInit {
         }]
       };
 
-      // Salones por mes
       this.salonesPorMes = result.salones;
       this.salonChartData = {
         labels: result.salones.map(m => this.monthMap[m.mes] || m.mes),
@@ -103,8 +85,20 @@ export class DashboardInicioComponent implements OnInit {
         }]
       };
 
-      // Top 5 productos
       this.topProductos = result.topProd;
     });
+
+    // 2) polling de KPIs cada 15s (incluye reservasHoy y salonesHoy)
+    this.kpisPollingSub = interval(15_000).pipe(
+      startWith(0),
+      switchMap(() => this.ds.getKpisHoy())
+    ).subscribe({
+      next: kpis => this.kpis = kpis,
+      error: err => console.error('Error refrescando KPIs', err)
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.kpisPollingSub?.unsubscribe();
   }
 }

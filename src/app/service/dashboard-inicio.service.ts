@@ -11,7 +11,6 @@ import {
 
 import {
   ReportesVentasService,
-  ReservasPorMesDTO,
   ProductoVentasDTO
 } from './reportes-ventas.service';
 
@@ -62,23 +61,13 @@ export class DashboardInicioService {
         })
       );
 
-    // 1b) reservas de habitaciones hoy
+    // 1b) reservas de habitaciones hoy (nuevo endpoint)
     const reservasHoy$ = this.ventasSvc
-      .getReservasPorMes('habitaciones', hoy, hoy)
-      .pipe(
-        map((arr: ReservasPorMesDTO[]) =>
-          arr.reduce((sum, d) => sum + (d.cantidad ?? 0), 0)
-        )
-      );
+      .getReservasHoyHabitaciones();   // devuelve Observable<number>
 
-    // 1c) reservas de salones hoy
+    // 1c) reservas de salones hoy (nuevo endpoint)
     const salonesHoy$ = this.ventasSvc
-      .getReservasPorMes('salones', hoy, hoy)
-      .pipe(
-        map((arr: ReservasPorMesDTO[]) =>
-          arr.reduce((sum, d) => sum + (d.cantidad ?? 0), 0)
-        )
-      );
+      .getReservasHoySalones();        // devuelve Observable<number>
 
     // fusionamos TODO
     return forkJoin({
@@ -106,9 +95,7 @@ export class DashboardInicioService {
     return this.ventasSvc
       .getReservasPorMes('habitaciones', desde, hasta)
       .pipe(
-        map((arr: ReservasPorMesDTO[]) =>
-          arr.map(d => ({ mes: d.mes, total: d.cantidad }))
-        )
+        map(arr => arr.map(d => ({ mes: d.mes, total: d.cantidad })))
       );
   }
 
@@ -119,9 +106,7 @@ export class DashboardInicioService {
     return this.ventasSvc
       .getReservasPorMes('salones', desde, hasta)
       .pipe(
-        map((arr: ReservasPorMesDTO[]) =>
-          arr.map(d => ({ mes: d.mes, total: d.cantidad }))
-        )
+        map(arr => arr.map(d => ({ mes: d.mes, total: d.cantidad })))
       );
   }
 
@@ -132,14 +117,11 @@ export class DashboardInicioService {
     return this.ventasSvc
       .getProductosMasVendidos(desde, hasta)
       .pipe(
-        map((arr: ProductoVentasDTO[]) =>
+        map(arr =>
           arr
             .sort((a, b) => b.cantidadVendida - a.cantidadVendida)
             .slice(0, 5)
-            .map(d => ({
-              producto: d.productoNombre,
-              cantidad: d.cantidadVendida
-            }))
+            .map(d => ({ producto: d.productoNombre, cantidad: d.cantidadVendida }))
         )
       );
   }
