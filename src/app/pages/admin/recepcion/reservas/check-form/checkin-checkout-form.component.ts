@@ -88,13 +88,35 @@ export class CheckinCheckoutFormComponent implements OnInit {
           checkoutCtrl?.enable();
           checkoutCtrl?.setValidators(Validators.required);
           checkoutCtrl?.updateValueAndValidity();
+    
           this.loadReservas(check.reserva?.id_reserva);
+    
+          // ✅ cargar tabla de habitaciones + huespedes
+          this.reservasService.getReservaById(check.reserva?.id_reserva).subscribe({
+            next: (reserva) => {
+              this.huespedService.getHuespedes().subscribe({
+                next: (huespedes) => {
+                  this.habitacionesReserva = (reserva.habitacionesXReserva ?? []).map(hr => ({
+                    ...hr,
+                    huespedes: huespedes.filter(h => h.habres?.id_hab_reserv === hr.id_hab_reserv && h.estado === 1)
+                  }));
+                },
+                error: () => {
+                  this.habitacionesReserva = (reserva.habitacionesXReserva ?? []).map(hr => ({
+                    ...hr,
+                    huespedes: []
+                  }));
+                }
+              });
+            }
+          });
         },
         complete: () => this.loading = false
       });
     } else {
       this.loadReservas();
     }
+    
   }
   
 
@@ -218,14 +240,39 @@ export class CheckinCheckoutFormComponent implements OnInit {
 
   saveCheck(checkData: CheckinCheckout): void {
     this.loading = true;
-
+  
     const operation = this.isEditing
       ? this.checkService.modificar(checkData)
       : this.checkService.guardar(checkData);
-
+  
     operation.subscribe({
       next: () => {
         this.loading = false;
+  
+        if (this.isEditing) {
+          // ✅ SOLO PARA CHECKOUT (edición)
+          const reserva = this.reservas.find(
+            r => Number(r.id_reserva) === Number(checkData.reserva.id_reserva)
+          );
+  
+          const habitaciones = (reserva?.habitacionesXReserva || [])
+            .filter((hr: HabitacionReserva) => hr.estado === 1 && hr.habitacion)
+            .map((hr: HabitacionReserva) => `#${hr.habitacion.numero}`)
+            .join(', ') || 'desconocidas';
+  
+          this.notificationService.agregar(
+            `Las habitaciones ${habitaciones} fueron liberadas y están listas para mantenimiento`
+          );
+  
+          Swal.fire({
+            icon: 'info',
+            title: 'Habitaciones liberadas',
+            text: `Las habitaciones ${habitaciones} fueron liberadas y están listas para mantenimiento`,
+            confirmButtonText: 'Aceptar'
+          });
+        }
+  
+        // ✅ Mostrar alerta de éxito
         Swal.fire({
           icon: 'success',
           title: this.isEditing ? 'Actualizado' : 'Registrado',
@@ -240,23 +287,23 @@ export class CheckinCheckoutFormComponent implements OnInit {
           buttonsStyling: false,
           timer: 1500
         });
+  
         this.router.navigate(['/admin/checks']);
       },
       error: (err) => {
         const backendMessage =
           err.error?.message ||
-          (typeof err.error === 'string' ? err.error : null) || // si devuelve texto plano
+          (typeof err.error === 'string' ? err.error : null) ||
           'No se puede hacer check-in a una reserva no pagada';
-
+  
         this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el registro: ${backendMessage}`;
         this.loading = false;
-
-        Swal.fire('Error', backendMessage, 'error'); // Puedes mostrar solo el mensaje del backend si prefieres
+  
+        Swal.fire('Error', backendMessage, 'error');
       }
-
-
     });
   }
+  
 
   volver(): void {
     this.router.navigate(['/admin/checks']);
@@ -416,7 +463,9 @@ export class CheckinCheckoutFormComponent implements OnInit {
     
       this.huespedService.getHuespedes().subscribe(huespedes => {
         const yaEsta = huespedes.some(h =>
-          h.cliente?.idCliente === cliente.idCliente && h.estado === 1
+          h.cliente?.idCliente === cliente.idCliente &&
+          h.estado === 1 &&
+          h.habres?.reserva?.estado_reserva==="Check_in"// o el valor que uses para "checkin"
         );
     
         if (yaEsta) {

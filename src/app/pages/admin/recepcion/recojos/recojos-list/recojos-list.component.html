@@ -82,12 +82,12 @@
               </span>
             </td>
             <td class="acciones">
-              <button class="btn-accion editar">
+              <button *ngIf="recojo.estado_recojo?.toLowerCase() === 'pendiente'" class="btn-accion editar">
                 <a [routerLink]="['/admin/recepcion/recojos/editar', recojo.id_recojo]">
                   <i class="edit fa-regular fa-pen-to-square"></i>
                 </a>
               </button>
-              <button class="btn-accion eliminar" (click)="eliminarRecojo(recojo.id_recojo!)">
+              <button *ngIf="recojo.estado_recojo?.toLowerCase() === 'pendiente'" class="btn-accion eliminar" (click)="eliminarRecojo(recojo.id_recojo!)">
                 <i class="delete fa-regular fa-trash-can"></i>
               </button>
             </td>
