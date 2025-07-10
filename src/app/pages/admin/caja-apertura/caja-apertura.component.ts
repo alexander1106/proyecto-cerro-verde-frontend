@@ -1,7 +1,9 @@
+import { ReservasService } from './../../../service/reserva.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CajaService } from '../../../service/caja.service';
 import Swal from 'sweetalert2';
+import { Reserva } from '../../../service/reserva.service';
 
 @Component({
   selector: 'app-caja-apertura',
@@ -15,8 +17,32 @@ export class CajaAperturaComponent implements OnInit {
   transacciones: any[] = [];
   nuevaTransaccion = {
     montoTransaccion: null,
-    tipo: { id: 1 } // 1: ingreso, 2: egreso
+    tipo: { id: 1 }, // 1: ingreso, 2: egreso
+    motivo: '',
+    reservaDevueltaId: null
   };
+  reservasCanceladas: Reserva[] = [];
+  resumenMetodoPago = {
+    efectivo: 0,
+    yape: 0,
+    plin: 0,
+    tarjeta: 0
+  };
+  
+  motivosIngreso = [
+    'Pago recibido',
+    'Transferencia entrante',
+    'Otros'
+  ];
+  
+  motivosEgreso = [
+    'Pago de servicios',
+    'Devolución',
+    'Compra de insumos',
+    'Transferencia bancaria',
+    'Otros'
+  ];
+
   mostrarModalApertura = false;
   tabActivo: 'transacciones' | 'arqueo' = 'transacciones';
   arqueo: any[] = [];
@@ -101,7 +127,14 @@ export class CajaAperturaComponent implements OnInit {
       )
       .reduce((sum, t) => sum + t.montoTransaccion, 0);
   }
-  
+  get motivosDisponibles(): string[] {
+  if (this.nuevaTransaccion.tipo?.id === 1) {
+    return this.motivosIngreso;
+  } else if (this.nuevaTransaccion.tipo?.id === 2) {
+    return this.motivosEgreso;
+  }
+  return [];
+}
   get totalVentasHoy(): number {
     return this.transaccionesDeHoy
       .filter(t => t.tipo.id === 1)
@@ -147,10 +180,10 @@ export class CajaAperturaComponent implements OnInit {
       .reduce((sum, t) => sum + t.montoTransaccion, 0);
   }
   
-  constructor(private cajaService: CajaService, private router: Router) {}
+  constructor(private cajaService: CajaService, private reservaService: ReservasService, private router: Router) {}
 
   ngOnInit() {
-    this.verificarEstadoCaja();
+    this.verificarEstadoCaja();   
   }
 
   limpiarFiltros() {
@@ -186,7 +219,26 @@ export class CajaAperturaComponent implements OnInit {
     this.arqueoSeleccionadoId = id;
     this.mostrarModalDetalleArqueo = true;
   }
-  
+
+  cargarReservasCanceladas() {
+    this.reservaService.getReservas().subscribe({
+      next: (reservas: Reserva[]) => {
+        // Filtrar solo las canceladas en el componente
+        this.reservasCanceladas = reservas.filter(r => r.estado_reserva?.toLowerCase() === 'cancelada');
+      },
+      error: () => {
+        console.error('No se pudieron cargar las reservas');
+      }
+    });
+  }
+
+  onMotivoChange() {
+    if (this.nuevaTransaccion.motivo === 'Devolución') {
+      this.cargarReservasCanceladas();
+    } else {
+      this.nuevaTransaccion.reservaDevueltaId = null;
+    }
+  }  
   
   verificarEstadoCaja() {
     this.cajaService.verificarEstadoCaja().subscribe({
@@ -197,17 +249,22 @@ export class CajaAperturaComponent implements OnInit {
         } else {
           this.requiereMontoInicial = false;
           this.cajaAperturada = response.body;
+  
           this.cargarTransacciones();
           this.cargarArqueo();
+  
+          // ✅ LLAMA AQUÍ el resumen de métodos de pago
+          this.cajaService.obtenerResumenPorMetodoPago(this.cajaAperturada.id).subscribe(resumen => {
+            this.resumenMetodoPago = resumen;
+          });
         }
       },
       error: (error: any) => {
         this.cajaAperturada = null;
-        console.log(error)
+        console.log(error);
       }
     });
   }
-  
   
 
   aperturarDesdeModal() {
@@ -287,11 +344,31 @@ export class CajaAperturaComponent implements OnInit {
       return;
     }
   
+    if (!this.nuevaTransaccion.motivo || this.nuevaTransaccion.motivo.trim() === '') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Motivo requerido',
+        text: 'Seleccione un motivo para la transacción.',
+      });
+      return;
+    }
+  
+    if (this.nuevaTransaccion.motivo === 'Devolución' && !this.nuevaTransaccion.reservaDevueltaId) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Reserva requerida',
+        text: 'Seleccione una reserva asociada a la devolución.',
+      });
+      return;
+    }
+  
     this.cajaService.guardarTransaccion(this.nuevaTransaccion).subscribe({
       next: () => {
         this.nuevaTransaccion = {
           montoTransaccion: null,
-          tipo: { id: 1 }
+          tipo: { id: 1 },
+          motivo: '',
+          reservaDevueltaId: null
         };
         this.cargarTransacciones();
         this.verificarEstadoCaja();
@@ -309,8 +386,7 @@ export class CajaAperturaComponent implements OnInit {
       }
     });
   }
-  
-  
+    
 
   cargarArqueo() {
     this.cajaService.verificarExistenciaArqueo().subscribe({

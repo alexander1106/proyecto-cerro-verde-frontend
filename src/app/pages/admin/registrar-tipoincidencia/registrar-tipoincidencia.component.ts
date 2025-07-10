@@ -39,37 +39,62 @@ export class RegistrarTipoIncidenciaComponent implements OnChanges {
   guardar(): void {
     if (this.tipoForm.invalid) return;
 
-    const data = { nombre: this.tipoForm.value.nombre };
     this.loading = true;
+    this.error = '';
+    const nombreIngresado = this.tipoForm.value.nombre.trim();
 
-    if (this.modoEdicion) {
-      this.service.actualizarTipoIncidencia(this.tipoEditar.id_tipo_incidencia, data).subscribe({
-        next: () => {
+    // Validar duplicados antes de registrar o actualizar
+    this.service.getTiposIncidencia().subscribe({
+      next: (tipos) => {
+        const existeNombre = tipos.some((tipo: any) => 
+          tipo.nombre.toLowerCase() === nombreIngresado.toLowerCase() &&
+          (!this.modoEdicion || tipo.id_tipo_incidencia !== this.tipoEditar.id_tipo_incidencia)
+        );
+
+        if (existeNombre) {
+          this.error = 'El nombre del tipo de incidencia ya existe. Por favor elige otro.';
           this.loading = false;
-          this.onRegistroExitoso.emit();
-        },
-        error: err => {
-          console.error(err);
-          this.error = 'Error al actualizar el tipo de incidencia.';
-          this.loading = false;
+          return;
         }
-      });
-    } else {
-      this.service.registrarTipoIncidencia(data).subscribe({
-        next: () => {
-          this.loading = false;
-          this.onRegistroExitoso.emit();
-        },
-        error: err => {
-          console.error(err);
-          this.error = 'Error al registrar el tipo de incidencia.';
-          this.loading = false;
+
+        const data = { nombre: nombreIngresado };
+
+        if (this.modoEdicion) {
+          this.service.actualizarTipoIncidencia(this.tipoEditar.id_tipo_incidencia, data).subscribe({
+            next: () => {
+              this.loading = false;
+              this.onRegistroExitoso.emit();
+            },
+            error: err => {
+              console.error(err);
+              this.error = 'Error al actualizar el tipo de incidencia.';
+              this.loading = false;
+            }
+          });
+        } else {
+          this.service.registrarTipoIncidencia(data).subscribe({
+            next: () => {
+              this.loading = false;
+              this.onRegistroExitoso.emit();
+            },
+            error: err => {
+              console.error(err);
+              this.error = 'Error al registrar el tipo de incidencia.';
+              this.loading = false;
+            }
+          });
         }
-      });
-    }
+      },
+      error: err => {
+        console.error(err);
+        this.error = 'Error al verificar el nombre del tipo de incidencia.';
+        this.loading = false;
+      }
+    });
   }
 
   cancelar(): void {
     this.onCancelar.emit();
   }
 }
+

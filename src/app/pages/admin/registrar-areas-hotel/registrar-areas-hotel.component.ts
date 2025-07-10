@@ -40,38 +40,61 @@ export class RegistrarAreaHotelComponent implements OnChanges {
     if (this.areaForm.invalid) return;
 
     this.loading = true;
-    const payload = {
-      nombre: this.areaForm.value.nombre,
-    };
+    this.error = '';
+    const nombreIngresado = this.areaForm.value.nombre.trim();
 
-    if (this.modoEdicion) {
-      this.service.actualizarAreaHotel(this.areaEditar.id_area, payload).subscribe({
-        next: () => {
+    // Primero verificamos si existe ya un área con ese nombre
+    this.service.getAreasHotel().subscribe({
+      next: (areas) => {
+        const nombreExiste = areas.some((area: any) => 
+          area.nombre.toLowerCase() === nombreIngresado.toLowerCase() &&
+          (!this.modoEdicion || area.id_area !== this.areaEditar.id_area)
+        );
+
+        if (nombreExiste) {
+          this.error = 'El nombre del área ya existe. Por favor elige otro.';
           this.loading = false;
-          this.onRegistroExitoso.emit();
-        },
-        error: err => {
-          console.error(err);
-          this.error = 'Error al actualizar el área.';
-          this.loading = false;
+          return;
         }
-      });
-    } else {
-      this.service.registrarAreaHotel(payload).subscribe({
-        next: () => {
-          this.loading = false;
-          this.onRegistroExitoso.emit();
-        },
-        error: err => {
-          console.error(err);
-          this.error = 'Error al registrar el área.';
-          this.loading = false;
+
+        const payload = { nombre: nombreIngresado };
+
+        if (this.modoEdicion) {
+          this.service.actualizarAreaHotel(this.areaEditar.id_area, payload).subscribe({
+            next: () => {
+              this.loading = false;
+              this.onRegistroExitoso.emit();
+            },
+            error: err => {
+              console.error(err);
+              this.error = 'Error al actualizar el área.';
+              this.loading = false;
+            }
+          });
+        } else {
+          this.service.registrarAreaHotel(payload).subscribe({
+            next: () => {
+              this.loading = false;
+              this.onRegistroExitoso.emit();
+            },
+            error: err => {
+              console.error(err);
+              this.error = 'Error al registrar el área.';
+              this.loading = false;
+            }
+          });
         }
-      });
-    }
+      },
+      error: err => {
+        console.error(err);
+        this.error = 'Error al verificar el nombre del área.';
+        this.loading = false;
+      }
+    });
   }
 
   cancelar(): void {
     this.onCancelar.emit();
   }
 }
+

@@ -12,6 +12,9 @@
           <div class="mb-2">
             <label>Nombres</label>
             <input type="text" class="form-control" formControlName="nombres" />
+            <div *ngIf="personalLimpiezaForm.get('nombres')?.invalid && personalLimpiezaForm.get('nombres')?.touched" class="text-danger">
+              El nombre es obligatorio.
+            </div>
           </div>
         </form>
         <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
@@ -25,3 +28,4 @@
     </div>
   </div>
 </div>
+

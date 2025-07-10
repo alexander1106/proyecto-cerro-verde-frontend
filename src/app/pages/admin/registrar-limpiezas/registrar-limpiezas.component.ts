@@ -1,3 +1,4 @@
+import { LoginService } from './../../../service/login.service';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MantenimientoService } from '../../../service/mantenimiento.service';
@@ -22,14 +23,13 @@ export class RegistrarLimpiezaComponent implements OnInit, OnChanges {
   personalLimpieza: any[] = [];
   habitaciones: any[] = [];
   salones: any[] = [];
-  modoEdicion: boolean = false;
-
 
   constructor(
     private fb: FormBuilder,
     private mantenimientoService: MantenimientoService,
     private habitacionesService: HabitacionesService,
-    private salonesService: SalonesService
+    private salonesService: SalonesService,
+    private loginService: LoginService
   ) {
     this.limpiezaForm = this.fb.group({
       fecha_limpieza: [this.getCurrentDateTime(), Validators.required],
@@ -62,27 +62,41 @@ export class RegistrarLimpiezaComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['limpiezaEditar']) {
-      this.modoEdicion = !!this.limpiezaEditar;
-  
       if (this.limpiezaEditar) {
+        // ✅ Convertir fecha para input datetime-local
+        const fecha = new Date(this.limpiezaEditar.fecha_registro);
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()).padStart(2, '0');
+        const hours = String(fecha.getHours()).padStart(2, '0');
+        const minutes = String(fecha.getMinutes()).padStart(2, '0');
+        const fechaFormateada = `${year}-${month}-${day}T${hours}:${minutes}`;
+
         this.limpiezaForm.patchValue({
-          fecha_limpieza: this.limpiezaEditar.fecha_registro,
+          fecha_limpieza: fechaFormateada,
           observaciones: this.limpiezaEditar.observaciones,
           id_personal_limpieza: this.limpiezaEditar.personal?.id_personal_limpieza || null,
           id_habitacion: this.limpiezaEditar.habitacion?.id_habitacion || null,
           id_salon: this.limpiezaEditar.salon?.id_salon || null
         });
-  
-        // 🔒 Desactivar campos si está en modo edición
-        this.limpiezaForm.get('fecha_limpieza')?.disable();
-        this.limpiezaForm.get('id_habitacion')?.disable();
-        this.limpiezaForm.get('id_salon')?.disable();
+
+        // ✅ Permitir editar todo
+        this.limpiezaForm.get('fecha_limpieza')?.enable();
+        this.limpiezaForm.get('id_habitacion')?.enable();
+        this.limpiezaForm.get('id_salon')?.enable();
       } else {
-        this.limpiezaForm.enable(); // por si acaso
+        // Si no hay limpiezaEditar, resetear form
+        this.limpiezaForm.reset({
+          fecha_limpieza: this.getCurrentDateTime(),
+          observaciones: '',
+          id_personal_limpieza: null,
+          id_habitacion: null,
+          id_salon: null
+        });
+        this.limpiezaForm.enable();
       }
     }
   }
-  
 
   getCurrentDateTime(): string {
     const now = new Date();
@@ -136,3 +150,4 @@ export class RegistrarLimpiezaComponent implements OnInit, OnChanges {
     this.onCancelar.emit();
   }
 }
+

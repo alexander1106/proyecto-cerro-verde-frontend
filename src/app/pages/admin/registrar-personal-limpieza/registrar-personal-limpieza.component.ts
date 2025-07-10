@@ -42,40 +42,64 @@ export class RegistrarPersonalLimpiezaComponent implements OnChanges {
   guardar(): void {
     if (this.personalLimpiezaForm.invalid) return;
 
-    const data = {
-      nombres: this.personalLimpiezaForm.value.nombres
-    };
-
     this.loading = true;
+    this.error = '';
+    const nombreIngresado = this.personalLimpiezaForm.value.nombres.trim();
 
-    if (this.modoEdicion) {
-      this.mantenimientoService.actualizarPersonalLimpieza(this.personalEditar.id_personal_limpieza, data).subscribe({
-        next: () => {
+    // Verificar duplicados
+    this.mantenimientoService.getPersonalLimpieza().subscribe({
+      next: (personalList) => {
+        const existe = personalList.some((p: any) =>
+          p.nombres.toLowerCase() === nombreIngresado.toLowerCase() &&
+          (!this.modoEdicion || p.id_personal_limpieza !== this.personalEditar.id_personal_limpieza)
+        );
+
+        if (existe) {
+          this.error = 'El nombre del personal ya existe. Por favor usa otro.';
           this.loading = false;
-          this.onRegistroExitoso.emit();
-        },
-        error: err => {
-          console.error(err);
-          this.error = 'Error al actualizar personal.';
-          this.loading = false;
+          return;
         }
-      });
-    } else {
-      this.mantenimientoService.registrarPersonalLimpieza(data).subscribe({
-        next: () => {
-          this.loading = false;
-          this.onRegistroExitoso.emit();
-        },
-        error: err => {
-          console.error(err);
-          this.error = 'Error al registrar personal.';
-          this.loading = false;
+
+        const data = {
+          nombres: nombreIngresado
+        };
+
+        if (this.modoEdicion) {
+          this.mantenimientoService.actualizarPersonalLimpieza(this.personalEditar.id_personal_limpieza, data).subscribe({
+            next: () => {
+              this.loading = false;
+              this.onRegistroExitoso.emit();
+            },
+            error: err => {
+              console.error(err);
+              this.error = 'Error al actualizar el personal.';
+              this.loading = false;
+            }
+          });
+        } else {
+          this.mantenimientoService.registrarPersonalLimpieza(data).subscribe({
+            next: () => {
+              this.loading = false;
+              this.onRegistroExitoso.emit();
+            },
+            error: err => {
+              console.error(err);
+              this.error = 'Error al registrar el personal.';
+              this.loading = false;
+            }
+          });
         }
-      });
-    }
+      },
+      error: err => {
+        console.error(err);
+        this.error = 'Error al verificar el nombre del personal.';
+        this.loading = false;
+      }
+    });
   }
 
   cancelar(): void {
     this.onCancelar.emit();
   }
 }
+

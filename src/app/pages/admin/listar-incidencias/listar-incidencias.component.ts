@@ -50,7 +50,6 @@ export class ListarIncidenciasComponent implements OnInit {
   get incidenciasFiltradas(): any[] {
     let resultado = [...this.incidencias];
 
-    // Filtrado
     if (this.filtroEstado) {
       resultado = resultado.filter(i => i.estado_incidencia === this.filtroEstado);
     }
@@ -59,7 +58,6 @@ export class ListarIncidenciasComponent implements OnInit {
       resultado = resultado.filter(i => i.gravedad === this.filtroGravedad);
     }
 
-    // Ordenamiento
     resultado.sort((a, b) => {
       const campoA = a[this.ordenCampo] ?? '';
       const campoB = b[this.ordenCampo] ?? '';
@@ -102,6 +100,7 @@ export class ListarIncidenciasComponent implements OnInit {
 
   abrirModal(): void {
     this.mostrarModal = true;
+    this.incidenciaSeleccionada = null;
   }
 
   cerrarModal(): void {
@@ -116,6 +115,11 @@ export class ListarIncidenciasComponent implements OnInit {
   cerrarDetalle(): void {
     this.mostrarModalDetalle = false;
     this.incidenciaSeleccionada = null;
+  }
+
+  editarIncidencia(incidencia: any): void {
+    this.incidenciaSeleccionada = incidencia;
+    this.mostrarModal = true;
   }
 
   finalizarIncidencia(incidencia: any): void {

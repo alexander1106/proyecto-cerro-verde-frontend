@@ -14,9 +14,9 @@
           <option value="resuelta">Resuelta</option>
         </select>
       </div>
-    
+
       <div class="col-md-3">
-        <label class="form-label">Filtrar por Gravedad</label>
+        <label class="form-label">Filtrar por Urgencia</label>
         <select class="form-select" [(ngModel)]="filtroGravedad">
           <option value="">-- Todas --</option>
           <option value="baja">Baja</option>
@@ -24,7 +24,7 @@
           <option value="alta">Alta</option>
         </select>
       </div>
-    
+
       <div class="col-md-3">
         <label class="form-label">Ordenar por</label>
         <select class="form-select" [(ngModel)]="ordenCampo">
@@ -32,38 +32,26 @@
           <option value="gravedad">Gravedad</option>
         </select>
       </div>
-    
+
       <div class="col-md-1 d-flex align-items-end">
         <button class="btn btn-outline-secondary" (click)="ordenAscendente = !ordenAscendente">
           <i class="bi" [ngClass]="ordenAscendente ? 'bi-sort-up' : 'bi-sort-down'"></i>
         </button>
       </div>
-    
+
       <div class="col-md-2 align-self-end">
         <button class="btn btn-outline-secondary w-100" (click)="limpiarFiltros()">
           <i class="bi bi-x-circle me-1"></i> Limpiar Filtros
         </button>
       </div>
     </div>
-    
-
-    <!-- Cargando -->
-    <div *ngIf="loading" class="text-center text-muted">
-      <i class="bi bi-arrow-repeat spinner-border"></i> Cargando incidencias...
-    </div>
-
-    <!-- Sin resultados -->
-    <div *ngIf="!loading && incidenciasFiltradas.length === 0" class="text-muted text-center">
-      <i class="bi bi-inbox fs-1"></i>
-      <p>No hay incidencias registradas</p>
-    </div>
 
     <!-- Tabla -->
     <div *ngIf="!loading && incidenciasFiltradas.length > 0">
-      <table class="tabla-trabajadores">
+      <table class="tabla-trabajadores" style="font-size: 12px;">
         <thead class="table-light">
           <tr>
-            <th>ID</th>
+            <th style="width: 50px;">ID</th>
             <th>Registro</th>
             <th>Solución</th>
             <th>Estado</th>
@@ -76,8 +64,8 @@
         <tbody>
           <tr *ngFor="let incidencia of incidenciasPaginadas">
             <td>{{ incidencia.id_incidencia }}</td>
-            <td>{{ incidencia.fecha_registro }}</td>
-            <td>{{ incidencia.fecha_solucion || '—' }}</td>
+            <td><div class="scroll-cell">{{ incidencia.fecha_registro | date: 'yyyy-MM-dd HH:mm' }}</div></td>
+            <td><div class="scroll-cell">{{ incidencia.fecha_solucion ? (incidencia.fecha_solucion | date: 'yyyy-MM-dd HH:mm') : '—' }}</div></td>
             <td>
               <span class="badge"
                 [ngClass]="{
@@ -91,7 +79,7 @@
               <span *ngIf="incidencia.habitacion">Habitación {{ incidencia.habitacion.numero }}</span>
               <span *ngIf="!incidencia.habitacion && incidencia.area">Área {{ incidencia.area.nombre }}</span>
               <span *ngIf="!incidencia.habitacion && !incidencia.area && incidencia.salon">Salón {{ incidencia.salon.nombre }}</span>
-              <span *ngIf="!incidencia.habitacion && !incidencia.area">—</span>
+              <span *ngIf="!incidencia.habitacion && !incidencia.area && !incidencia.salon">—</span>
             </td>
             <td>{{ incidencia.tipoIncidencia?.nombre || '—' }}</td>
             <td>
@@ -104,18 +92,17 @@
               </span>
             </td>
             <td>
-              <button class="btn btn-primary btn-sm ms-2" (click)="verDetalle(incidencia)">
-                <i class="bi bi-eye-fill me-1"></i>
+              <button class="btn btn-primary btn-sm p-1" (click)="verDetalle(incidencia)">
+                <i class="bi bi-eye-fill" style="font-size: 0.9rem;"></i>
               </button>
-              <button *ngIf="incidencia.estado_incidencia === 'pendiente'"
-                class="btn btn-sm btn-success ms-2"
-                (click)="finalizarIncidencia(incidencia)">
-                <i class="bi bi-check-circle-fill me-1"></i>
+              <button *ngIf="incidencia.estado_incidencia === 'pendiente'" class="btn btn-warning btn-sm p-1 ms-1" (click)="editarIncidencia(incidencia)">
+                <i class="bi bi-pencil-square" style="font-size: 0.9rem;"></i>
               </button>
-              <button *ngIf="incidencia.estado_incidencia === 'pendiente'"
-                class="btn btn-danger btn-sm ms-2"
-                (click)="eliminarIncidencia(incidencia)">
-                <i class="bi bi-trash-fill me-1"></i>
+              <button *ngIf="incidencia.estado_incidencia === 'pendiente'" class="btn btn-success btn-sm p-1 ms-1" (click)="finalizarIncidencia(incidencia)">
+                <i class="bi bi-check-circle-fill" style="font-size: 0.9rem;"></i>
+              </button>
+              <button *ngIf="incidencia.estado_incidencia === 'pendiente'" class="btn btn-danger btn-sm p-1 ms-1" (click)="eliminarIncidencia(incidencia)">
+                <i class="bi bi-trash-fill" style="font-size: 0.9rem;"></i>
               </button>
             </td>
           </tr>
@@ -127,7 +114,18 @@
         <button class="btn btn-outline-primary" (click)="cambiarPagina(1)" [disabled]="paginaActual >= Math.ceil(incidenciasFiltradas.length / elementosPorPagina)">
           Siguiente
         </button>
-      </div>      
+      </div>
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!loading && incidenciasFiltradas.length === 0" class="text-muted text-center">
+      <i class="bi bi-inbox fs-1"></i>
+      <p>No hay incidencias registradas</p>
+    </div>
+
+    <!-- Cargando -->
+    <div *ngIf="loading" class="text-center text-muted">
+      <i class="bi bi-arrow-repeat spinner-border"></i> Cargando incidencias...
     </div>
   </div>
 
@@ -151,7 +149,12 @@
 
   <app-registrar-incidencia
     *ngIf="mostrarModal"
+    [incidenciaEditar]="incidenciaSeleccionada"
     (onRegistroExitoso)="registroExitoso()"
     (onCancelar)="cerrarModal()">
   </app-registrar-incidencia>
 </div>
+
+
+
+

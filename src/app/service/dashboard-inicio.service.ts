@@ -2,7 +2,7 @@
 
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import {
   CajaReporteService,
@@ -18,6 +18,8 @@ import {
 export interface Kpis {
   ingresosHoy: number;
   egresosHoy: number;
+  reservasHoy: number;    // ← Habitaciones hoy
+  salonesHoy: number;     // ← Salones hoy
 }
 
 export interface MesTotal {
@@ -37,81 +39,118 @@ export class DashboardInicioService {
     private ventasSvc: ReportesVentasService
   ) {}
 
-  /** 1. KPIs de hoy a partir de tu resumen de caja */
+  /** Helper para formatear fecha a YYYY-MM-DD */
+  private formatDate(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  }
+
+  /**
+   * 1. KPIs de hoy: ingresos, egresos, reservas de habitaciones y salones
+   */
   getKpisHoy(): Observable<Kpis> {
-  const now = new Date();
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  const y = now.getFullYear();
-  const m = pad(now.getMonth() + 1);
-  const d = pad(now.getDate());
-  const fechaStr = `${y}-${m}-${d}`;
+    const hoy = this.formatDate(new Date());
 
-  return this.cajaSvc
-    .obtenerResumenCaja(fechaStr, fechaStr, ['Ingreso','Egreso'])
-    .pipe(
-      map((arr: CajaResumenDTO[]) => {
-        // Comparamos en minúsculas para que matchee "INGRESO", "Ingreso" o "ingreso"
-        const ingreso = arr.find(d =>
-          d.tipo.toLowerCase() === 'ingreso'
-        )?.total ?? 0;
+    // 1a) ingresos / egresos
+    const ingresoEgreso$ = this.cajaSvc
+      .obtenerResumenCaja(hoy, hoy, ['Ingreso', 'Egreso'])
+      .pipe(
+        map((arr: CajaResumenDTO[]) => {
+          const ingresos = arr.find(d => d.tipo.toLowerCase() === 'ingreso')?.total ?? 0;
+          const egresos  = arr.find(d => d.tipo.toLowerCase() === 'egreso')?.total  ?? 0;
+          return { ingresos, egresos };
+        })
+      );
 
-        const egreso = arr.find(d =>
-          d.tipo.toLowerCase() === 'egreso'
-        )?.total  ?? 0;
+    // 1b) reservas de habitaciones hoy
+    const reservasHoy$ = this.ventasSvc
+      .getReservasPorMes('habitaciones', hoy, hoy)
+      .pipe(
+        map((arr: ReservasPorMesDTO[]) =>
+          arr.reduce((sum, d) => sum + (d.cantidad ?? 0), 0)
+        )
+      );
 
-        return { ingresosHoy: ingreso, egresosHoy: egreso };
-      }),
+    // 1c) reservas de salones hoy
+    const salonesHoy$ = this.ventasSvc
+      .getReservasPorMes('salones', hoy, hoy)
+      .pipe(
+        map((arr: ReservasPorMesDTO[]) =>
+          arr.reduce((sum, d) => sum + (d.cantidad ?? 0), 0)
+        )
+      );
+
+    // fusionamos TODO
+    return forkJoin({
+      ie: ingresoEgreso$,
+      rh: reservasHoy$,
+      sh: salonesHoy$
+    }).pipe(
+      map(({ ie, rh, sh }) => ({
+        ingresosHoy: ie.ingresos,
+        egresosHoy:  ie.egresos,
+        reservasHoy: rh,
+        salonesHoy:  sh
+      })),
       catchError(err => {
-        console.error('[KPIs] fallo:', err);
-        return of({ ingresosHoy:0, egresosHoy:0 });
+        console.error('[DashboardInicio] getKpisHoy error', err);
+        return of({ ingresosHoy: 0, egresosHoy: 0, reservasHoy: 0, salonesHoy: 0 });
       })
     );
-}
+  }
 
   /** 2. Reservas de habitaciones por mes (todo el año) */
   getHabitacionesPorMes(anio: number): Observable<MesTotal[]> {
     const desde = `${anio}-01-01`;
     const hasta = `${anio}-12-31`;
-    return this.ventasSvc.getReservasPorMes('habitaciones', desde, hasta).pipe(
-      map((arr: ReservasPorMesDTO[]) =>
-        arr.map(d => ({ mes: d.mes, total: d.cantidad }))
-      )
-    );
+    return this.ventasSvc
+      .getReservasPorMes('habitaciones', desde, hasta)
+      .pipe(
+        map((arr: ReservasPorMesDTO[]) =>
+          arr.map(d => ({ mes: d.mes, total: d.cantidad }))
+        )
+      );
   }
 
   /** 3. Reservas de salones por mes (todo el año) */
   getSalonesPorMes(anio: number): Observable<MesTotal[]> {
     const desde = `${anio}-01-01`;
     const hasta = `${anio}-12-31`;
-    return this.ventasSvc.getReservasPorMes('salones', desde, hasta).pipe(
-      map((arr: ReservasPorMesDTO[]) =>
-        arr.map(d => ({ mes: d.mes, total: d.cantidad }))
-      )
-    );
+    return this.ventasSvc
+      .getReservasPorMes('salones', desde, hasta)
+      .pipe(
+        map((arr: ReservasPorMesDTO[]) =>
+          arr.map(d => ({ mes: d.mes, total: d.cantidad }))
+        )
+      );
   }
 
   /** 4. Top 5 productos más vendidos en el año */
   getTopProductos(anio: number): Observable<ProductoCantidad[]> {
     const desde = `${anio}-01-01`;
     const hasta = `${anio}-12-31`;
-    return this.ventasSvc.getProductosMasVendidos(desde, hasta).pipe(
-      map((arr: ProductoVentasDTO[]) =>
-        arr
-          .sort((a,b) => b.cantidadVendida - a.cantidadVendida)
-          .slice(0, 5)
-          .map(d => ({ producto: d.productoNombre, cantidad: d.cantidadVendida }))
-      )
-    );
+    return this.ventasSvc
+      .getProductosMasVendidos(desde, hasta)
+      .pipe(
+        map((arr: ProductoVentasDTO[]) =>
+          arr
+            .sort((a, b) => b.cantidadVendida - a.cantidadVendida)
+            .slice(0, 5)
+            .map(d => ({
+              producto: d.productoNombre,
+              cantidad: d.cantidadVendida
+            }))
+        )
+      );
   }
-
 
   /** Carga todo en paralelo */
   loadAll(anio: number) {
     return forkJoin({
-      kpis:        this.getKpisHoy(),
+      kpis:         this.getKpisHoy(),
       habitaciones: this.getHabitacionesPorMes(anio),
       salones:      this.getSalonesPorMes(anio),
       topProd:      this.getTopProductos(anio),
-        });
+    });
   }
 }

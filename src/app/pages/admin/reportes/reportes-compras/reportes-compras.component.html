@@ -49,8 +49,9 @@
       </mat-select>
     </mat-form-field>
 
-    <!-- 4) Botones de acción -->
+    <!-- 4) Botones de acción (Generar + sólo iconos de descarga) -->
     <div class="form-actions">
+      <!-- Botón Generar -->
       <button
         mat-raised-button
         color="primary"
@@ -59,21 +60,27 @@
       >
         Generar
       </button>
+
+      <!-- Icono PDF -->
       <button
-        mat-raised-button
+        mat-icon-button
         color="accent"
+        matTooltip="Descargar PDF"
         (click)="descargarPdf()"
         [disabled]="reportForm.invalid"
       >
-        Descargar PDF
+        <mat-icon>picture_as_pdf</mat-icon>
       </button>
+
+      <!-- Icono Excel (registro svgIcon 'excel-file' en AppModule) -->
       <button
-        mat-raised-button
+        mat-icon-button
         color="warn"
+        matTooltip="Descargar Excel"
         (click)="descargarExcel()"
         [disabled]="reportForm.invalid"
       >
-        Descargar Excel
+        <i class="fas fa-file-excel"></i>
       </button>
     </div>
   </form>
@@ -121,7 +128,7 @@
       </mat-form-field>
 
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-        <!-- Definición de columnas dinámicas -->
+        <!-- Columnas dinámicas para productos -->
         <ng-container *ngIf="isProductos()" matColumnDef="producto">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
           <td mat-cell *matCellDef="let e">{{ e.productoNombre }}</td>
@@ -135,6 +142,7 @@
           <td mat-cell *matCellDef="let e">{{ e.totalGastado | number:'1.2-2' }}</td>
         </ng-container>
 
+        <!-- Columnas dinámicas para proveedores -->
         <ng-container *ngIf="isProveedores()" matColumnDef="proveedor">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
           <td mat-cell *matCellDef="let e">{{ e.proveedorNombre }}</td>
