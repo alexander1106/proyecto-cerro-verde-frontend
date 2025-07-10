@@ -620,8 +620,15 @@ export class VentasComponent {
 
     // Configurar fecha
     const ahora = new Date();
-    const fechaHoraFormateada = ahora.toISOString().slice(0, 19).replace('T', ' ');
-    this.venta.fecha = fechaHoraFormateada; // "2025-07-09 14:39:00"    
+    const yyyy = ahora.getFullYear();
+    const MM = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dd = String(ahora.getDate()).padStart(2, '0');
+    const hh = String(ahora.getHours()).padStart(2, '0');
+    const mm = String(ahora.getMinutes()).padStart(2, '0');
+    const ss = String(ahora.getSeconds()).padStart(2, '0');
+    
+    this.venta.fecha = `${yyyy}-${MM}-${dd} ${hh}:${mm}:${ss}`;
+    
 
     // Para productos, el estado inicial es pendiente
     if (this.titulo === 'Productos') {
